@@ -3,8 +3,11 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:project_meetup/profile_screen.dart';
 
 import 'discover_screen.dart';
+import 'profile_screen.dart';
+import 'chat_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,11 +40,14 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Meetup',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+          primaryColor: Colors.lightBlue,
+          scaffoldBackgroundColor: const Color(0xFFF3F5F7),
+          colorScheme: ColorScheme.fromSwatch()
+              .copyWith(secondary: Colors.lightBlueAccent)),
       home: const BottomNavigation(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -65,14 +71,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
       'Index 1: Events',
       style: optionStyle,
     ),
-    Text(
-      'Index 2: Chat',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 3: Profile',
-      style: optionStyle,
-    ),
+    ChatScreen(),
+    ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -84,6 +84,10 @@ class _BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("App"),
+        backgroundColor: Colors.black,
+      ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
@@ -107,7 +111,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Theme.of(context).colorScheme.primary,
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
       ),

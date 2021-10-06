@@ -9,20 +9,6 @@ class DiscoverScreen extends StatefulWidget {
 }
 
 class _DiscoverScreenState extends State<DiscoverScreen> {
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Discover',
-    ),
-    Text(
-      'Index 1: Events',
-    ),
-    Text(
-      'Index 2: Chat',
-    ),
-    Text(
-      'Index 3: Profile',
-    ),
-  ];
   final List<String> entries = <String>[
     'A',
     'B',
@@ -42,45 +28,33 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         padding: const EdgeInsets.all(8),
         itemCount: entries.length,
         itemBuilder: (BuildContext context, int index) {
-          return Container(
-            child: Card(
-              child: InkWell(
-                splashColor: Colors.blue.withAlpha(30),
-                onTap: () {
-                  print('Card tapped.');
-                },
-                child: Container(
-                  width: 300,
-                  height: 100,
-                  child: Center(child: Text(entries[index].toString())),
-                ),
+          return Card(
+            child: InkWell(
+              splashColor: Colors.blue.withAlpha(30),
+              borderRadius: BorderRadius.circular(3),
+              onTap: () {
+                print('Card tapped.');
+              },
+              child: Container(
+                width: 300,
+                height: 100,
+                child: Center(
+                    child: Row(
+                  children: const <Widget>[
+                    Expanded(
+                      child: Text('Card', textAlign: TextAlign.center),
+                    ),
+                    Expanded(
+                      child: FittedBox(
+                        fit: BoxFit.contain, // otherwise the logo will be tiny
+                        child: FlutterLogo(),
+                      ),
+                    ),
+                  ],
+                )),
               ),
             ),
           );
         });
   }
 }
-/*
-
-Container(
-            height: 50,
-            color: Colors.grey,
-            child: Center(child: Text(entries[index].toString())),
-          );
-
-          Center(
-      child: Card(
-        child: InkWell(
-          splashColor: Colors.blue.withAlpha(30),
-          onTap: () {
-            print('Card tapped.');
-          },
-          child: const SizedBox(
-            width: 300,
-            height: 100,
-            child: Text('A card that can be tapped'),
-          ),
-        ),
-      ),
-    );
- */
