@@ -3,13 +3,15 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:project_meetup/profile_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 
+import 'package:project_meetup/profile_screen.dart';
 import 'discover_screen.dart';
 import 'profile_screen.dart';
 import 'chat_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -21,6 +23,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   @override
   void initState() {
     super.initState();
@@ -40,15 +43,32 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Meetup',
-      theme: ThemeData(
-          primaryColor: Colors.lightBlue,
-          scaffoldBackgroundColor: const Color(0xFFF3F5F7),
-          colorScheme: ColorScheme.fromSwatch()
-              .copyWith(secondary: Colors.lightBlueAccent)),
-      home: const BottomNavigation(),
-      debugShowCheckedModeBanner: false,
+    return FutureBuilder(
+      // Initialize FlutterFire:
+      future: _initialization,
+      builder: (context, snapshot) {
+        // Check for errors
+        if (snapshot.hasError) {
+          return const FlutterLogo();
+        }
+
+        // Once complete, show your application
+        if (snapshot.connectionState == ConnectionState.done) {
+          return MaterialApp(
+            title: 'Meetup',
+            theme: ThemeData(
+                primaryColor: Colors.lightBlue,
+                scaffoldBackgroundColor: const Color(0xFFF3F5F7),
+                colorScheme: ColorScheme.fromSwatch()
+                    .copyWith(secondary: Colors.lightBlueAccent)),
+            home: const BottomNavigation(),
+            debugShowCheckedModeBanner: false,
+          );
+        }
+
+        // Otherwise, show something whilst waiting for initialization to complete
+        return const FlutterLogo();
+      },
     );
   }
 }
