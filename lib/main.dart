@@ -25,7 +25,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     SchedulerBinding.instance!.addPostFrameCallback((_) {
-      fetchAll();
+      // ignore: avoid_print
+      fetchAll().catchError((error) => print(error));
     });
   }
 
