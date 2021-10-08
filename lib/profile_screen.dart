@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:project_meetup/user_authentication.dart';
+import 'package:provider/provider.dart';
 
 /// Stateful Widget for bottom navigation bar.
 class ProfileScreen extends StatefulWidget {
@@ -87,6 +89,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         titleSection,
         textSection,
+        ElevatedButton(
+          onPressed: () {
+            context.read<UserAuthentication>().signOut();
+          },
+          child: const Text("Sign out"),
+        ),
       ],
     );
   }

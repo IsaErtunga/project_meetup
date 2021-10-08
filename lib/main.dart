@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +7,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:project_meetup/profile_screen.dart';
+import 'package:project_meetup/sign_in_screen.dart';
+import 'package:project_meetup/user_authentication.dart';
+import 'package:provider/provider.dart';
 import 'discover_screen.dart';
 import 'profile_screen.dart';
 import 'chat_screen.dart';
@@ -54,22 +58,45 @@ class _MyAppState extends State<MyApp> {
 
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
-          return MaterialApp(
-            title: 'Meetup',
-            theme: ThemeData(
-                primaryColor: Colors.lightBlue,
-                scaffoldBackgroundColor: const Color(0xFFF3F5F7),
-                colorScheme: ColorScheme.fromSwatch()
-                    .copyWith(secondary: Colors.lightBlueAccent)),
-            home: const BottomNavigation(),
-            debugShowCheckedModeBanner: false,
-          );
+          return MultiProvider(
+              providers: [
+                Provider<UserAuthentication>(
+                  create: (_) => UserAuthentication(FirebaseAuth.instance),
+                ),
+                StreamProvider(
+                  create: (context) =>
+                      context.read<UserAuthentication>().authStateChanges,
+                  initialData: null,
+                )
+              ],
+              child: MaterialApp(
+                title: 'Meetup',
+                theme: ThemeData(
+                    primaryColor: Colors.lightBlue,
+                    scaffoldBackgroundColor: const Color(0xFFF3F5F7),
+                    colorScheme: ColorScheme.fromSwatch()
+                        .copyWith(secondary: Colors.lightBlueAccent)),
+                home: const AuthenticationWrapper(),
+                debugShowCheckedModeBanner: false,
+              ));
         }
 
         // Otherwise, show something whilst waiting for initialization to complete
         return const FlutterLogo();
       },
     );
+  }
+}
+
+class AuthenticationWrapper extends StatelessWidget {
+  const AuthenticationWrapper({Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    final firebaseUser = context.watch<User?>();
+    if (firebaseUser != null) {
+      return const BottomNavigation();
+    }
+    return const SignInPage();
   }
 }
 
