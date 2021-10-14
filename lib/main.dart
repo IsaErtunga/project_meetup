@@ -119,7 +119,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
       'Index 1: Events',
       style: optionStyle,
     ),
-    ChatScreen(),
     ProfileScreen(),
   ];
 
@@ -148,10 +147,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
           BottomNavigationBarItem(
             icon: FaIcon(FontAwesomeIcons.calendarDay),
             label: 'Events',
-          ),
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.solidCommentAlt),
-            label: 'Chat',
           ),
           BottomNavigationBarItem(
             icon: FaIcon(FontAwesomeIcons.solidUser),
