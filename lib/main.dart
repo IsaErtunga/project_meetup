@@ -12,7 +12,6 @@ import 'package:project_meetup/user_authentication.dart';
 import 'package:provider/provider.dart';
 import 'discover_screen.dart';
 import 'profile_screen.dart';
-import 'chat_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -75,7 +74,7 @@ class _MyAppState extends State<MyApp> {
                     primaryColor: Colors.lightBlue,
                     scaffoldBackgroundColor: const Color(0xFFF3F5F7),
                     colorScheme: ColorScheme.fromSwatch()
-                        .copyWith(secondary: Colors.lightBlueAccent)),
+                        .copyWith(secondary: const Color(0xFFF3F5F7))),
                 home: const AuthenticationWrapper(),
                 debugShowCheckedModeBanner: false,
               ));
@@ -131,10 +130,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("App"),
-        backgroundColor: Colors.black,
-      ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),

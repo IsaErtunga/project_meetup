@@ -40,9 +40,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: false,
-      child: Chat(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Chat"),
+        backgroundColor: Colors.black,
+      ),
+      body: Chat(
         messages: _messages,
         onSendPressed: _handleSendPressed,
         user: _user,
