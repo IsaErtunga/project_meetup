@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:project_meetup/chat_screen.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 
+import 'package:project_meetup/chat_screen.dart';
+import 'package:project_meetup/users_page.dart';
 import 'discover_screen.dart';
 
 class GroupDetailsScreen extends StatefulWidget {
@@ -25,7 +28,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
         icon: const FaIcon(FontAwesomeIcons.comments),
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const ChatScreen()));
+              MaterialPageRoute(builder: (context) => const UsersPage()));
         },
         label: const Text("Chat"),
       ),
@@ -54,7 +57,6 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                         margin: const EdgeInsets.symmetric(vertical: 10),
                         color: Colors.grey[300],
                         alignment: Alignment.center,
-                        child: Text(widget.group.groupData["groupName"]),
                       ))
                   .toList(),
             ),
