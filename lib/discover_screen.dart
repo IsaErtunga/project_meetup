@@ -38,26 +38,25 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
               return GridView.count(
                 crossAxisCount: 2,
                 children: snapshot.data!.docs.map((doc) {
-                  return Card(
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    elevation: 5,
-                    margin:
-                        const EdgeInsets.symmetric(horizontal: 7, vertical: 7),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: GestureDetector(
-                      child: Column(
-                        children: [
-                          Expanded(
-                            flex: 3,
-                            child: AspectRatio(
-                                aspectRatio: 16 / 12,
-                                child: Hero(
-                                  tag: (doc.data()
-                                          as Map<String, dynamic>)["groupName"]
-                                      .toString(),
+                  return Hero(
+                      tag: (doc.data() as Map<String, dynamic>)["groupName"]
+                          .toString(),
+                      child: Card(
+                        semanticContainer: true,
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        elevation: 5,
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 7, vertical: 7),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        child: GestureDetector(
+                          child: Column(
+                            children: [
+                              Expanded(
+                                flex: 3,
+                                child: AspectRatio(
+                                  aspectRatio: 16 / 12,
                                   child: Image(
                                     fit: BoxFit.fill,
                                     image: NetworkImage(
@@ -66,31 +65,33 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                                           .toString(),
                                     ),
                                   ),
-                                )),
+                                ),
+                              ),
+                              Expanded(
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                      (doc.data() as Map<String, dynamic>)[
+                                              "groupName"]
+                                          .toString(),
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                              ),
+                            ],
                           ),
-                          Expanded(
-                            child: Container(
-                              alignment: Alignment.center,
-                              child: Text(
-                                  (doc.data()
-                                          as Map<String, dynamic>)["groupName"]
-                                      .toString(),
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                          ),
-                        ],
-                      ),
-                      onTap: () => {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => GroupDetailsScreen(Group(
-                                    doc.id,
-                                    (doc.data() as Map<String, dynamic>))))),
-                      },
-                    ),
-                  );
+                          onTap: () => {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => GroupDetailsScreen(
+                                        Group(
+                                            doc.id,
+                                            (doc.data()
+                                                as Map<String, dynamic>))))),
+                          },
+                        ),
+                      ));
                 }).toList(),
               );
             }

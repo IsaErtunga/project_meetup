@@ -17,6 +17,15 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
   CollectionReference groups = FirebaseFirestore.instance.collection('Groups');
   CollectionReference users = FirebaseFirestore.instance.collection('Users');
 
+  final members = [
+    "https://picsum.photos/200",
+    "https://picsum.photos/200",
+    "https://picsum.photos/200",
+    "https://picsum.photos/200",
+    "https://picsum.photos/200",
+    "https://picsum.photos/200"
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,31 +41,55 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            backgroundColor: Theme.of(context).colorScheme.secondary,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            forceElevated: true,
             expandedHeight: 200,
             pinned: true,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(30.0),
+                    bottomRight: Radius.circular(30.0))),
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(widget.group.groupData["groupName"]),
-              background: Hero(
-                tag: widget.group.groupData["groupName"],
-                child: Image(
-                    fit: BoxFit.fill,
-                    image:
-                        NetworkImage(widget.group.groupData["groupPicture"])),
+              background: Row(
+                  children: members.map((member) {
+                return Expanded(
+                    child: CircleAvatar(
+                  backgroundImage: NetworkImage(member),
+                ));
+              }).toList()),
+              title: Text(
+                widget.group.groupData["groupName"],
+                style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),
           ),
           SliverFillRemaining(
             child: Column(
-              children: List<int>.generate(6, (index) => index)
-                  .map((index) => Container(
-                        height: 40,
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        color: Colors.grey[300],
-                        alignment: Alignment.center,
-                        child: Text(widget.group.groupData["groupName"]),
-                      ))
-                  .toList(),
+              children: [
+                Expanded(
+                  child: Container(
+                    alignment: Alignment.topLeft,
+                    margin: const EdgeInsets.only(left: 10, top: 10),
+                    child: Hero(
+                      tag: widget.group.groupData["groupName"],
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Image(
+                            height: 150,
+                            width: 150,
+                            image: NetworkImage(
+                                widget.group.groupData["groupPicture"])),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Image(
+                      //fit: BoxFit.fill,
+                      image:
+                          NetworkImage(widget.group.groupData["groupPicture"])),
+                ),
+              ],
             ),
           )
         ],

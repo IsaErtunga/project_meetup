@@ -73,8 +73,9 @@ class _MyAppState extends State<MyApp> {
                 theme: ThemeData(
                     primaryColor: Colors.lightBlue,
                     scaffoldBackgroundColor: const Color(0xFFF3F5F7),
-                    colorScheme: ColorScheme.fromSwatch()
-                        .copyWith(secondary: const Color(0xFFF3F5F7))),
+                    colorScheme: ColorScheme.fromSwatch().copyWith(
+                        primary: Colors.teal,
+                        secondary: const Color(0xFFF3F5F7))),
                 home: const AuthenticationWrapper(),
                 debugShowCheckedModeBanner: false,
               ));
