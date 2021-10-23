@@ -66,29 +66,29 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
           SliverFillRemaining(
             child: Column(
               children: [
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.topLeft,
-                    margin: const EdgeInsets.only(left: 10, top: 10),
-                    child: Hero(
-                      tag: widget.group.groupData["groupName"],
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
-                        child: Image(
-                            height: 150,
-                            width: 150,
-                            image: NetworkImage(
-                                widget.group.groupData["groupPicture"])),
-                      ),
+                Container(
+                  alignment: Alignment.topLeft,
+                  margin: const EdgeInsets.only(left: 10, top: 10),
+                  child: Hero(
+                    tag: widget.group.groupData["groupName"],
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Image(
+                          height: 150,
+                          width: 150,
+                          image: NetworkImage(
+                              widget.group.groupData["groupPicture"])),
                     ),
                   ),
                 ),
-                Expanded(
-                  child: Image(
-                      //fit: BoxFit.fill,
-                      image:
-                          NetworkImage(widget.group.groupData["groupPicture"])),
-                ),
+                SizedBox(
+                  height: 400,
+                  width: 400,
+                  child: Container(
+                    margin: const EdgeInsets.all(40.0),
+                    color: Colors.teal,
+                  ),
+                )
               ],
             ),
           )
