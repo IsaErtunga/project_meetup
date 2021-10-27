@@ -16,7 +16,7 @@ class GroupDetailsScreen extends StatefulWidget {
 
 class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
   CollectionReference groups = FirebaseFirestore.instance.collection('Groups');
-  CollectionReference users = FirebaseFirestore.instance.collection('Users');
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
 
   final members = [
     "https://picsum.photos/200",
@@ -82,12 +82,98 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 400,
-                  width: 400,
+                Expanded(
                   child: Container(
-                    margin: const EdgeInsets.all(40.0),
-                    color: Colors.teal,
+                    margin: const EdgeInsets.all(20.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Container(
+                        color: Colors.teal,
+                        child: FutureBuilder<DocumentSnapshot>(
+                          future: groups.doc(widget.group.id).get(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<DocumentSnapshot> snapshot) {
+                            // If something went wrong
+                            if (snapshot.hasError) {
+                              return const Text("Something went wrong");
+                            }
+
+                            // If document doesnt exist
+                            if (snapshot.hasData && !snapshot.data!.exists) {
+                              return const Text("Document does not exist");
+                            }
+
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              Map<String, dynamic> data =
+                                  snapshot.data!.data() as Map<String, dynamic>;
+
+                              // Return actual list
+                              return ListView(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  children: data["members"] != null
+                                      ? (data["members"].map<Widget>((member) {
+                                          return ListTile(
+                                            title: Text(member),
+                                          );
+                                        }).toList())
+                                      : ([]));
+                            }
+
+                            // TODO loading indicator
+                            return const Text("loading");
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.all(20.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Container(
+                        color: Colors.teal,
+                        child: FutureBuilder<DocumentSnapshot>(
+                          future: groups.doc(widget.group.id).get(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<DocumentSnapshot> snapshot) {
+                            // If something went wrong
+                            if (snapshot.hasError) {
+                              return const Text("Something went wrong");
+                            }
+
+                            // If document doesnt exist
+                            if (snapshot.hasData && !snapshot.data!.exists) {
+                              return const Text("Document does not exist");
+                            }
+
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              Map<String, dynamic> data =
+                                  snapshot.data!.data() as Map<String, dynamic>;
+
+                              // Return actual list
+                              return ListView(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  children: data["members"] != null
+                                      ? (data["members"].map<Widget>((member) {
+                                          return ListTile(
+                                            title: Text(member),
+                                          );
+                                        }).toList())
+                                      : ([]));
+                            }
+
+                            // TODO loading indicator
+                            return const Text("loading");
+                          },
+                        ),
+                      ),
+                    ),
                   ),
                 )
               ],

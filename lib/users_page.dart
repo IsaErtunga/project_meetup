@@ -34,7 +34,7 @@ class UsersPage extends StatelessWidget {
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text("hej"),
+                    title: Text(snapshot.data![index].firstName.toString()),
                     onTap: () {
                       _handlePressed(snapshot.data![index], context);
                     },
