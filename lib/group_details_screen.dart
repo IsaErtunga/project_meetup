@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:project_meetup/chat_screen.dart';
 import 'package:project_meetup/users_page.dart';
 
 import 'discover_screen.dart';
@@ -60,7 +59,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
               }).toList()),
               title: Text(
                 widget.group.groupData["groupName"],
-                style: TextStyle(color: Colors.white, fontSize: 16),
+                style: const TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),
           ),

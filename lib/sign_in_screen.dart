@@ -40,7 +40,7 @@ class _SignInPageState extends State<SignInPage> {
                     password: passwordController.text.trim(),
                   );
             },
-            child: Text("Sign in"),
+            child: const Text("Sign in"),
           )
         ],
       ),

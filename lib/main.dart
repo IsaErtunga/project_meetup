@@ -41,6 +41,8 @@ class _MyAppState extends State<MyApp> {
       await FlutterDisplayMode.setHighRefreshRate();
     } on PlatformException catch (e) {
       await FlutterDisplayMode.setLowRefreshRate();
+      // ignore: avoid_print
+      print(e);
     }
   }
 

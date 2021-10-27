@@ -18,7 +18,6 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   final groupList = [];
 
   Future _refreshGroups(BuildContext context) async {
-    print("hej");
     return groups.get();
   }
 
