@@ -44,6 +44,7 @@ dependencies:
   cloud_functions: ^3.0.4
   provider: ^6.0.1
   flutter_firebase_chat_core: ^1.4.2
+  animations: ^2.0.2
 
 dev_dependencies:
   flutter_test:

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:project_meetup/open_container_transform_demo.dart';
+import 'package:flutter/material.dart';
 
-import 'package:project_meetup/group_details_screen.dart';
+import 'group_details_screen.dart';
 
 /// Stateful Widget for bottom navigation bar.
 class DiscoverScreen extends StatefulWidget {
@@ -80,6 +82,15 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                             ],
                           ),
                           onTap: () => {
+                            /*
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) {
+                                  return const OpenContainerTransformDemo();
+                                },
+                              ),
+                            )*/
+
                             Navigator.of(context).push(_createRoute(Group(
                                 doc.id, (doc.data() as Map<String, dynamic>))))
                           },
@@ -122,49 +133,81 @@ class Group {
   const Group(this.id, this.groupData);
 }
 
-/*
-         return ListView(
-              children: snapshot.data.docs.map((doc) {
-                return Card(
-                  child: ListTile(
-                    title: Text(doc.data()['title']),
+class _SmallerCard extends StatelessWidget {
+  const _SmallerCard({
+    required this.openContainer,
+    required this.subtitle,
+  });
+
+  final VoidCallback openContainer;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return _InkWellOverlay(
+      openContainer: openContainer,
+      height: 225,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            color: Colors.black38,
+            height: 150,
+            child: Center(
+              child: Image.asset(
+                'assets/placeholder_image.png',
+                width: 80,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Title',
+                    style: Theme.of(context).textTheme.headline6,
                   ),
-                );
-              }).toList(),
-            );
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: Theme.of(context).textTheme.caption,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
-                        return ListView.builder(
-                padding: const EdgeInsets.all(8),
-                itemCount: snapshot.data!.size,
-                itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                    child: InkWell(
-                      splashColor: Colors.blue.withAlpha(30),
-                      borderRadius: BorderRadius.circular(3),
-                      onTap: () {
-                        print('Card tapped.');
-                      },
-                      child: Container(
-                        width: 300,
-                        height: 100,
-                        child: Center(
-                            child: Row(
-                          children: const <Widget>[
-                            Expanded(
-                              child: Text('Card', textAlign: TextAlign.center),
-                            ),
-                            Expanded(
-                              child: FittedBox(
-                                fit: BoxFit
-                                    .contain, // otherwise the logo will be tiny
-                                child: FlutterLogo(),
-                              ),
-                            ),
-                          ],
-                        )),
-                      ),
-                    ),
-                  );
-                });
+class _InkWellOverlay extends StatelessWidget {
+  const _InkWellOverlay({
+    this.openContainer,
+    this.width,
+    this.height,
+    this.child,
+  });
 
- */
+  final VoidCallback? openContainer;
+  final double? width;
+  final double? height;
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: height,
+      width: width,
+      child: InkWell(
+        onTap: openContainer,
+        child: child,
+      ),
+    );
+  }
+}
