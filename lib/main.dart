@@ -117,10 +117,33 @@ class _BottomNavigationState extends State<BottomNavigation> {
   static final List<Widget> _widgetOptions = <Widget>[
     DiscoverScreen(),
     SlidingUpPanel(
-        panel: Center(
-          child: Text("This is the sliding Widget"),
+      panel: Center(
+        child: Text("This is the sliding Widget"),
+      ),
+      collapsed: Container(
+        decoration: BoxDecoration(
+          color: Colors.blueGrey,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(24.0),
+            topRight: Radius.circular(24.0),
+          ),
         ),
-        body: EventsScreen()),
+        //color: Colors.blueGrey,
+        child: Center(
+          child: Text(
+            "This is the collapsed Widget",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+      body: Center(
+        child: EventsScreen(),
+      ),
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(24.0),
+        topRight: Radius.circular(24.0),
+      ),
+    ),
     ProfileScreen(),
   ];
 
