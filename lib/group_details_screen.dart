@@ -1,7 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:project_meetup/users_page.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+import 'package:project_meetup/chat_screen.dart';
 
 import 'discover_screen.dart';
 
@@ -21,9 +25,6 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
     "https://picsum.photos/200",
     "https://picsum.photos/200",
     "https://picsum.photos/200",
-    "https://picsum.photos/200",
-    "https://picsum.photos/200",
-    "https://picsum.photos/200"
   ];
 
   @override
@@ -50,13 +51,21 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                     bottomLeft: Radius.circular(30.0),
                     bottomRight: Radius.circular(30.0))),
             flexibleSpace: FlexibleSpaceBar(
-              background: Row(
-                  children: members.map((member) {
-                return Expanded(
-                    child: CircleAvatar(
-                  backgroundImage: NetworkImage(member),
-                ));
-              }).toList()),
+              background: Container(
+                alignment: Alignment.center,
+                margin: const EdgeInsets.only(left: 0, top: 0),
+                child: Hero(
+                  tag: widget.group.groupData["groupName"],
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: Image(
+                        height: 150,
+                        width: 150,
+                        image: NetworkImage(
+                            widget.group.groupData["groupPicture"])),
+                  ),
+                ),
+              ),
               title: Text(
                 widget.group.groupData["groupName"],
                 style: const TextStyle(color: Colors.white, fontSize: 16),
@@ -64,118 +73,125 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
             ),
           ),
           SliverFillRemaining(
-            child: Column(
-              children: [
-                Container(
-                  alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.only(left: 10, top: 10),
-                  child: Hero(
-                    tag: widget.group.groupData["groupName"],
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: Image(
-                          height: 150,
-                          width: 150,
-                          image: NetworkImage(
-                              widget.group.groupData["groupPicture"])),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.all(20.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: Container(
-                        color: Colors.teal,
-                        child: FutureBuilder<DocumentSnapshot>(
-                          future: groups.doc(widget.group.id).get(),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<DocumentSnapshot> snapshot) {
-                            // If something went wrong
-                            if (snapshot.hasError) {
-                              return const Text("Something went wrong");
-                            }
+            child: FutureBuilder<DocumentSnapshot>(
+              future: groups.doc(widget.group.id).get(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+                // If something went wrong
+                if (snapshot.hasError) {
+                  return const Text("Something went wrong");
+                }
 
-                            // If document doesnt exist
-                            if (snapshot.hasData && !snapshot.data!.exists) {
-                              return const Text("Document does not exist");
-                            }
+                // If document doesn't exist
+                if (snapshot.hasData && !snapshot.data!.exists) {
+                  return const Text("Document does not exist");
+                }
 
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              Map<String, dynamic> data =
-                                  snapshot.data!.data() as Map<String, dynamic>;
+                if (snapshot.connectionState == ConnectionState.done) {
+                  Map<String, dynamic> data =
+                      snapshot.data!.data() as Map<String, dynamic>;
 
-                              // Return actual list
-                              return ListView(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  children: data["members"] != null
-                                      ? (data["members"].map<Widget>((member) {
-                                          return ListTile(
-                                            title: Text(member),
-                                          );
-                                        }).toList())
-                                      : ([]));
-                            }
-
-                            // TODO loading indicator
-                            return const Text("loading");
-                          },
-                        ),
+                  // Return actual list
+                  return Column(children: [
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 10),
+                      child: const Text(
+                        "Events",
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.all(20.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: Container(
-                        color: Colors.teal,
-                        child: FutureBuilder<DocumentSnapshot>(
-                          future: groups.doc(widget.group.id).get(),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<DocumentSnapshot> snapshot) {
-                            // If something went wrong
-                            if (snapshot.hasError) {
-                              return const Text("Something went wrong");
-                            }
-
-                            // If document doesnt exist
-                            if (snapshot.hasData && !snapshot.data!.exists) {
-                              return const Text("Document does not exist");
-                            }
-
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              Map<String, dynamic> data =
-                                  snapshot.data!.data() as Map<String, dynamic>;
-
-                              // Return actual list
-                              return ListView(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  children: data["members"] != null
-                                      ? (data["members"].map<Widget>((member) {
-                                          return ListTile(
-                                            title: Text(member),
-                                          );
-                                        }).toList())
-                                      : ([]));
-                            }
-
-                            // TODO loading indicator
-                            return const Text("loading");
-                          },
-                        ),
+                    data["events"].isNotEmpty
+                        ? GridView.count(
+                            padding: const EdgeInsets.only(top: 0),
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            crossAxisCount: 2,
+                            children: data["events"].map<Widget>((doc) {
+                              return GestureDetector(
+                                onTap: () {},
+                                child: Card(
+                                  semanticContainer: true,
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  elevation: 5,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 7, vertical: 7),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  child: const Text("hej"),
+                                ),
+                              );
+                            }).toList(),
+                          )
+                        : const Text(
+                            "No events",
+                            style: TextStyle(fontSize: 24),
+                          ),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 10),
+                      child: const Text(
+                        "Members",
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                )
-              ],
+                    data["members"].isNotEmpty
+                        ? ListView(
+                            padding: const EdgeInsets.only(top: 0),
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: data["members"].map<Widget>((doc) {
+                              return GestureDetector(
+                                onTap: () {},
+                                child: SizedBox(
+                                  height: 80,
+                                  child: Card(
+                                    semanticContainer: true,
+                                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                                    elevation: 5,
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 7, vertical: 7),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 15.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: const [
+                                          CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                                "https://i.picsum.photos/id/555/200/200.jpg?hmac=SPdHg_AxaDTFgZCoJymemxudcniLOiP2P5k6T8Eb-kc"),
+                                          ),
+                                          Text('Isa Ertunga'),
+                                          FaIcon(FontAwesomeIcons.arrowRight),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          )
+                        : const Text(
+                            "No members",
+                            style: TextStyle(fontSize: 24),
+                          )
+                  ]);
+                }
+
+                // TODO loading indicator
+                return const Text("loading");
+              },
             ),
           )
         ],
