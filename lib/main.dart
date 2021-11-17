@@ -59,28 +59,34 @@ class _MyAppState extends State<MyApp> {
 
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
-          return MultiProvider(
-              providers: [
-                Provider<UserAuthentication>(
-                  create: (_) => UserAuthentication(FirebaseAuth.instance),
-                ),
-                StreamProvider(
-                  create: (context) =>
-                      context.read<UserAuthentication>().authStateChanges,
-                  initialData: null,
-                )
-              ],
-              child: MaterialApp(
-                title: 'Meetup',
-                theme: ThemeData(
-                    primaryColor: Colors.lightBlue,
-                    scaffoldBackgroundColor: const Color(0xFFF3F5F7),
-                    colorScheme: ColorScheme.fromSwatch().copyWith(
-                        primary: Colors.teal,
-                        secondary: const Color(0xFFF3F5F7))),
-                home: const AuthenticationWrapper(),
-                debugShowCheckedModeBanner: false,
-              ));
+          return LayoutBuilder(builder: (context, constraints) {
+            return OrientationBuilder(builder: (context, orientation) {
+              SizeConfig().init(constraints, orientation);
+
+              return MultiProvider(
+                  providers: [
+                    Provider<UserAuthentication>(
+                      create: (_) => UserAuthentication(FirebaseAuth.instance),
+                    ),
+                    StreamProvider(
+                      create: (context) =>
+                          context.read<UserAuthentication>().authStateChanges,
+                      initialData: null,
+                    )
+                  ],
+                  child: MaterialApp(
+                    title: 'Meetup',
+                    theme: ThemeData(
+                        primaryColor: Colors.lightBlue,
+                        scaffoldBackgroundColor: const Color(0xFFF3F5F7),
+                        colorScheme: ColorScheme.fromSwatch().copyWith(
+                            primary: Colors.teal,
+                            secondary: const Color(0xFFF3F5F7))),
+                    home: const AuthenticationWrapper(),
+                    debugShowCheckedModeBanner: false,
+                  ));
+            });
+          });
         }
 
         // Otherwise, show something whilst waiting for initialization to complete
