@@ -10,7 +10,6 @@ import 'package:project_meetup/profile_screen.dart';
 import 'package:project_meetup/sign_in_screen.dart';
 import 'package:project_meetup/user_authentication.dart';
 import 'package:provider/provider.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import 'discover_screen.dart';
 import 'profile_screen.dart';
@@ -125,38 +124,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static final List<Widget> _widgetOptions = <Widget>[
     DiscoverScreen(),
-    SlidingUpPanel(
-      panel: const Center(
-        child: Text("This is the sliding Widget"),
-      ),
-      collapsed: Container(
-        decoration: const BoxDecoration(
-          color: Colors.blueGrey,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24.0),
-            topRight: Radius.circular(24.0),
-          ),
-        ),
-        //color: Colors.blueGrey,
-        child: const Center(
-          child: Text(
-            "This is the collapsed Widget",
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      ),
-      body: const Center(
-        child: EventsScreen(),
-      ),
-      header: Align(
-        alignment: Alignment.center,
-        child: Text(""),
-      ),
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(24.0),
-        topRight: Radius.circular(24.0),
-      ),
-    ),
+    EventsScreen(),
     ProfileScreen(),
   ];
 
