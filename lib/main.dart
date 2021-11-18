@@ -117,11 +117,11 @@ class _BottomNavigationState extends State<BottomNavigation> {
   static final List<Widget> _widgetOptions = <Widget>[
     DiscoverScreen(),
     SlidingUpPanel(
-      panel: Center(
+      panel: const Center(
         child: Text("This is the sliding Widget"),
       ),
       collapsed: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.blueGrey,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(24.0),
@@ -129,17 +129,21 @@ class _BottomNavigationState extends State<BottomNavigation> {
           ),
         ),
         //color: Colors.blueGrey,
-        child: Center(
+        child: const Center(
           child: Text(
             "This is the collapsed Widget",
             style: TextStyle(color: Colors.white),
           ),
         ),
       ),
-      body: Center(
+      body: const Center(
         child: EventsScreen(),
       ),
-      borderRadius: BorderRadius.only(
+      header: Align(
+        alignment: Alignment.center,
+        child: Text(""),
+      ),
+      borderRadius: const BorderRadius.only(
         topLeft: Radius.circular(24.0),
         topRight: Radius.circular(24.0),
       ),
