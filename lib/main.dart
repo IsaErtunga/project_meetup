@@ -12,7 +12,6 @@ import 'package:project_meetup/user_authentication.dart';
 import 'package:provider/provider.dart';
 import 'discover_screen.dart';
 import 'profile_screen.dart';
-import 'chat_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +41,8 @@ class _MyAppState extends State<MyApp> {
       await FlutterDisplayMode.setHighRefreshRate();
     } on PlatformException catch (e) {
       await FlutterDisplayMode.setLowRefreshRate();
+      // ignore: avoid_print
+      print(e);
     }
   }
 
@@ -58,27 +59,34 @@ class _MyAppState extends State<MyApp> {
 
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
-          return MultiProvider(
-              providers: [
-                Provider<UserAuthentication>(
-                  create: (_) => UserAuthentication(FirebaseAuth.instance),
-                ),
-                StreamProvider(
-                  create: (context) =>
-                      context.read<UserAuthentication>().authStateChanges,
-                  initialData: null,
-                )
-              ],
-              child: MaterialApp(
-                title: 'Meetup',
-                theme: ThemeData(
-                    primaryColor: Colors.lightBlue,
-                    scaffoldBackgroundColor: const Color(0xFFF3F5F7),
-                    colorScheme: ColorScheme.fromSwatch()
-                        .copyWith(secondary: const Color(0xFFF3F5F7))),
-                home: const AuthenticationWrapper(),
-                debugShowCheckedModeBanner: false,
-              ));
+          return LayoutBuilder(builder: (context, constraints) {
+            return OrientationBuilder(builder: (context, orientation) {
+              SizeConfig().init(constraints, orientation);
+
+              return MultiProvider(
+                  providers: [
+                    Provider<UserAuthentication>(
+                      create: (_) => UserAuthentication(FirebaseAuth.instance),
+                    ),
+                    StreamProvider(
+                      create: (context) =>
+                          context.read<UserAuthentication>().authStateChanges,
+                      initialData: null,
+                    )
+                  ],
+                  child: MaterialApp(
+                    title: 'Meetup',
+                    theme: ThemeData(
+                        primaryColor: Colors.lightBlue,
+                        scaffoldBackgroundColor: const Color(0xFFF3F5F7),
+                        colorScheme: ColorScheme.fromSwatch().copyWith(
+                            primary: Colors.teal,
+                            secondary: const Color(0xFFF3F5F7))),
+                    home: const AuthenticationWrapper(),
+                    debugShowCheckedModeBanner: false,
+                  ));
+            });
+          });
         }
 
         // Otherwise, show something whilst waiting for initialization to complete
@@ -131,10 +139,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("App"),
-        backgroundColor: Colors.black,
-      ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
