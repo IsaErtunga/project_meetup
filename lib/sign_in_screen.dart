@@ -97,16 +97,7 @@ class _SignInPageState extends State<SignInPage> {
               ),
             ],
           ),
-          ElevatedButton(
-            onPressed: () {
-              context.read<UserAuthentication>().signIn(
-                    email: emailController.text.trim(),
-                    password: passwordController.text.trim(),
-                  );
-            },
-            child: const Text("Sign in"),
-          )
-        ],
+        ),
       ),
     );
   }
