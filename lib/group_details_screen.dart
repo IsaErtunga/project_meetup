@@ -135,6 +135,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                             crossAxisCount: 2,
                             children: data["events"].map<Widget>((doc) {
                               return GestureDetector(
+                                onTap: () {
                                   Navigator.of(context)
                                       .push(_createRoute(doc["id"]));
                                 },
