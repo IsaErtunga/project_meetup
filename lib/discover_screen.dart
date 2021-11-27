@@ -40,8 +40,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                 crossAxisCount: 2,
                 children: snapshot.data!.docs.map((doc) {
                   return Hero(
-                      tag: (doc.data() as Map<String, dynamic>)["groupName"]
-                          .toString(),
+                      tag: doc.id,
                       child: Card(
                         semanticContainer: true,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
