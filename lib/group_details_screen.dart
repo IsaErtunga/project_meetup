@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:project_meetup/create_event_screen.dart';
 import 'package:project_meetup/event_details_screen.dart';
 import 'package:project_meetup/users_page.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
@@ -9,6 +10,7 @@ import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:project_meetup/chat_screen.dart';
 
 import 'discover_screen.dart';
+import 'create_event_screen.dart';
 
 class GroupDetailsScreen extends StatefulWidget {
   final Group group;
@@ -32,7 +34,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: Container(
-        margin: EdgeInsets.only(
+        margin: const EdgeInsets.only(
           left: 35,
         ),
         child: Row(
@@ -43,8 +45,10 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
               backgroundColor: Colors.black,
               icon: const FaIcon(FontAwesomeIcons.plus),
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const UsersPage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CreateEventScreen()));
               },
               label: const Text("Add event"),
             ),

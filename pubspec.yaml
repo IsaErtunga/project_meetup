@@ -45,6 +45,8 @@ dependencies:
   provider: ^6.0.1
   flutter_firebase_chat_core: ^1.4.2
   animations: ^2.0.2
+  syncfusion_flutter_datepicker: ^19.3.55
+  modal_bottom_sheet: ^2.0.0
 
 dev_dependencies:
   flutter_test:
