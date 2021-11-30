@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -33,39 +34,63 @@ class _EventsScreenState extends State<EventsScreen> {
   @override
   Widget build(BuildContext context) {
     return SlidingUpPanel(
-      panel: Padding(
-          padding: const EdgeInsets.only(top: 50.0),
-          child: FutureBuilder<QuerySnapshot>(
-              future: events.get(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                // If something went wrong
-                if (snapshot.hasError) {
-                  return const Text("Something went wrong");
-                }
-
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return ListView(
-                    children: snapshot.data!.docs.map((doc) {
-                      return Card(
-                        semanticContainer: true,
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        elevation: 5,
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 7, vertical: 7),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: Text(
-                          (doc.data() as Map<String, dynamic>)["eventName"]
-                              .toString(),
-                        ),
-                      );
-                    }).toList(),
-                  );
-                }
-                return const CircularProgressIndicator();
-              })),
+      panel: Container(
+        decoration: const BoxDecoration(
+          color: const Color(0xFFF3F5F7),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(24.0),
+            topRight: Radius.circular(24.0),
+          ),
+        ),
+        child: Column(
+          children: [
+            const FaIcon(FontAwesomeIcons.chevronDown),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.only(top: 50.0),
+                child: FutureBuilder<QuerySnapshot>(
+                    future: events.get(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      // If something went wrong
+                      if (snapshot.hasError) {
+                        return const Text("Something went wrong");
+                      }
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return ListView(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          children: snapshot.data!.docs.map((doc) {
+                            return SizedBox(
+                              height: 80,
+                              child: Card(
+                                semanticContainer: true,
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                elevation: 5,
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 7, horizontal: 5),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    (doc.data() as Map<String, dynamic>)[
+                                            "eventName"]
+                                        .toString(),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      }
+                      return const CircularProgressIndicator();
+                    }),
+              ),
+            ),
+          ],
+        ),
+      ),
       collapsed: Container(
         decoration: const BoxDecoration(
           color: Colors.blueGrey,
@@ -75,11 +100,16 @@ class _EventsScreenState extends State<EventsScreen> {
           ),
         ),
         //color: Colors.blueGrey,
-        child: const Center(
-          child: Text(
-            "This is the collapsed Widget",
-            style: TextStyle(color: Colors.white),
-          ),
+        child: Column(
+          children: [
+            const FaIcon(FontAwesomeIcons.chevronUp),
+            const Center(
+              child: Text(
+                "Slide up for events",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
         ),
       ),
       body: Center(

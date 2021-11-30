@@ -9,7 +9,7 @@ class UsersPage extends StatelessWidget {
   // Create a user with an ID of UID if you don't use `FirebaseChatCore.instance.users()` stream
   void _handlePressed(types.User otherUser, BuildContext context) async {
     final room = await FirebaseChatCore.instance.createRoom(otherUser);
-
+    print("Hej");
     // Navigate to the Chat screen
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => ChatScreen(room)));
@@ -18,7 +18,17 @@ class UsersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: () {}),
+      /*
+      floatingActionButton: FloatingActionButton(onPressed: () async {
+        await FirebaseChatCore.instance.createUserInFirestore(
+          types.User(
+            firstName: 'Isas',
+            id: "BLr66879yWfcUT8FmHuDYKn003r1", // UID from Firebase Authentication
+            imageUrl: 'https://i.pravatar.cc/300',
+            lastName: 'Ertunga',
+          ),
+        );
+      }),*/
       body: StreamBuilder<List<types.User>>(
         stream: FirebaseChatCore.instance.users(),
         initialData: const [],
