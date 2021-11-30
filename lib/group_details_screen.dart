@@ -2,12 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:project_meetup/create_event_screen.dart';
+import 'package:project_meetup/event_details_screen.dart';
 import 'package:project_meetup/users_page.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:project_meetup/chat_screen.dart';
 
 import 'discover_screen.dart';
+import 'create_event_screen.dart';
 
 class GroupDetailsScreen extends StatefulWidget {
   final Group group;
@@ -30,14 +33,37 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Colors.black,
-        icon: const FaIcon(FontAwesomeIcons.comments),
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const UsersPage()));
-        },
-        label: const Text("Chat"),
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(
+          left: 35,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            FloatingActionButton.extended(
+              heroTag: "btn1",
+              backgroundColor: Colors.black,
+              icon: const FaIcon(FontAwesomeIcons.plus),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CreateEventScreen()));
+              },
+              label: const Text("Add event"),
+            ),
+            FloatingActionButton.extended(
+              heroTag: "btn2",
+              backgroundColor: Colors.black,
+              icon: const FaIcon(FontAwesomeIcons.comments),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const UsersPage()));
+              },
+              label: const Text("Chat"),
+            ),
+          ],
+        ),
       ),
       body: CustomScrollView(
         slivers: <Widget>[
@@ -55,7 +81,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                 alignment: Alignment.center,
                 margin: const EdgeInsets.only(left: 0, top: 0),
                 child: Hero(
-                  tag: widget.group.groupData["groupName"],
+                  tag: widget.group.id,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10.0),
                     child: Image(
@@ -66,6 +92,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                   ),
                 ),
               ),
+              centerTitle: true,
               title: Text(
                 widget.group.groupData["groupName"],
                 style: const TextStyle(color: Colors.white, fontSize: 16),
@@ -112,7 +139,10 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                             crossAxisCount: 2,
                             children: data["events"].map<Widget>((doc) {
                               return GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.of(context)
+                                      .push(_createRoute(doc["id"]));
+                                },
                                 child: Card(
                                   semanticContainer: true,
                                   clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -122,7 +152,29 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15.0),
                                   ),
-                                  child: const Text("hej"),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: AspectRatio(
+                                          aspectRatio: 16 / 12,
+                                          child: Image(
+                                            fit: BoxFit.fill,
+                                            image: NetworkImage(doc["image"]),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                          child: Center(
+                                              child: Text(
+                                        doc["eventName"],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ))),
+                                    ],
+                                  ),
                                 ),
                               );
                             }).toList(),
@@ -200,102 +252,21 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
   }
 }
 
-// Widgets used
+Route _createRoute(String eventId) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        EventDetailsScreen(eventId),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(1.0, 0.0);
+      const end = Offset.zero;
+      const curve = Curves.ease;
 
-/*
-FutureBuilder<DocumentSnapshot>(
-        future: groups.doc(widget.groupId).get(),
-        builder:
-            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return Text("Something went wrong");
-          }
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
-          if (snapshot.hasData && !snapshot.data!.exists) {
-            return Text("Document does not exist");
-          }
-
-          if (snapshot.connectionState == ConnectionState.done) {
-            Map<String, dynamic> data =
-                snapshot.data!.data() as Map<String, dynamic>;
-
-            return Column(
-              children: [
-                ListView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    children: data["members"] != null
-                        ? (data["members"].map<Widget>((member) {
-                            return FutureBuilder<DocumentSnapshot>(
-                              future: users.doc(member).get(),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<DocumentSnapshot>
-                                      userSnapshot) {
-                                if (userSnapshot.hasError) {
-                                  return Text("Something went wrong");
-                                }
-
-                                if (userSnapshot.hasData &&
-                                    !userSnapshot.data!.exists) {
-                                  return Text("Document does not exist");
-                                }
-
-                                if (userSnapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  Map<String, dynamic> userData =
-                                      userSnapshot.data!.data()
-                                          as Map<String, dynamic>;
-                                  return ListTile(
-                                    title: Text(userData["firstName"]),
-                                  );
-                                }
-
-                                return Text("Loading");
-                              },
-                            );
-                          }).toList())
-                        : ([])),
-                Center(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        /*1*/
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            /*2*/
-                            Container(
-                              padding: const EdgeInsets.only(bottom: 8),
-                              child: const Text(
-                                'Isa',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              'Sweden',
-                              style: TextStyle(
-                                color: Colors.grey[500],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      /*3*/
-                      Icon(
-                        Icons.star,
-                        color: Colors.red[500],
-                      ),
-                      const Text('41'),
-                    ],
-                  ),
-                )
-              ],
-            );
-          }
-
-          return Text("loading");
-        },
-      ),
- */
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
