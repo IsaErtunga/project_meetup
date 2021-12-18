@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:intl/intl.dart';
 
 class CreateEventScreen extends StatefulWidget {
   const CreateEventScreen({Key? key}) : super(key: key);
@@ -12,7 +13,10 @@ class CreateEventScreen extends StatefulWidget {
 }
 
 class _CreateEventScreenState extends State<CreateEventScreen> {
+  CollectionReference events = FirebaseFirestore.instance.collection('Events');
+
   final _formKey = GlobalKey<FormState>();
+  final Map<String, dynamic> formData = {'event': null, 'description': null, 'date': null};
 
   /// Date from calendar
   String _selectedDate = '';
@@ -21,8 +25,15 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     setState(() {
       if (args.value is DateTime) {
         _selectedDate = args.value.toString();
+        formData['date'] = _selectedDate;
       }
     });
+  }
+
+  Future<void> addEvent() {
+    return events.add(formData)
+        .then((value) => print("Event Added"))
+        .catchError((error) => print("Failed to add event: $error"));
   }
 
   String radioValue = "hej";
@@ -33,6 +44,30 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       backgroundColor: Colors.teal,
       appBar: AppBar(
         title: Text("Create event"),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Container(
+        margin: const EdgeInsets.symmetric(vertical: 20.0),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shadowColor: Colors.transparent,
+            primary: Colors.white24,
+            textStyle: const TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.bold),
+            padding:
+            const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
+          ),
+          onPressed: () {
+            print('Submitting form');
+            if (_formKey.currentState!.validate()) {
+              _formKey.currentState!.save(); //onSaved is called!
+              addEvent();
+            }
+          },
+          child: const Text("Add event"),
+        ),
       ),
       body: Form(
         key: _formKey,
@@ -59,6 +94,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   }
                   return null;
                 },
+                onSaved: (String? value) {
+                  formData['event'] = value;
+                },
               ),
             ),
             Container(
@@ -81,6 +119,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     return 'Please enter some text';
                   }
                   return null;
+                },
+                onSaved: (String? value) {
+                  formData['description'] = value;
                 },
               ),
             ),
@@ -105,6 +146,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   }
                   return null;
                 },
+
               ),
             ),
             Row(
@@ -196,9 +238,10 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     ),
                   );
                 },
-                child: const Text("Sign in"),
+                child: const Text("Select date"),
               ),
             ),
+
           ],
         ),
       ),

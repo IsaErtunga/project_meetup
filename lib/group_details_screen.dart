@@ -170,7 +170,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                           child: Center(
                                               child: Text(
                                         doc["eventName"],
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ))),
                                     ],
@@ -199,9 +199,12 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            children: data["members"].map<Widget>((doc) {
+                            children: data["members"].map<Widget>((document) {
                               return GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  print(document);
+                                  users.doc(document).get().then((value) => print(value.data()));
+                                  },
                                 child: SizedBox(
                                   height: 80,
                                   child: Card(
