@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:intl/intl.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 class CreateEventScreen extends StatefulWidget {
   const CreateEventScreen({Key? key}) : super(key: key);
@@ -18,16 +18,19 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, dynamic> formData = {'event': null, 'description': null, 'date': null};
 
-  /// Date from calendar
-  String _selectedDate = '';
-
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
     setState(() {
       if (args.value is DateTime) {
-        _selectedDate = args.value.toString();
-        formData['date'] = _selectedDate;
+        formData['date'] = args.value;
       }
     });
+  }
+
+  Future<void> getFruit() async {
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('listFruit');
+    final results = await callable();
+    List fruit = results.data;  // ["Apple", "Banana", "Cherry", "Date", "Fig", "Grapes"]
+    print(fruit);
   }
 
   Future<void> addEvent() {
@@ -63,7 +66,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             print('Submitting form');
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save(); //onSaved is called!
-              addEvent();
+              //addEvent();
+              getFruit();
             }
           },
           child: const Text("Add event"),
@@ -125,30 +129,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 },
               ),
             ),
-            Container(
-              margin:
-                  const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-              child: TextFormField(
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: "Date",
-                  labelStyle: const TextStyle(color: Colors.white),
-                  floatingLabelBehavior: FloatingLabelBehavior.never,
-                  filled: true,
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-                // The validator receives the text that the user has entered.
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  }
-                  return null;
-                },
 
-              ),
-            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
