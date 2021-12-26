@@ -37,6 +37,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               snapshot.data!.data() as Map<String, dynamic>;
 
           return Scaffold(
+            floatingActionButton: FloatingActionButton(child: Text("Sign out"), onPressed: () {
+              context.read<UserAuthentication>().signOut();
+            }),
             backgroundColor: const Color(0xffF8F8FA),
             body: Stack(
               clipBehavior: Clip.none, //overflow: Overflow.visible,
