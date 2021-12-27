@@ -24,11 +24,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       future: users.doc(auth.currentUser!.uid).get(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            //context.read<UserAuthentication>().signOut();
         if (snapshot.hasError) {
           return Text("Something went wrong");
         }
 
         if (snapshot.hasData && !snapshot.data!.exists) {
+
           return Text("Document does not exist");
         }
 
