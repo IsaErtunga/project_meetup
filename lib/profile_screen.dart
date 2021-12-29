@@ -25,6 +25,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return groups.get();
   }
 
+  final groupList = [];
+
   @override
   Widget build(BuildContext context) {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
@@ -244,101 +246,103 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             Container(
                               height: 25 * SizeConfig.heightMultiplier,
-                              child: FutureBuilder<QuerySnapshot>(
-                                  future: users.get(),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<QuerySnapshot> snapshot) {
-                                    if (snapshot.hasError) {
-                                      return const Text("Something went wrong");
-                                    }
+                              child: data["myGroups"].isNotEmpty
+                                  ? GridView.count(
+                                      scrollDirection: Axis.horizontal,
+                                      crossAxisCount: 1,
+                                      children: data["myGroups"]
+                                          .map<Widget>((document) {
+                                        return FutureBuilder<DocumentSnapshot>(
+                                            future: groups.doc(document).get(),
+                                            builder: (BuildContext context,
+                                                AsyncSnapshot<DocumentSnapshot>
+                                                    snapshot) {
+                                              if (snapshot.hasError) {
+                                                return Text(
+                                                    "Something went wrong");
+                                              }
 
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.done) {
-                                      return GridView.count(
-                                        scrollDirection: Axis.horizontal,
-                                        crossAxisCount: 1,
-                                        children: data["myGroups"]
-                                            .map<Widget>((document) {
-                                          print(document);
-                                          groups.doc(document).get().then(
-                                              (result) =>
-                                                  myGroups1 = result.data());
-                                          (groups.doc(document)).get().then(
-                                              (result) => print(result.data()));
-                                          /* print(myGroups1);*/
+                                              if (snapshot.hasData &&
+                                                  !snapshot.data!.exists) {
+                                                return Text(
+                                                    "Document does not exist");
+                                              }
 
-                                          // print(value.data()));
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.done) {
+                                                Map<String, dynamic> groupData =
+                                                    snapshot.data!.data()
+                                                        as Map<String, dynamic>;
 
-                                          // snapshot.data!.docs.map((doc) {
-                                          return Hero(
-                                              tag: groups.doc(document).id,
-                                              child: Card(
-                                                semanticContainer: true,
-                                                clipBehavior:
-                                                    Clip.antiAliasWithSaveLayer,
-                                                elevation: 5,
-                                                margin:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 7,
-                                                        vertical: 7),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          15.0),
-                                                ),
-                                                child: GestureDetector(
-                                                  child: Column(
-                                                    children: [
-                                                      Expanded(
-                                                        flex: 3,
-                                                        child: AspectRatio(
-                                                          aspectRatio: 16 / 12,
-                                                          child: Image(
-                                                            fit: BoxFit.fill,
-                                                            image: NetworkImage(
-                                                              // (document.data() as Map<
-                                                              (myGroups1 as Map<
-                                                                          String,
-                                                                          dynamic>)[
-                                                                      "groupPicture"]
-                                                                  .toString(),
+                                                return Card(
+                                                  semanticContainer: true,
+                                                  clipBehavior: Clip
+                                                      .antiAliasWithSaveLayer,
+                                                  elevation: 5,
+                                                  margin: const EdgeInsets
+                                                          .symmetric(
+                                                      horizontal: 7,
+                                                      vertical: 7),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15.0),
+                                                  ),
+                                                  child: GestureDetector(
+                                                    child: Column(
+                                                      children: [
+                                                        Expanded(
+                                                          flex: 3,
+                                                          child: AspectRatio(
+                                                            aspectRatio:
+                                                                16 / 12,
+                                                            child: Image(
+                                                              fit: BoxFit.fill,
+                                                              image:
+                                                                  NetworkImage(
+                                                                // (document.data() as Map<
+                                                                groupData[
+                                                                        "groupPicture"]
+                                                                    .toString(),
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      Expanded(
-                                                        child: Container(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          child: Text(
-                                                              (myGroups1 as Map<
-                                                                          String,
-                                                                          dynamic>)[
-                                                                      "groupName"]
-                                                                  .toString(),
-                                                              style: const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold)),
+                                                        Expanded(
+                                                          child: Container(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: Text(
+                                                                groupData[
+                                                                        "groupName"]
+                                                                    .toString(),
+                                                                style: const TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold)),
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ],
+                                                      ],
+                                                    ),
+                                                    onTap: () => {
+                                                      Navigator.of(context).push(
+                                                          _createRoute(Group(
+                                                              document.id,
+                                                              (document.data()
+                                                                  as Map<String,
+                                                                      dynamic>))))
+                                                    },
                                                   ),
-                                                  onTap: () => {
-                                                    Navigator.of(context).push(
-                                                        _createRoute(Group(
-                                                            document.id,
-                                                            (document.data()
-                                                                as Map<String,
-                                                                    dynamic>))))
-                                                  },
-                                                ),
-                                              ));
-                                        }).toList(),
-                                      );
-                                    }
-                                    return const CircularProgressIndicator();
-                                  }),
+                                                );
+                                              }
+                                              return Text("loading");
+                                            });
+                                      }).toList(),
+                                    )
+                                  : const Text(
+                                      "No groups",
+                                      style: TextStyle(fontSize: 24),
+                                    ),
                             ),
                           ],
                         ),
@@ -363,7 +367,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           itemCount: groupList.length,
                                           itemBuilder: (BuildContext context, int index) {
                                             return */
-                                           
+
                                     children: snapshot.data!.docs.map((doc)
 
                                       data["myGroups"].map<Widget>((document) {
@@ -700,7 +704,6 @@ class Group {
 
   const Group(this.id, this.groupData);
 }
-
 
 /*
  ElevatedButton(
