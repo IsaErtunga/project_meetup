@@ -3,6 +3,7 @@ import 'package:project_meetup/user_authentication.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'group_details_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -14,7 +15,15 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   // User collection reference
-  CollectionReference users = FirebaseFirestore.instance.collection('Users');
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  CollectionReference groups = FirebaseFirestore.instance.collection('Groups');
+
+  dynamic myGroups1;
+  /*Object?*/ //dynamic groups1;
+  //final groupList = [];
+  Future _refreshGroups(BuildContext context) async {
+    return groups.get();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,15 +49,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
             backgroundColor: const Color(0xffF8F8FA),
             body: Stack(
               clipBehavior: Clip.none, //overflow: Overflow.visible,
+              // Stack(
               children: <Widget>[
                 Container(
+                  //height: 35 * SizeConfig.heightMultiplier,
+                  //decoration: BoxDecoration(
                   height: 35 * SizeConfig.heightMultiplier,
                   decoration: BoxDecoration(
                     color: Colors.white,
+
+                    // shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                       bottomRight: Radius.circular(40.0),
                       bottomLeft: Radius.circular(40.0),
                     ),
+
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.5),
@@ -115,100 +130,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ),
                                       ],
                                     ),
-                                    /*SizedBox(
-                                      width: 7 * SizeConfig.widthMultiplier,
-                                    ),
-                                    Row(
-                                      children: <Widget>[
-                                        Image.network(
-                                          "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Instagram-Icon.png/1025px-Instagram-Icon.png",
-                                          height:
-                                              5 * SizeConfig.heightMultiplier,
-                                          width: 5 * SizeConfig.widthMultiplier,
-                                        ),
-                                        SizedBox(
-                                          width: 2 * SizeConfig.widthMultiplier,
-                                        ),
-                                        Text(
-                                          "Insta",
-                                          style: TextStyle(
-                                            color: Colors.white60,
-                                            fontSize:
-                                                1.5 * SizeConfig.textMultiplier,
-                                          ),
-                                        ),
-                                      ],
-                                    )*/
                                   ],
                                 )
                               ],
                             )
                           ],
                         ),
-                        /*SizedBox(
-                          height: 3 * SizeConfig.heightMultiplier,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Text(
-                                  "22.2K",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 3 * SizeConfig.textMultiplier,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  "Followers",
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 1.9 * SizeConfig.textMultiplier,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Column(
-                              children: <Widget>[
-                                Text(
-                                  "1243",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 3 * SizeConfig.textMultiplier,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  "Following",
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 1.9 * SizeConfig.textMultiplier,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.white60),
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  "EDIG PROFILE",
-                                  style: TextStyle(
-                                      color: Colors.white60,
-                                      fontSize:
-                                          1.8 * SizeConfig.textMultiplier),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),*/
                       ],
                     ),
                   ),
                 ),
+                //  ],
+                // ),
+                //),
+
                 Padding(
                   padding:
                       EdgeInsets.only(top: 36.5 * SizeConfig.heightMultiplier),
@@ -238,7 +173,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
                                         fontSize:
-                                            2.2 * SizeConfig.textMultiplier),
+                                            3 * SizeConfig.textMultiplier),
                                   ),
                                 ],
                               ),
@@ -251,21 +186,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: ListView(
                                 scrollDirection: Axis.horizontal,
                                 children: <Widget>[
-                                  _EventsAttendedCard(
+                                  _eventsAttendedCard(
                                       "https://github.com/slackvishal/flutter_traveler_profile_app/blob/master/assets/travelfive.png?raw=true",
                                       "https://github.com/slackvishal/flutter_traveler_profile_app/blob/master/assets/travelthree.png?raw=true",
                                       "https://github.com/slackvishal/flutter_traveler_profile_app/blob/master/assets/traveltwo.png?raw=true",
                                       "https://github.com/slackvishal/flutter_traveler_profile_app/blob/master/assets/travelsix.png?raw=true",
                                       "+18",
-                                      "Can't be arsed"),
-                                  _EventsAttendedCard(
+                                      "dsf"),
+                                  _eventsAttendedCard(
                                       "https://github.com/slackvishal/flutter_traveler_profile_app/blob/master/assets/travelthree.png?raw=true",
                                       "https://github.com/slackvishal/flutter_traveler_profile_app/blob/master/assets/traveltwo.png?raw=true",
                                       "https://images.theconversation.com/files/271810/original/file-20190430-136810-yhoyzj.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=754&fit=clip",
                                       "https://travel.usnews.com/static-travel/images/destinations/73/gettyimages-462922955_445x280.jpg",
                                       "+248",
                                       "Oh hell naw"),
-                                  _EventsAttendedCard(
+                                  _eventsAttendedCard(
                                       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzq5OMXCKBCkIYtC8O5J-GYSGH06IGapK0fQ&usqp=CAU",
                                       "https://mydivinevacation.com/wp-content/uploads/2019/01/Romantic-Travel.jpg",
                                       "https://images.theconversation.com/files/271810/original/file-20190430-136810-yhoyzj.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=754&fit=clip",
@@ -291,7 +226,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
                                         fontSize:
-                                            2.2 * SizeConfig.textMultiplier),
+                                            3 * SizeConfig.textMultiplier),
                                   ),
                                   Spacer(),
                                   Text(
@@ -305,72 +240,112 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                             SizedBox(
-                              height: 3 * SizeConfig.heightMultiplier,
+                              height: 4 * SizeConfig.heightMultiplier,
                             ),
                             Container(
-                              height: 20 * SizeConfig.heightMultiplier,
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
-                                children: <Widget>[
-                                  _myGroupsCard(
-                                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmiNYJz_0aKz92YhqV2mckEi_TktSVJtI_VQ&usqp=CAU"),
-                                  _myGroupsCard(
-                                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShg0PCdhfH4L7qOHiCruP81hDrF80pIHFRwA&usqp=CAU"),
-                                  _myGroupsCard(
-                                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBIIFXubuk_u_QPIMY4VmTAaupePAm54SwvA&usqp=CAU"),
-                                  SizedBox(
-                                    width: 10 * SizeConfig.widthMultiplier,
-                                  )
-                                ],
-                              ),
-                            ),
-                            /*SizedBox(
-                              height: 3 * SizeConfig.heightMultiplier,
-                            ),
-                            SizedBox(
-                              height: 3 * SizeConfig.heightMultiplier,
-                            ),
-                            Container(
-                              height: 37 * SizeConfig.heightMultiplier,
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
-                                children: <Widget>[
-                                  _EventsAttendedCard(
-                                      "https://static.toiimg.com/photo/msid-76420833,width-96,height-65.cms",
-                                      "https://travel.usnews.com/static-travel/images/destinations/73/gettyimages-462922955_445x280.jpg",
-                                      "https://images.theconversation.com/files/271810/original/file-20190430-136810-yhoyzj.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=754&fit=clip",
-                                      "https://travel.usnews.com/static-travel/images/destinations/73/gettyimages-462922955_445x280.jpg",
-                                      "+18",
-                                      "Location 1"),
-                                  _EventsAttendedCard(
-                                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHVjpMi4RjrVqjy5zgSlXB0D558-ARM7-aAg&usqp=CAU",
-                                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJcT3Klpy3YpnUc8T3A5Cu4-ikzgDWxFLfzw&usqp=CAU",
-                                      "https://images.theconversation.com/files/271810/original/file-20190430-136810-yhoyzj.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=754&fit=clip",
-                                      "https://travel.usnews.com/static-travel/images/destinations/73/gettyimages-462922955_445x280.jpg",
-                                      "+248",
-                                      "Location 2"),
-                                  _EventsAttendedCard(
-                                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzq5OMXCKBCkIYtC8O5J-GYSGH06IGapK0fQ&usqp=CAU",
-                                      "https://mydivinevacation.com/wp-content/uploads/2019/01/Romantic-Travel.jpg",
-                                      "https://images.theconversation.com/files/271810/original/file-20190430-136810-yhoyzj.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=754&fit=clip",
-                                      "https://travel.usnews.com/static-travel/images/destinations/73/gettyimages-462922955_445x280.jpg",
-                                      "+118",
-                                      "Location 3"),
-                                  SizedBox(
-                                    width: 10 * SizeConfig.widthMultiplier,
-                                  ),
-                                ],
-                              ),
-                            ),*/
-                            SizedBox(
-                              height: 3 * SizeConfig.heightMultiplier,
+                              height: 25 * SizeConfig.heightMultiplier,
+                              child: FutureBuilder<QuerySnapshot>(
+                                  future: users.get(),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                                    if (snapshot.hasError) {
+                                      return const Text("Something went wrong");
+                                    }
+
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      return GridView.count(
+                                        scrollDirection: Axis.horizontal,
+                                        crossAxisCount: 1,
+                                        children: data["myGroups"]
+                                            .map<Widget>((document) {
+                                          print(document);
+                                          groups.doc(document).get().then(
+                                              (result) =>
+                                                  myGroups1 = result.data());
+                                          (groups.doc(document)).get().then(
+                                              (result) => print(result.data()));
+                                          /* print(myGroups1);*/
+
+                                          // print(value.data()));
+
+                                          // snapshot.data!.docs.map((doc) {
+                                          return Hero(
+                                              tag: groups.doc(document).id,
+                                              child: Card(
+                                                semanticContainer: true,
+                                                clipBehavior:
+                                                    Clip.antiAliasWithSaveLayer,
+                                                elevation: 5,
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 7,
+                                                        vertical: 7),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15.0),
+                                                ),
+                                                child: GestureDetector(
+                                                  child: Column(
+                                                    children: [
+                                                      Expanded(
+                                                        flex: 3,
+                                                        child: AspectRatio(
+                                                          aspectRatio: 16 / 12,
+                                                          child: Image(
+                                                            fit: BoxFit.fill,
+                                                            image: NetworkImage(
+                                                              // (document.data() as Map<
+                                                              (myGroups1 as Map<
+                                                                          String,
+                                                                          dynamic>)[
+                                                                      "groupPicture"]
+                                                                  .toString(),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        child: Container(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          child: Text(
+                                                              (myGroups1 as Map<
+                                                                          String,
+                                                                          dynamic>)[
+                                                                      "groupName"]
+                                                                  .toString(),
+                                                              style: const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold)),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  onTap: () => {
+                                                    Navigator.of(context).push(
+                                                        _createRoute(Group(
+                                                            document.id,
+                                                            (document.data()
+                                                                as Map<String,
+                                                                    dynamic>))))
+                                                  },
+                                                ),
+                                              ));
+                                        }).toList(),
+                                      );
+                                    }
+                                    return const CircularProgressIndicator();
+                                  }),
                             ),
                           ],
                         ),
                       ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           );
@@ -381,10 +356,77 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-_EventsAttendedCard(String asset1, String asset2, String asset3, String asset4,
+/*
+
+                                         /* snapshot.data!.docs.map((doc),
+                                          padding: const EdgeInsets.all(8),
+                                          itemCount: groupList.length,
+                                          itemBuilder: (BuildContext context, int index) {
+                                            return */
+                                           
+                                    children: snapshot.data!.docs.map((doc)
+
+                                      data["myGroups"].map<Widget>((document) {
+                                    return ListView(
+                                        scrollDirection: Axis.horizontal,
+                                        children:
+                                            /*GestureDetector(onTap: () {
+                                          print(document);
+                                          users.doc(document).get().then(
+                                              (value) => print(value.data()));
+                                          child:*/
+                                            /*<Widget>[
+                                          Expanded(
+                                              child:*/
+
+                                            //groups.doc(document).get().then(
+                                            //  (value) => print(value.data()));
+
+                                            <Widget>[
+                                          myGroupsCard(
+                                              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmiNYJz_0aKz92YhqV2mckEi_TktSVJtI_VQ&usqp=CAU",
+                                              "oi"
+                                              /* Text((document.data() as Map<
+                                                          String,
+                                                          dynamic>)["firstName"]
+                                                      .toString())*/
+                                              )
+                                        ]);
+                                    // ];
+                                  }).toList(),
+                                  // }).toList(),
+                                  /*_myGroupsCard(
+                                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShg0PCdhfH4L7qOHiCruP81hDrF80pIHFRwA&usqp=CAU",
+                                      "Oh hell naw");
+                                  _myGroupsCard(
+                                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBIIFXubuk_u_QPIMY4VmTAaupePAm54SwvA&usqp=CAU",
+                                      "lel");}*/
+                                  /* SizedBox(
+                                            width:
+                                                10 * SizeConfig.widthMultiplier,
+                                          )
+                                        ],*/
+                                ),
+                                SizedBox(
+                                  height: 3 * SizeConfig.heightMultiplier,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ]));
+        }
+        return Text("loading");
+      },
+    );
+  }*/
+
+_eventsAttendedCard(String asset1, String asset2, String asset3, String asset4,
     String more, String name) {
   return Padding(
-    padding: const EdgeInsets.only(left: 40.0),
+    padding: const EdgeInsets.only(left: 20.0),
     child: Card(
       elevation: 12,
       child: Container(
@@ -494,23 +536,103 @@ _EventsAttendedCard(String asset1, String asset2, String asset3, String asset4,
   );
 }
 
-_myGroupsCard(String s) {
-  return Padding(
-    padding: const EdgeInsets.only(left: 40.0),
+myGroupsCard(var groupimage, var groupName) {
+  return <Widget>[
+    Card(
+      child: Container(
+        height: 2.3 * SizeConfig.imageSizeMultiplier,
+        width: 40 * SizeConfig.widthMultiplier,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+          //border: Border.all(color: Colors.grey, width: 0.2)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: Row(
+                  children: <Widget>[
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Image.network(
+                        groupimage,
+                        height: 30 * SizeConfig.imageSizeMultiplier,
+                        width: 35 * SizeConfig.imageSizeMultiplier,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                    left: 10.0, top: 2 * SizeConfig.heightMultiplier),
+                child: Text(
+                  groupName,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 2 * SizeConfig.textMultiplier,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  ];
+}
+
+/*return Padding(
+    padding: const EdgeInsets.only(left: 20.0),
     child: Card(
-      elevation: 4,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(2.0),
-        child: Image.network(
-          s,
-          height: 20 * SizeConfig.heightMultiplier,
-          width: 70 * SizeConfig.widthMultiplier,
-          fit: BoxFit.cover,
+      child: Container(
+        height: 2.3 * SizeConfig.imageSizeMultiplier,
+        width: 40 * SizeConfig.widthMultiplier,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+          //border: Border.all(color: Colors.grey, width: 0.2)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: Row(
+                  children: <Widget>[
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Image.network(
+                        groupimage,
+                        height: 30 * SizeConfig.imageSizeMultiplier,
+                        width: 35 * SizeConfig.imageSizeMultiplier,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                    left: 10.0, top: 2 * SizeConfig.heightMultiplier),
+                child: Text(
+                  groupName,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 2 * SizeConfig.textMultiplier,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     ),
   );
-}
+}*/
 
 class SizeConfig {
   static double _screenWidth = 1;
@@ -552,6 +674,33 @@ class SizeConfig {
     print(_blockSizeVertical);
   }
 }
+
+Route _createRoute(data) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        GroupDetailsScreen(data),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(1.0, 0.0);
+      const end = Offset.zero;
+      const curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
+class Group {
+  final String id;
+  final Map groupData;
+
+  const Group(this.id, this.groupData);
+}
+
 
 /*
  ElevatedButton(
