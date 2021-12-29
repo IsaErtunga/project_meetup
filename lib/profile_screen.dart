@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'group_details_screen.dart';
+import 'discover_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -327,10 +328,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     onTap: () => {
                                                       Navigator.of(context).push(
                                                           _createRoute(Group(
-                                                              document.id,
-                                                              (document.data()
+                                                              document,
+                                                              snapshot.data!
+                                                                      .data()
                                                                   as Map<String,
-                                                                      dynamic>))))
+                                                                      dynamic>)))
                                                     },
                                                   ),
                                                 );
@@ -696,13 +698,6 @@ Route _createRoute(data) {
       );
     },
   );
-}
-
-class Group {
-  final String id;
-  final Map groupData;
-
-  const Group(this.id, this.groupData);
 }
 
 /*
