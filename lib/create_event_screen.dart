@@ -16,7 +16,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   CollectionReference events = FirebaseFirestore.instance.collection('Events');
 
   final _formKey = GlobalKey<FormState>();
-  final Map<String, dynamic> formData = {'event': null, 'description': null, 'date': null};
+  final Map<String, dynamic> formData = {
+    'event': null,
+    'description': null,
+    'date': null
+  };
 
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
     setState(() {
@@ -27,14 +31,17 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   }
 
   Future<void> getFruit() async {
-    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('listFruit');
+    HttpsCallable callable =
+        FirebaseFunctions.instance.httpsCallable('listFruit');
     final results = await callable();
-    List fruit = results.data;  // ["Apple", "Banana", "Cherry", "Date", "Fig", "Grapes"]
+    List fruit =
+        results.data; // ["Apple", "Banana", "Cherry", "Date", "Fig", "Grapes"]
     print(fruit);
   }
 
   Future<void> addEvent() {
-    return events.add(formData)
+    return events
+        .add(formData)
         .then((value) => print("Event Added"))
         .catchError((error) => print("Failed to add event: $error"));
   }
@@ -56,11 +63,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             shadowColor: Colors.transparent,
             primary: Colors.white24,
             textStyle: const TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.bold),
-            padding:
-            const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
+                color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+            padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
           ),
           onPressed: () {
             print('Submitting form');
@@ -129,7 +133,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 },
               ),
             ),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
@@ -222,7 +225,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 child: const Text("Select date"),
               ),
             ),
-
           ],
         ),
       ),
