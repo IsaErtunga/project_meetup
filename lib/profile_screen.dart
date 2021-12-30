@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:project_meetup/choose_interests_screen.dart';
 import 'package:project_meetup/user_authentication.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'group_details_screen.dart';
 import 'discover_screen.dart';
+import 'choose_interests_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -19,9 +23,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   CollectionReference groups = FirebaseFirestore.instance.collection('Groups');
 
-  dynamic myGroups1;
-  /*Object?*/ //dynamic groups1;
-  //final groupList = [];
   Future _refreshGroups(BuildContext context) async {
     return groups.get();
   }
@@ -49,6 +50,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
               snapshot.data!.data() as Map<String, dynamic>;
 
           return Scaffold(
+            floatingActionButton: Container(
+              margin: const EdgeInsets.only(
+                left: 35,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  FloatingActionButton.extended(
+                    backgroundColor: Colors.black,
+                    icon: const FaIcon(FontAwesomeIcons.plus),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const ChooseInterestsScreen()));
+                    },
+                    label: const Text("Edit interests"),
+                  ),
+                ],
+              ),
+            ),
             backgroundColor: const Color(0xffF8F8FA),
             body: Stack(
               clipBehavior: Clip.none, //overflow: Overflow.visible,
@@ -149,7 +172,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 Padding(
                   padding:
-                      EdgeInsets.only(top: 36.5 * SizeConfig.heightMultiplier),
+                      EdgeInsets.only(top: 36 * SizeConfig.heightMultiplier),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     color: Colors.white,
