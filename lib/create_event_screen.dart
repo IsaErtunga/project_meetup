@@ -4,9 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'discover_screen.dart';
 
 class CreateEventScreen extends StatefulWidget {
-  const CreateEventScreen({Key? key}) : super(key: key);
+  final Group group;
+  const CreateEventScreen(this.group, {Key? key}) : super(key: key);
 
   @override
   _CreateEventScreenState createState() => _CreateEventScreenState();
@@ -16,10 +18,17 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   CollectionReference events = FirebaseFirestore.instance.collection('Events');
 
   final _formKey = GlobalKey<FormState>();
+
   final Map<String, dynamic> formData = {
-    'event': null,
-    'description': null,
-    'date': null
+    "name": null,
+    "description": null,
+    "date": null,
+    "hostingGroup": null,
+    "picture": null,
+    "location": null,
+    "eventImages": [],
+    "attendingUsers": [],
+    "numberOfAttendees": null,
   };
 
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
@@ -30,16 +39,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     });
   }
 
-  Future<void> getFruit() async {
-    HttpsCallable callable =
-        FirebaseFunctions.instance.httpsCallable('listFruit');
-    final results = await callable();
-    List fruit =
-        results.data; // ["Apple", "Banana", "Cherry", "Date", "Fig", "Grapes"]
-    print(fruit);
-  }
-
-  Future<void> addEvent() {
+  Future<void> addEvent(String hostingGroup) {
+    formData["hostingGroup"] = hostingGroup;
     return events
         .add(formData)
         .then((value) => print("Event Added"))
@@ -53,6 +54,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     return Scaffold(
       backgroundColor: Colors.teal,
       appBar: AppBar(
+        elevation: 0,
         title: Text("Create event"),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -70,8 +72,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             print('Submitting form');
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save(); //onSaved is called!
-              //addEvent();
-              getFruit();
+              addEvent(widget.group.id);
             }
           },
           child: const Text("Add event"),
@@ -103,7 +104,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   return null;
                 },
                 onSaved: (String? value) {
-                  formData['event'] = value;
+                  setState(() {
+                    formData['name'] = value;
+                  });
                 },
               ),
             ),
@@ -129,60 +132,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   return null;
                 },
                 onSaved: (String? value) {
-                  formData['description'] = value;
+                  setState(() {
+                    formData['description'] = value;
+                  });
                 },
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      radioValue = "då";
-                    });
-                  },
-                  child: Container(
-                    child: Row(
-                      children: [
-                        Radio(
-                          value: "då",
-                          groupValue: radioValue,
-                          onChanged: (String? value) {
-                            setState(() {
-                              radioValue = value!;
-                            });
-                          },
-                        ),
-                        const Text('då'),
-                      ],
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      radioValue = "hej";
-                    });
-                  },
-                  child: Container(
-                    child: Row(
-                      children: [
-                        Radio(
-                          value: "hej",
-                          groupValue: radioValue,
-                          onChanged: (String? value) {
-                            setState(() {
-                              radioValue = value!;
-                            });
-                          },
-                        ),
-                        const Text('då'),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
             ),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 20.0),

@@ -36,7 +36,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
               MaterialPageRoute(
                   builder: (context) => const CreateGroupScreen()));
         },
-        label: const Text("Add groups"),
+        label: const Text("Create group"),
       ),
       body: RefreshIndicator(
         onRefresh: () => _refreshGroups(context),

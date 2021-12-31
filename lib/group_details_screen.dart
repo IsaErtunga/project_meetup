@@ -48,7 +48,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const CreateEventScreen()));
+                        builder: (context) => CreateEventScreen(widget.group)));
               },
               label: const Text("Add event"),
             ),
@@ -203,8 +203,11 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                               return GestureDetector(
                                 onTap: () {
                                   print(document);
-                                  users.doc(document).get().then((value) => print(value.data()));
-                                  },
+                                  users
+                                      .doc(document)
+                                      .get()
+                                      .then((value) => print(value.data()));
+                                },
                                 child: SizedBox(
                                   height: 80,
                                   child: Card(

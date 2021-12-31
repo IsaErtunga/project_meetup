@@ -86,7 +86,9 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       return null;
                     },
                     onSaved: (String? value) {
-                      formData['groupName'] = value;
+                      setState(() {
+                        formData['groupName'] = value;
+                      });
                     },
                   ),
                 ),
@@ -112,7 +114,9 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       return null;
                     },
                     onSaved: (String? value) {
-                      formData['groupDescription'] = value;
+                      setState(() {
+                        formData['groupDescription'] = value;
+                      });
                     },
                   ),
                 ),
@@ -123,7 +127,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.grey,
+                    color: Color(0xFFEEEEEE),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -134,8 +138,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         onChanged: (value) {
                           setState(() {
                             isPrivate = value;
+                            formData["isPrivate"] = value;
                           });
-                          formData["isPrivate"] = value;
                         },
                       ),
                     ],
