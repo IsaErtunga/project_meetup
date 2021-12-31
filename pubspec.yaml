@@ -47,6 +47,8 @@ dependencies:
   animations: ^2.0.2
   syncfusion_flutter_datepicker: ^19.3.55
   modal_bottom_sheet: ^2.0.0
+  sliding_up_panel: ^2.0.0+1
+  google_maps_flutter: ^2.1.0
 
 dev_dependencies:
   flutter_test:

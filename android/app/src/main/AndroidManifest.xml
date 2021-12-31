@@ -3,6 +3,8 @@
    <application
         android:label="project_meetup"
         android:icon="@mipmap/ic_launcher">
+       <meta-data android:name="com.google.android.geo.API_KEY"
+           android:value="AIzaSyAHVYGBWrT8Nf22FL9yRlzw5c2nIA7n70k"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
