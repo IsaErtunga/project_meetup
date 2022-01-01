@@ -49,6 +49,10 @@ dependencies:
   modal_bottom_sheet: ^2.0.0
   sliding_up_panel: ^2.0.0+1
   google_maps_flutter: ^2.1.0
+  flutter_google_places: ^0.3.0
+
+  geocoding: ^2.0.1
+  google_api_headers: ^1.1.1
 
 dev_dependencies:
   flutter_test:

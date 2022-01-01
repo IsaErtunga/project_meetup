@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:project_meetup/application_bloc.dart';
+import 'package:project_meetup/google_maps_screen.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'dart:async';
 import 'discover_screen.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CreateEventScreen extends StatefulWidget {
   final Group group;
@@ -16,6 +20,14 @@ class CreateEventScreen extends StatefulWidget {
 
 class _CreateEventScreenState extends State<CreateEventScreen> {
   CollectionReference events = FirebaseFirestore.instance.collection('Events');
+
+  // Controller for Google Maps
+  Completer<GoogleMapController> _controller = Completer();
+
+  static final CameraPosition _kGooglePlex = CameraPosition(
+    target: LatLng(37.42796133580664, -122.085749655962),
+    zoom: 14.4746,
+  );
 
   final _formKey = GlobalKey<FormState>();
 
@@ -30,6 +42,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     "attendingUsers": [],
     "numberOfAttendees": null,
   };
+
+  final applicationBloc = ApplicationBloc();
 
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
     setState(() {
@@ -139,6 +153,27 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               ),
             ),
             Container(
+              margin:
+                  const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+              child: TextField(
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: "Location",
+                    labelStyle: const TextStyle(color: Colors.white),
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                    filled: true,
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onChanged: (value) {
+                    applicationBloc.searchPlaces(value);
+                    applicationBloc.searchResults.forEach((element) {
+                      print(element.description);
+                    });
+                  }),
+            ),
+            Container(
               margin: const EdgeInsets.symmetric(vertical: 20.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -173,6 +208,31 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                           ],
                         ),
                       ),
+                    ),
+                  );
+                },
+                child: const Text("Select date"),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 20.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shadowColor: Colors.transparent,
+                  primary: Colors.white24,
+                  textStyle: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
+                ),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) {
+                        return const GoogleMapsScreen();
+                      },
                     ),
                   );
                 },
