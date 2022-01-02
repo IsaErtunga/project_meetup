@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:project_meetup/theme_profile_screen.dart';
 import 'package:project_meetup/user_authentication.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 import 'group_details_screen.dart';
 import 'discover_screen.dart';
+//import 'theme_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -18,15 +21,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // User collection reference
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   CollectionReference groups = FirebaseFirestore.instance.collection('Groups');
+  CollectionReference events = FirebaseFirestore.instance.collection('Events');
 
-  dynamic myGroups1;
-  /*Object?*/ //dynamic groups1;
-  //final groupList = [];
   Future _refreshGroups(BuildContext context) async {
     return groups.get();
   }
-
-  final groupList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -49,208 +48,395 @@ class _ProfileScreenState extends State<ProfileScreen> {
               snapshot.data!.data() as Map<String, dynamic>;
 
           return Scaffold(
-            backgroundColor: const Color(0xffF8F8FA),
-            body: Stack(
-              clipBehavior: Clip.none, //overflow: Overflow.visible,
-              // Stack(
-              children: <Widget>[
-                Container(
-                  //height: 35 * SizeConfig.heightMultiplier,
-                  //decoration: BoxDecoration(
-                  height: 35 * SizeConfig.heightMultiplier,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-
-                    // shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(40.0),
-                      bottomLeft: Radius.circular(40.0),
-                    ),
-
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                        left: 50.0,
-                        right: 30.0,
-                        top: 10 * SizeConfig.heightMultiplier),
-                    child: Column(
-                      children: <Widget>[
-                        Row(
+            backgroundColor: Colors.white, //const Color(0xffF8F8FA),
+            body: CustomScrollView(
+              slivers: <Widget>[
+                SliverAppBar(
+                  backgroundColor: Colors.white, //const Color(0xffF8F8FA),
+                  forceElevated: true,
+                  expandedHeight: 200,
+                  //s  collapsedHeight: 70,
+                  pinned: false,
+                  shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.only(bottomRight: Radius.circular(30))),
+                  flexibleSpace: FlexibleSpaceBar(
+                    /*centerTitle: false,
+                     titlePadding:
+                        EdgeInsetsDirectional.only(start: 5, bottom: 20),
+                    title: Column(
+                      children: <Widget>[*/
+                    background: Container(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            left: 40.0,
+                            right: 30.0,
+                            top: 10 * SizeConfig.heightMultiplier),
+                        child: Column(
                           children: <Widget>[
-                            Container(
-                              height: 11 * SizeConfig.heightMultiplier,
-                              width: 22 * SizeConfig.widthMultiplier,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: NetworkImage(data["imageUrl"]))),
-                            ),
-                            SizedBox(
-                              width: 5 * SizeConfig.widthMultiplier,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            Row(
                               children: <Widget>[
-                                Text(
-                                  data["firstName"],
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 3 * SizeConfig.textMultiplier,
-                                      fontWeight: FontWeight.bold),
+                                Container(
+                                  height: 11 * SizeConfig.heightMultiplier,
+                                  width: 21 * SizeConfig.widthMultiplier,
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.rectangle,
+                                      borderRadius: BorderRadius.circular(30),
+                                      image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image:
+                                              NetworkImage(data["imageUrl"]))),
                                 ),
                                 SizedBox(
-                                  height: 1 * SizeConfig.heightMultiplier,
+                                  width: 5 * SizeConfig.widthMultiplier,
                                 ),
-                                Row(
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
+                                    Text(
+                                      '${data["firstName"]} ${data["lastName"]}',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize:
+                                              3 * SizeConfig.textMultiplier,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 0.5),
+                                    ),
+                                    Text('@${data["userName"]}',
+                                        style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize:
+                                                2 * SizeConfig.textMultiplier)),
+                                    SizedBox(
+                                      height: 2 * SizeConfig.heightMultiplier,
+                                    ),
                                     Row(
                                       children: <Widget>[
-                                        Image.network(
-                                          "https://tethys.pnnl.gov/sites/default/files/styles/captioned_400xauto/public/taxonomy-images/Milan-Logo.png?itok=orAi9niZ",
-                                          height:
-                                              5 * SizeConfig.heightMultiplier,
-                                          width: 5 * SizeConfig.widthMultiplier,
-                                        ),
-                                        SizedBox(
-                                          width: 2 * SizeConfig.widthMultiplier,
-                                        ),
-                                        Text(
-                                          "PoliMi",
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize:
-                                                1.5 * SizeConfig.textMultiplier,
-                                          ),
+                                        Row(
+                                          children: <Widget>[
+                                            Text(
+                                              data["University"],
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 1.5 *
+                                                    SizeConfig.textMultiplier,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
-                                    ),
+                                    )
                                   ],
                                 )
                               ],
-                            )
+                            ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
+                  /*  ],
+                    ),
+                  ),*/
                 ),
-                //  ],
-                // ),
-                //),
-
-                Padding(
-                  padding:
-                      EdgeInsets.only(top: 36.5 * SizeConfig.heightMultiplier),
+                SliverFillRemaining(
                   child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    color: Colors.white,
-                    /*decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(30.0),
-                          topLeft: Radius.circular(30.0),
-                        )),*/
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0, right: 10),
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  left: 30.0,
-                                  top: 3 * SizeConfig.heightMultiplier),
-                              child: Row(
-                                children: <Widget>[
-                                  Text(
-                                    "Attended events",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            3 * SizeConfig.textMultiplier),
+                    //    SingleChildScrollView(
+                    //physics: const BouncingScrollPhysics(),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10.0, right: 10),
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 10.0,
+                                top: 3 * SizeConfig.heightMultiplier),
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  "Attended events",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.5,
+                                      fontSize: 3 * SizeConfig.textMultiplier),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 3 * SizeConfig.heightMultiplier,
+                          ),
+                          Container(
+                            height: 134,
+                            width: double.infinity,
+                            child: data["attendedEvents"].isNotEmpty
+                                ? ListView(
+                                    padding: const EdgeInsets.only(
+                                        top: 0, bottom: 0, right: 16, left: 16),
+                                    scrollDirection: Axis.horizontal,
+                                    physics: const BouncingScrollPhysics(),
+                                    children: data["attendedEvents"]
+                                        .map<Widget>((document) {
+                                      return FutureBuilder<DocumentSnapshot>(
+                                          future: events.doc(document).get(),
+                                          builder: (BuildContext context,
+                                              AsyncSnapshot<DocumentSnapshot>
+                                                  snapshot) {
+                                            if (snapshot.hasError) {
+                                              return Text(
+                                                  "Something went wrong");
+                                            }
+
+                                            if (snapshot.hasData &&
+                                                !snapshot.data!.exists) {
+                                              return Text(
+                                                  "Document does not exist");
+                                            }
+
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.done) {
+                                              Map<String, dynamic> eventData =
+                                                  snapshot.data!.data()
+                                                      as Map<String, dynamic>;
+                                              return SizedBox(
+                                                width: 280,
+                                                child: Stack(
+                                                  children: <Widget>[
+                                                    Container(
+                                                      child: Row(
+                                                        children: <Widget>[
+                                                          const SizedBox(
+                                                            width: 48,
+                                                          ),
+                                                          Expanded(
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: HexColor(
+                                                                    '#F8FAFB'),
+                                                                borderRadius:
+                                                                    const BorderRadius
+                                                                            .all(
+                                                                        Radius.circular(
+                                                                            16.0)),
+                                                              ),
+                                                              child: Row(
+                                                                children: <
+                                                                    Widget>[
+                                                                  const SizedBox(
+                                                                    width: 48 +
+                                                                        24.0,
+                                                                  ),
+                                                                  Expanded(
+                                                                    child:
+                                                                        Container(
+                                                                      child:
+                                                                          Column(
+                                                                        children: <
+                                                                            Widget>[
+                                                                          Align(
+                                                                            alignment:
+                                                                                Alignment.centerLeft,
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: const EdgeInsets.only(top: 10),
+                                                                              child: Text(
+                                                                                (DateFormat.MMMEd().add_Hm().format(eventData["Date_Time"].toDate()).toString()),
+
+                                                                                //  maxLines: 1,
+                                                                                //overflow: TextOverflow.ellipsis,
+                                                                                textAlign: TextAlign.left,
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.w400,
+                                                                                  fontSize: 14,
+                                                                                  letterSpacing: 0.27,
+                                                                                  color: Colors.red[900],
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          Align(
+                                                                            alignment:
+                                                                                Alignment.centerLeft,
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: const EdgeInsets.only(top: 2),
+                                                                              child: Text(
+                                                                                eventData["eventName"].toString(),
+                                                                                textAlign: TextAlign.left,
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.w600,
+                                                                                  fontSize: 16,
+                                                                                  letterSpacing: 0.27,
+                                                                                  color: Colors.black,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          Align(
+                                                                            alignment:
+                                                                                Alignment.centerLeft,
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: const EdgeInsets.only(top: 5),
+                                                                              child: Row(
+                                                                                //    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                //  crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                children: <Widget>[
+                                                                                  Expanded(
+                                                                                    child: Text(
+                                                                                      'by ${eventData["hostingGroup"].toString()}',
+                                                                                      textAlign: TextAlign.left,
+                                                                                      style: TextStyle(
+                                                                                        fontWeight: FontWeight.w300,
+                                                                                        fontSize: 12,
+                                                                                        letterSpacing: 0.27,
+                                                                                        color: Colors.blueGrey[700],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          const Expanded(
+                                                                            child:
+                                                                                SizedBox(),
+                                                                          ),
+                                                                          Align(
+                                                                            alignment:
+                                                                                Alignment.centerRight,
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: const EdgeInsets.only(right: 10, bottom: 10),
+                                                                              child: Column(
+                                                                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                //crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                children: <Widget>[
+                                                                                  Container(
+                                                                                    child: Text(
+                                                                                      '${eventData["attendants_count"].toString()} going',
+                                                                                      //  textAlign: TextAlign.right,
+                                                                                      style: TextStyle(
+                                                                                        fontWeight: FontWeight.w300,
+                                                                                        fontSize: 12,
+                                                                                        letterSpacing: 0.27,
+                                                                                        color: Colors.blueGrey[600],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                top: 24,
+                                                                bottom: 24,
+                                                                left: 16),
+                                                        child: Row(
+                                                          children: <Widget>[
+                                                            ClipRRect(
+                                                              borderRadius:
+                                                                  const BorderRadius
+                                                                          .all(
+                                                                      Radius.circular(
+                                                                          16.0)),
+                                                              child:
+                                                                  AspectRatio(
+                                                                aspectRatio:
+                                                                    1.0,
+                                                                child: Image(
+                                                                  fit: BoxFit
+                                                                      .fill,
+                                                                  image:
+                                                                      NetworkImage(
+                                                                    eventData[
+                                                                            "eventPicture"]
+                                                                        .toString(),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }
+                                            return Text("loading");
+                                          });
+                                    }).toList(),
+                                  )
+                                : const Text(
+                                    "No attended events",
+                                    style: TextStyle(fontSize: 24),
                                   ),
-                                ],
-                              ),
+                          ),
+                          SizedBox(
+                            width: 10 * SizeConfig.widthMultiplier,
+                          ),
+                          SizedBox(
+                            height: 3 * SizeConfig.heightMultiplier,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 10.0, right: 30.0),
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  "My Groups",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.5,
+                                      fontSize: 3 * SizeConfig.textMultiplier),
+                                ),
+                                Spacer(),
+                                Text(
+                                  "View All",
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize:
+                                          1.7 * SizeConfig.textMultiplier),
+                                ),
+                              ],
                             ),
-                            SizedBox(
-                              height: 3 * SizeConfig.heightMultiplier,
-                            ),
-                            Container(
-                              height: 37 * SizeConfig.heightMultiplier,
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
-                                children: <Widget>[
-                                  _eventsAttendedCard(
-                                      "https://github.com/slackvishal/flutter_traveler_profile_app/blob/master/assets/travelfive.png?raw=true",
-                                      "https://github.com/slackvishal/flutter_traveler_profile_app/blob/master/assets/travelthree.png?raw=true",
-                                      "https://github.com/slackvishal/flutter_traveler_profile_app/blob/master/assets/traveltwo.png?raw=true",
-                                      "https://github.com/slackvishal/flutter_traveler_profile_app/blob/master/assets/travelsix.png?raw=true",
-                                      "+18",
-                                      "dsf"),
-                                  _eventsAttendedCard(
-                                      "https://github.com/slackvishal/flutter_traveler_profile_app/blob/master/assets/travelthree.png?raw=true",
-                                      "https://github.com/slackvishal/flutter_traveler_profile_app/blob/master/assets/traveltwo.png?raw=true",
-                                      "https://images.theconversation.com/files/271810/original/file-20190430-136810-yhoyzj.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=754&fit=clip",
-                                      "https://travel.usnews.com/static-travel/images/destinations/73/gettyimages-462922955_445x280.jpg",
-                                      "+248",
-                                      "Oh hell naw"),
-                                  _eventsAttendedCard(
-                                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzq5OMXCKBCkIYtC8O5J-GYSGH06IGapK0fQ&usqp=CAU",
-                                      "https://mydivinevacation.com/wp-content/uploads/2019/01/Romantic-Travel.jpg",
-                                      "https://images.theconversation.com/files/271810/original/file-20190430-136810-yhoyzj.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=754&fit=clip",
-                                      "https://travel.usnews.com/static-travel/images/destinations/73/gettyimages-462922955_445x280.jpg",
-                                      "+118",
-                                      "lel"),
-                                  SizedBox(
-                                    width: 10 * SizeConfig.widthMultiplier,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 3 * SizeConfig.heightMultiplier,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 30.0, right: 30.0),
-                              child: Row(
-                                children: <Widget>[
-                                  Text(
-                                    "My Groups",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            3 * SizeConfig.textMultiplier),
-                                  ),
-                                  Spacer(),
-                                  Text(
-                                    "View All",
-                                    style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize:
-                                            1.7 * SizeConfig.textMultiplier),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 4 * SizeConfig.heightMultiplier,
-                            ),
-                            Container(
-                              height: 25 * SizeConfig.heightMultiplier,
+                          ),
+                          SizedBox(
+                            height: 1.5 * SizeConfig.heightMultiplier,
+                          ),
+                          Expanded(
+                            child: Container(
+                              height: 300 * SizeConfig.heightMultiplier,
                               child: data["myGroups"].isNotEmpty
-                                  ? GridView.count(
-                                      scrollDirection: Axis.horizontal,
-                                      crossAxisCount: 1,
+                                  ? GridView(
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        mainAxisSpacing: 32.0,
+                                        crossAxisSpacing: 32.0,
+                                        childAspectRatio: 0.8,
+                                      ),
+                                      scrollDirection: Axis.vertical,
+                                      padding: const EdgeInsets.all(8),
+                                      physics: const BouncingScrollPhysics(),
                                       children: data["myGroups"]
                                           .map<Widget>((document) {
                                         return FutureBuilder<DocumentSnapshot>(
@@ -275,55 +461,156 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     snapshot.data!.data()
                                                         as Map<String, dynamic>;
 
-                                                return Card(
-                                                  semanticContainer: true,
-                                                  clipBehavior: Clip
-                                                      .antiAliasWithSaveLayer,
-                                                  elevation: 5,
-                                                  margin: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 7,
-                                                      vertical: 7),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15.0),
-                                                  ),
+                                                return Flexible(
+                                                    child: InkWell(
+                                                  splashColor:
+                                                      Colors.transparent,
+                                                  //onTap: callback,
                                                   child: GestureDetector(
-                                                    child: Column(
-                                                      children: [
-                                                        Expanded(
-                                                          flex: 3,
-                                                          child: AspectRatio(
-                                                            aspectRatio:
-                                                                16 / 12,
-                                                            child: Image(
-                                                              fit: BoxFit.fill,
-                                                              image:
-                                                                  NetworkImage(
-                                                                // (document.data() as Map<
-                                                                groupData[
-                                                                        "groupPicture"]
-                                                                    .toString(),
+                                                    child: SizedBox(
+                                                      height: 280,
+                                                      child: Stack(
+                                                        alignment:
+                                                            AlignmentDirectional
+                                                                .bottomCenter,
+                                                        children: <Widget>[
+                                                          Container(
+                                                            child: Column(
+                                                              children: <
+                                                                  Widget>[
+                                                                Expanded(
+                                                                  child:
+                                                                      Container(
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: HexColor(
+                                                                          '#F8FAFB'),
+                                                                      borderRadius: const BorderRadius
+                                                                              .all(
+                                                                          Radius.circular(
+                                                                              16.0)),
+                                                                      // border: new Border.all(
+                                                                      //     color: DesignCourseAppTheme.notWhite),
+                                                                    ),
+                                                                    child:
+                                                                        Column(
+                                                                      children: <
+                                                                          Widget>[
+                                                                        Expanded(
+                                                                          child:
+                                                                              Container(
+                                                                            child:
+                                                                                Column(
+                                                                              children: <Widget>[
+                                                                                //  Expanded(
+                                                                                Align(
+                                                                                  alignment: Alignment.centerLeft,
+                                                                                  child: Padding(
+                                                                                    padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+                                                                                    child: Text(
+                                                                                      groupData["groupName"].toString(),
+                                                                                      textAlign: TextAlign.left,
+                                                                                      style: TextStyle(
+                                                                                        fontWeight: FontWeight.w600,
+                                                                                        fontSize: 16,
+                                                                                        letterSpacing: 0.27,
+                                                                                        color: ProfileTheme.darkerText,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+
+                                                                                Padding(
+                                                                                  padding: const EdgeInsets.only(top: 8, left: 16, right: 16, bottom: 8),
+                                                                                  child: Row(
+                                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                    children: <Widget>[
+                                                                                      Text(
+                                                                                        '${groupData['memberAmount'].toString()} members',
+                                                                                        textAlign: TextAlign.left,
+                                                                                        style: TextStyle(
+                                                                                          fontWeight: FontWeight.w300,
+                                                                                          fontSize: 12,
+                                                                                          letterSpacing: 0.27,
+                                                                                          color: Colors.blueGrey[700],
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          width:
+                                                                              48,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                  height: 48,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      top: 24,
+                                                                      right: 16,
+                                                                      left: 16),
+                                                              child: Container(
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius: const BorderRadius
+                                                                          .all(
+                                                                      Radius.circular(
+                                                                          16.0)),
+                                                                  boxShadow: <
+                                                                      BoxShadow>[
+                                                                    BoxShadow(
+                                                                        color: ProfileTheme
+                                                                            .grey
+                                                                            .withOpacity(
+                                                                                0.8),
+                                                                        offset: const Offset(
+                                                                            0.0,
+                                                                            0.0),
+                                                                        blurRadius:
+                                                                            6.0),
+                                                                  ],
+                                                                ),
+                                                                child:
+                                                                    ClipRRect(
+                                                                  borderRadius: const BorderRadius
+                                                                          .all(
+                                                                      Radius.circular(
+                                                                          16.0)),
+                                                                  child:
+                                                                      AspectRatio(
+                                                                    aspectRatio:
+                                                                        1.28,
+                                                                    child:
+                                                                        Image(
+                                                                      fit: BoxFit
+                                                                          .fill,
+                                                                      image: NetworkImage(
+                                                                          groupData['groupPicture']
+                                                                              .toString()),
+                                                                    ),
+                                                                  ),
+                                                                ),
                                                               ),
                                                             ),
                                                           ),
-                                                        ),
-                                                        Expanded(
-                                                          child: Container(
-                                                            alignment: Alignment
-                                                                .center,
-                                                            child: Text(
-                                                                groupData[
-                                                                        "groupName"]
-                                                                    .toString(),
-                                                                style: const TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold)),
-                                                          ),
-                                                        ),
-                                                      ],
+                                                        ],
+                                                      ),
                                                     ),
                                                     onTap: () => {
                                                       Navigator.of(context).push(
@@ -335,7 +622,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                       dynamic>)))
                                                     },
                                                   ),
-                                                );
+                                                ));
                                               }
                                               return Text("loading");
                                             });
@@ -346,12 +633,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       style: TextStyle(fontSize: 24),
                                     ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
+                //  ),
               ],
             ),
           );
@@ -362,72 +650,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-/*
+class HexColor extends Color {
+  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 
-                                         /* snapshot.data!.docs.map((doc),
-                                          padding: const EdgeInsets.all(8),
-                                          itemCount: groupList.length,
-                                          itemBuilder: (BuildContext context, int index) {
-                                            return */
-
-                                    children: snapshot.data!.docs.map((doc)
-
-                                      data["myGroups"].map<Widget>((document) {
-                                    return ListView(
-                                        scrollDirection: Axis.horizontal,
-                                        children:
-                                            /*GestureDetector(onTap: () {
-                                          print(document);
-                                          users.doc(document).get().then(
-                                              (value) => print(value.data()));
-                                          child:*/
-                                            /*<Widget>[
-                                          Expanded(
-                                              child:*/
-
-                                            //groups.doc(document).get().then(
-                                            //  (value) => print(value.data()));
-
-                                            <Widget>[
-                                          myGroupsCard(
-                                              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmiNYJz_0aKz92YhqV2mckEi_TktSVJtI_VQ&usqp=CAU",
-                                              "oi"
-                                              /* Text((document.data() as Map<
-                                                          String,
-                                                          dynamic>)["firstName"]
-                                                      .toString())*/
-                                              )
-                                        ]);
-                                    // ];
-                                  }).toList(),
-                                  // }).toList(),
-                                  /*_myGroupsCard(
-                                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShg0PCdhfH4L7qOHiCruP81hDrF80pIHFRwA&usqp=CAU",
-                                      "Oh hell naw");
-                                  _myGroupsCard(
-                                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBIIFXubuk_u_QPIMY4VmTAaupePAm54SwvA&usqp=CAU",
-                                      "lel");}*/
-                                  /* SizedBox(
-                                            width:
-                                                10 * SizeConfig.widthMultiplier,
-                                          )
-                                        ],*/
-                                ),
-                                SizedBox(
-                                  height: 3 * SizeConfig.heightMultiplier,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  ]));
-        }
-        return Text("loading");
-      },
-    );
-  }*/
+  static int _getColorFromHex(String hexColor) {
+    hexColor = hexColor.toUpperCase().replaceAll('#', '');
+    if (hexColor.length == 6) {
+      hexColor = 'FF' + hexColor;
+    }
+    return int.parse(hexColor, radix: 16);
+  }
+}
 
 _eventsAttendedCard(String asset1, String asset2, String asset3, String asset4,
     String more, String name) {
@@ -440,7 +673,7 @@ _eventsAttendedCard(String asset1, String asset2, String asset3, String asset4,
         width: 60 * SizeConfig.widthMultiplier,
         decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(2.0),
+            borderRadius: BorderRadius.circular(10.0),
             border: Border.all(color: Colors.grey, width: 0.2)),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
