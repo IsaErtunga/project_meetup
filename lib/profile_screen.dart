@@ -27,10 +27,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return groups.get();
   }
 
+  final _stepsText = [
+    "Couch potatoe ",
+    "Dancing Queen",
+    "Social Butterfly",
+    "BNOC"
+  ];
+
+  final _stepCircleRadius = 12.0;
+
+  final _stepProgressViewHeight = 100.0;
+
+  Color _activeColor = Colors.amber;
+
+  Color _inactiveColor = Color(0xFFD6D6D6);
+
+  TextStyle _headerStyle =
+      TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold);
+
+  TextStyle _stepStyle = TextStyle(fontSize: 12.0, fontWeight: FontWeight.bold);
+
+  late Size _safeAreaSize;
+
+  int _curPage = 3;
+
+  StepProgressView _getStepProgress() {
+    return StepProgressView(
+      _stepsText,
+      _curPage,
+      _stepProgressViewHeight,
+      _safeAreaSize.width,
+      _stepCircleRadius,
+      _activeColor,
+      _inactiveColor,
+      _headerStyle,
+      _stepStyle,
+      decoration: BoxDecoration(color: Colors.white),
+      padding: EdgeInsets.only(
+        top: 16.0,
+        left: 5.0,
+        right: 25.0,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-
+    // CollectionReference users = FirebaseFirestore.instance.collection('users');
+    var mediaQD = MediaQuery.of(context);
+    _safeAreaSize = mediaQD.size;
     return FutureBuilder<DocumentSnapshot>(
       future: users.doc(auth.currentUser!.uid).get(),
       builder:
@@ -50,8 +95,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return Scaffold(
             backgroundColor: Colors.white, //const Color(0xffF8F8FA),
             body: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
               slivers: <Widget>[
                 SliverAppBar(
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colors.black),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
                   backgroundColor: Colors.white, //const Color(0xffF8F8FA),
                   forceElevated: true,
                   expandedHeight: 200,
@@ -71,7 +121,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         padding: EdgeInsets.only(
                             left: 40.0,
                             right: 30.0,
-                            top: 10 * SizeConfig.heightMultiplier),
+                            top: 5 * SizeConfig.heightMultiplier),
                         child: Column(
                           children: <Widget>[
                             Row(
@@ -127,14 +177,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ],
                                     )
                                   ],
-                                )
+                                ),
                               ],
                             ),
+                            //SizedBox(height: 1 * SizeConfig.widthMultiplier),
+                            Container(height: 50, child: _getStepProgress()),
                           ],
                         ),
                       ),
                     ),
                   ),
+
                   /*  ],
                     ),
                   ),*/
@@ -142,7 +195,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SliverFillRemaining(
                   child: Container(
                     //    SingleChildScrollView(
-                    //physics: const BouncingScrollPhysics(),
+                    // physics: const BouncingScrollPhysics(),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 10.0, right: 10),
                       child: Column(
@@ -662,216 +715,185 @@ class HexColor extends Color {
   }
 }
 
-_eventsAttendedCard(String asset1, String asset2, String asset3, String asset4,
-    String more, String name) {
-  return Padding(
-    padding: const EdgeInsets.only(left: 20.0),
-    child: Card(
-      elevation: 12,
-      child: Container(
-        height: 2.3 * SizeConfig.imageSizeMultiplier,
-        width: 60 * SizeConfig.widthMultiplier,
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10.0),
-            border: Border.all(color: Colors.grey, width: 0.2)),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                child: Row(
-                  children: <Widget>[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: Image.network(
-                        asset1,
-                        height: 27 * SizeConfig.imageSizeMultiplier,
-                        width: 27 * SizeConfig.imageSizeMultiplier,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Spacer(),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: Image.network(
-                        asset2,
-                        height: 27 * SizeConfig.imageSizeMultiplier,
-                        width: 27 * SizeConfig.imageSizeMultiplier,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 1 * SizeConfig.heightMultiplier,
-              ),
-              Expanded(
-                child: Row(
-                  children: <Widget>[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: Image.network(
-                        asset3,
-                        height: 27 * SizeConfig.imageSizeMultiplier,
-                        width: 27 * SizeConfig.imageSizeMultiplier,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Spacer(),
-                    Stack(
-                      clipBehavior: Clip.none,
-                      children: <Widget>[
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image.network(
-                            asset4,
-                            height: 27 * SizeConfig.imageSizeMultiplier,
-                            width: 27 * SizeConfig.imageSizeMultiplier,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Positioned(
-                          child: Container(
-                            height: 27 * SizeConfig.imageSizeMultiplier,
-                            width: 27 * SizeConfig.imageSizeMultiplier,
-                            decoration: BoxDecoration(
-                                color: Colors.black38,
-                                borderRadius: BorderRadius.circular(10.0)),
-                            child: Center(
-                              child: Text(
-                                more,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 2.5 * SizeConfig.textMultiplier,
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                    left: 10.0, top: 2 * SizeConfig.heightMultiplier),
-                child: Text(
-                  name,
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 2 * SizeConfig.textMultiplier,
-                      fontWeight: FontWeight.bold),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    ),
-  );
-}
+class StepProgressView extends StatelessWidget {
+  const StepProgressView(
+    List<String> stepsText,
+    int curStep,
+    double height,
+    double width,
+    double dotRadius,
+    Color activeColor,
+    Color inactiveColor,
+    TextStyle headerStyle,
+    TextStyle stepsStyle, {
+    //Key key,
+    required this.decoration,
+    required this.padding,
+    this.lineHeight = 7.0,
+  })  : _stepsText = stepsText,
+        _curStep = curStep,
+        _height = height,
+        _width = width,
+        _dotRadius = dotRadius,
+        _activeColor = activeColor,
+        _inactiveColor = inactiveColor,
+        _headerStyle = headerStyle,
+        _stepStyle = stepsStyle,
+        assert(curStep > 0 == true && curStep <= stepsText.length),
+        assert(width > 0),
+        assert(height >= 2 * dotRadius),
+        assert(width >= dotRadius * 2 * stepsText.length);
+  //super(key: key);
 
-myGroupsCard(var groupimage, var groupName) {
-  return <Widget>[
-    Card(
-      child: Container(
-        height: 2.3 * SizeConfig.imageSizeMultiplier,
-        width: 40 * SizeConfig.widthMultiplier,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
-          //border: Border.all(color: Colors.grey, width: 0.2)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: Row(
-                  children: <Widget>[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: Image.network(
-                        groupimage,
-                        height: 30 * SizeConfig.imageSizeMultiplier,
-                        width: 35 * SizeConfig.imageSizeMultiplier,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                    left: 10.0, top: 2 * SizeConfig.heightMultiplier),
-                child: Text(
-                  groupName,
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 2 * SizeConfig.textMultiplier,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ),
-  ];
-}
+  //height of the container
+  final double _height;
+  //width of the container
+  final double _width;
+  //container decoration
+  final BoxDecoration decoration;
+  //list of texts to be shown for each step
+  final List<String> _stepsText;
+  //cur step identifier
+  final int _curStep;
+  //active color
+  final Color _activeColor;
+  //in-active color
+  final Color _inactiveColor;
+  //dot radius
+  final double _dotRadius;
+  //container padding
+  final EdgeInsets padding;
+  //line height
+  final double lineHeight;
+  //header textstyle
+  final TextStyle _headerStyle;
+  //steps text
+  final TextStyle _stepStyle;
 
-/*return Padding(
-    padding: const EdgeInsets.only(left: 20.0),
-    child: Card(
-      child: Container(
-        height: 2.3 * SizeConfig.imageSizeMultiplier,
-        width: 40 * SizeConfig.widthMultiplier,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
-          //border: Border.all(color: Colors.grey, width: 0.2)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: Row(
-                  children: <Widget>[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: Image.network(
-                        groupimage,
-                        height: 30 * SizeConfig.imageSizeMultiplier,
-                        width: 35 * SizeConfig.imageSizeMultiplier,
-                        fit: BoxFit.cover,
+  List<Widget> _buildDots() {
+    var wids = <Widget>[];
+
+    _stepsText.asMap().forEach((i, text) {
+      var circleColor =
+          (i == 0 || _curStep > i) ? _activeColor : _inactiveColor;
+
+      var lineColor = _curStep > i + 1 ? _activeColor : _inactiveColor;
+
+      if (i == 0) {
+        wids.add(Tooltip(
+            message: 'couch potato ',
+            triggerMode: TooltipTriggerMode.tap,
+            child: CircleAvatar(
+              backgroundImage: AssetImage('images/CouchPotatoe.png'),
+              backgroundColor: circleColor,
+              radius: _dotRadius,
+            )));
+      } else if (i == 1) {
+        wids.add(Tooltip(
+            message: 'dancing queen',
+            triggerMode: TooltipTriggerMode.tap,
+            child: CircleAvatar(
+              backgroundImage: AssetImage('images/dancingQueen.png'),
+              backgroundColor: circleColor,
+              radius: _dotRadius,
+            )));
+      } else if (i == 2) {
+        wids.add(Tooltip(
+            message: 'social butterfly',
+            triggerMode: TooltipTriggerMode.tap,
+            child: CircleAvatar(
+              backgroundImage: AssetImage('images/SocialButterfly.png'),
+              backgroundColor: circleColor,
+              radius: _dotRadius,
+            )));
+      } else if (i == 3) {
+        wids.add(Tooltip(
+            message: 'BNOC',
+            triggerMode: TooltipTriggerMode.tap,
+            child: CircleAvatar(
+              backgroundImage: AssetImage('images/BNOC.png'),
+              backgroundColor: circleColor,
+              radius: _dotRadius,
+            )));
+      }
+
+      //add a line separator
+      //0-------0--------0
+      if (i != _stepsText.length - 1) {
+        wids.add(
+          Expanded(
+            child: Container(
+              height: lineHeight,
+              color: lineColor,
+            ),
+          ),
+        );
+      }
+    });
+
+    return wids;
+  }
+/*
+  List<Widget> _buildText() {
+    var wids = <Widget>[];
+    _stepsText.asMap().forEach((i, text) {
+      wids.add(Text(text, style: _stepStyle));
+    });
+
+    return wids;
+  }
+  */
+
+  Widget build(BuildContext context) {
+    return Container(
+      padding: padding,
+      height: this._height,
+      width: this._width,
+      decoration: this.decoration,
+      child: Column(
+        children: <Widget>[
+          /*
+          Container(
+            child: Center(
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: (_curStep).toString(),
+                      style: _headerStyle.copyWith(
+                        color: _activeColor, //this is always going to be active
+                      ),
+                    ),
+                    TextSpan(
+                      text: " / " + _stepsText.length.toString(),
+                      style: _headerStyle.copyWith(
+                        color: _curStep == _stepsText.length
+                            ? _activeColor
+                            : _inactiveColor,
                       ),
                     ),
                   ],
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(
-                    left: 10.0, top: 2 * SizeConfig.heightMultiplier),
-                child: Text(
-                  groupName,
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 2 * SizeConfig.textMultiplier,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+          */
+          Row(
+            children: _buildDots(),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          /*
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: _buildText(),
+          )*/
+        ],
       ),
-    ),
-  );
-}*/
+    );
+  }
+}
 
 class SizeConfig {
   static double _screenWidth = 1;
