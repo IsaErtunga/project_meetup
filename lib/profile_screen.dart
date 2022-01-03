@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:project_meetup/theme_profile_screen.dart';
 import 'package:project_meetup/user_authentication.dart';
@@ -7,6 +9,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'group_details_screen.dart';
 import 'discover_screen.dart';
+import 'package:filter_list/filter_list.dart';
+// import 'choose_interests.dart';
 //import 'theme_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -49,12 +53,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   late Size _safeAreaSize;
 
-  int _curPage = 3;
+  int _socialProgressIndex = 3;
 
   StepProgressView _getStepProgress() {
     return StepProgressView(
       _stepsText,
-      _curPage,
+      _socialProgressIndex,
       _stepProgressViewHeight,
       _safeAreaSize.width,
       _stepCircleRadius,
@@ -69,6 +73,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
         right: 25.0,
       ),
     );
+  }
+
+  List<String> allInterestsList = [
+    "Music/Dance/Club",
+    "Sports & Fitness",
+    "Travel & Outdoors",
+    "Science & Tech"
+  ];
+  List<String> selectedInterestsList = [];
+
+  Future<void> addInterests() {
+    return users
+        .doc(auth.currentUser!.uid)
+        .update({'myInterests': selectedInterestsList});
+  }
+
+  void _openInterestsFilterDialog() async {
+    await FilterListDialog.display<String>(context,
+        backgroundColor: Colors.black,
+        listData: allInterestsList,
+        selectedListData: selectedInterestsList,
+        height: 480,
+        headlineText: "Select Interests",
+        searchFieldHintText: "Search Here", choiceChipLabel: (item) {
+      return item;
+    }, validateSelectedItem: (list, val) {
+      return list!.contains(val);
+    }, onItemSearch: (list, text) {
+      if (list!.any(
+          (element) => element.toLowerCase().contains(text.toLowerCase()))) {
+        return list
+            .where(
+                (element) => element.toLowerCase().contains(text.toLowerCase()))
+            .toList();
+      } else {
+        return [];
+      }
+    }, onApplyButtonClick: (list) {
+      if (list != null) {
+        setState(
+          () {
+            selectedInterestsList = List.from(list);
+            addInterests();
+          },
+        );
+      }
+      Navigator.pop(context);
+    });
   }
 
   @override
@@ -121,7 +173,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         padding: EdgeInsets.only(
                             left: 40.0,
                             right: 30.0,
-                            top: 5 * SizeConfig.heightMultiplier),
+                            top: 8 * SizeConfig.heightMultiplier),
                         child: Column(
                           children: <Widget>[
                             Row(
@@ -180,7 +232,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ],
                             ),
-                            //SizedBox(height: 1 * SizeConfig.widthMultiplier),
+                            SizedBox(height: 2 * SizeConfig.widthMultiplier),
                             Container(height: 50, child: _getStepProgress()),
                           ],
                         ),
@@ -200,6 +252,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       padding: const EdgeInsets.only(left: 10.0, right: 10),
                       child: Column(
                         children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 10.0,
+                                top: 3 * SizeConfig.heightMultiplier),
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  "My Interests",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.5,
+                                      fontSize: 3 * SizeConfig.textMultiplier),
+                                ),
+                                Spacer(),
+                                OutlinedButton(
+                                    onPressed: _openInterestsFilterDialog,
+                                    style: ButtonStyle(),
+                                    child: const Text('edit'))
+                              ],
+                            ),
+                          ),
+                          Container(
+                            height: 70,
+                            width: double.infinity,
+                            child: data["myInterests"].isNotEmpty
+                                ? GridView.count(
+                                    scrollDirection: Axis.horizontal,
+                                    physics: BouncingScrollPhysics(),
+                                    crossAxisCount: 1,
+                                    children: data["myInterests"]
+                                        .map<Widget>((interest) {
+                                      return Card(
+                                          semanticContainer: true,
+                                          clipBehavior:
+                                              Clip.antiAliasWithSaveLayer,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15.0),
+                                          ),
+                                          color: Colors.black,
+                                          child: Center(
+                                              child: Text(
+                                            interest.toString(),
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          )));
+                                    }).toList(),
+                                  )
+                                : const Text("No interests",
+                                    style: TextStyle(fontSize: 24)),
+                          ),
                           Padding(
                             padding: EdgeInsets.only(
                                 left: 10.0,
