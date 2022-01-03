@@ -31,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return groups.get();
   }
 
-  final _stepsText = [
+  final _socialLevelsText = [
     "Couch potatoe ",
     "Dancing Queen",
     "Social Butterfly",
@@ -40,7 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   final _stepCircleRadius = 12.0;
 
-  final _stepProgressViewHeight = 100.0;
+  final _socialProgressViewHeight = 100.0;
 
   Color _activeColor = Colors.amber;
 
@@ -55,11 +55,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   int _socialProgressIndex = 3;
 
-  StepProgressView _getStepProgress() {
-    return StepProgressView(
-      _stepsText,
+  socialProgressView _getStepProgress() {
+    return socialProgressView(
+      _socialLevelsText,
       _socialProgressIndex,
-      _stepProgressViewHeight,
+      _socialProgressViewHeight,
       _safeAreaSize.width,
       _stepCircleRadius,
       _activeColor,
@@ -91,11 +91,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _openInterestsFilterDialog() async {
     await FilterListDialog.display<String>(context,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
+        applyButonTextBackgroundColor: Colors.black,
+        controlButtonTextStyle:
+            TextStyle(color: Colors.black, backgroundColor: Colors.white),
         listData: allInterestsList,
         selectedListData: selectedInterestsList,
         height: 480,
-        headlineText: "Select Interests",
+        headlineText: "Choose your Interests",
+        hideHeaderText: true,
+        hideSelectedTextCount: true,
         searchFieldHintText: "Search Here", choiceChipLabel: (item) {
       return item;
     }, validateSelectedItem: (list, val) {
@@ -270,39 +275,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 OutlinedButton(
                                     onPressed: _openInterestsFilterDialog,
                                     style: ButtonStyle(),
-                                    child: const Text('edit'))
+                                    child: const Text('edit',
+                                        style: TextStyle(color: Colors.black))),
                               ],
                             ),
                           ),
+                          SizedBox(
+                            height: 1.5 * SizeConfig.heightMultiplier,
+                          ),
                           Container(
-                            height: 70,
+                            height: 40,
                             width: double.infinity,
                             child: data["myInterests"].isNotEmpty
-                                ? GridView.count(
+                                ? ListView(
                                     scrollDirection: Axis.horizontal,
                                     physics: BouncingScrollPhysics(),
-                                    crossAxisCount: 1,
+                                    padding: const EdgeInsets.only(
+                                        top: 0, bottom: 0, right: 16, left: 13),
                                     children: data["myInterests"]
                                         .map<Widget>((interest) {
-                                      return Card(
-                                          semanticContainer: true,
-                                          clipBehavior:
-                                              Clip.antiAliasWithSaveLayer,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15.0),
-                                          ),
-                                          color: Colors.black,
-                                          child: Center(
+                                      return Chip(
+                                        backgroundColor: Colors.black,
+                                        side: BorderSide(
+                                            color: Colors.white, width: 4),
+                                        label: Text(
+                                          interest.toString(),
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      );
+                                      /*Align(
+                                        child: DecoratedBox(
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.white,
+                                                    width: 4),
+                                                color: Colors.black,
+                                                shape: BoxShape.rectangle,
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(16.0))),
+                                            child: TextButton(
+                                              onPressed: () {},
                                               child: Text(
-                                            interest.toString(),
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          )));
+                                                interest.toString(),
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                            )),
+                                      );*/
                                     }).toList(),
                                   )
-                                : const Text("No interests",
-                                    style: TextStyle(fontSize: 24)),
+                                : const Text("   No interests chosen yet",
+                                    style: TextStyle(fontSize: 15)),
                           ),
                           Padding(
                             padding: EdgeInsets.only(
@@ -330,7 +354,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: data["attendedEvents"].isNotEmpty
                                 ? ListView(
                                     padding: const EdgeInsets.only(
-                                        top: 0, bottom: 0, right: 16, left: 16),
+                                        top: 0, bottom: 0, right: 16, left: 13),
                                     scrollDirection: Axis.horizontal,
                                     physics: const BouncingScrollPhysics(),
                                     children: data["attendedEvents"]
@@ -819,8 +843,8 @@ class HexColor extends Color {
   }
 }
 
-class StepProgressView extends StatelessWidget {
-  const StepProgressView(
+class socialProgressView extends StatelessWidget {
+  const socialProgressView(
     List<String> stepsText,
     int curStep,
     double height,
