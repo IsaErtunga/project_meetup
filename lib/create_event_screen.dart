@@ -231,7 +231,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (BuildContext context) {
-                        return const GoogleMapsScreen();
+                        return GoogleMapsScreen();
                       },
                     ),
                   );
