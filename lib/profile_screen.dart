@@ -1,12 +1,13 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:project_meetup/attended_events_all.dart';
 import 'package:project_meetup/theme_profile_screen.dart';
 import 'package:project_meetup/user_authentication.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart'; //to convert timestamp to a date in ddmmyy format
 import 'group_details_screen.dart';
 import 'discover_screen.dart';
 import 'package:filter_list/filter_list.dart';
@@ -342,6 +343,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       letterSpacing: 0.5,
                                       fontSize: 3 * SizeConfig.textMultiplier),
                                 ),
+                                Spacer(),
+                                OutlinedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                AttendedEventsScreen()),
+                                      );
+                                    },
+                                    style: ButtonStyle(),
+                                    child: const Text('view all',
+                                        style: TextStyle(color: Colors.black))),
                               ],
                             ),
                           ),
