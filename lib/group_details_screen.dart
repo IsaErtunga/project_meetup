@@ -141,7 +141,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.of(context)
-                                      .push(_createRoute(doc["id"]));
+                                      .push(_createRoute(Event(doc["id"])));
                                 },
                                 child: Card(
                                   semanticContainer: true,
@@ -252,7 +252,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
   }
 }
 
-Route _createRoute(String eventId) {
+Route _createRoute(eventId) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) =>
         EventDetailsScreen(eventId),
@@ -269,4 +269,10 @@ Route _createRoute(String eventId) {
       );
     },
   );
+}
+
+class Event {
+  final String eventId;
+
+  const Event(this.eventId);
 }
