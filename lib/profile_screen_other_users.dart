@@ -1,37 +1,25 @@
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
-//import 'package:project_meetup/attended_events_all.dart';
-import 'package:project_meetup/theme_profile_screen.dart';
-import 'package:project_meetup/user_authentication.dart';
-import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart'; //to convert timestamp to a date in ddmmyy format
 import 'group_details_screen.dart';
-import 'discover_screen.dart';
-import 'package:filter_list/filter_list.dart';
 import 'event_details_screen.dart';
-// import 'choose_interests.dart';
-//import 'theme_profile_screen.dart';
+import 'package:intl/intl.dart'; //conversion from timestamp to date and time
+import 'package:project_meetup/theme_profile_screen.dart';
+import 'discover_screen.dart';
+import 'profile_screen.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+class ProfileScreenOtherUsers extends StatefulWidget {
+  final User user;
+  const ProfileScreenOtherUsers(this.user, {Key? key}) : super(key: key);
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfileScreenOtherUsers> createState() =>
+      _ProfileScreenOtherUsersState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  // User collection reference
+class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   CollectionReference groups = FirebaseFirestore.instance.collection('Groups');
   CollectionReference events = FirebaseFirestore.instance.collection('Events');
-
-  Future _refreshGroups(BuildContext context) async {
-    return groups.get();
-  }
 
   final _socialLevelsText = [
     "Couch potatoe ",
@@ -85,58 +73,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   ];
   List<String> selectedInterestsList = [];
 
-  Future<void> addInterests() {
-    return users
-        .doc(auth.currentUser!.uid)
-        .update({'myInterests': selectedInterestsList});
-  }
-
-  void _openInterestsFilterDialog() async {
-    await FilterListDialog.display<String>(context,
-        backgroundColor: Colors.white,
-        applyButonTextBackgroundColor: Colors.black,
-        controlButtonTextStyle:
-            TextStyle(color: Colors.black, backgroundColor: Colors.white),
-        listData: allInterestsList,
-        selectedListData: selectedInterestsList,
-        height: 480,
-        headlineText: "Choose your Interests",
-        hideHeaderText: true,
-        hideSelectedTextCount: true,
-        searchFieldHintText: "Search Here", choiceChipLabel: (item) {
-      return item;
-    }, validateSelectedItem: (list, val) {
-      return list!.contains(val);
-    }, onItemSearch: (list, text) {
-      if (list!.any(
-          (element) => element.toLowerCase().contains(text.toLowerCase()))) {
-        return list
-            .where(
-                (element) => element.toLowerCase().contains(text.toLowerCase()))
-            .toList();
-      } else {
-        return [];
-      }
-    }, onApplyButtonClick: (list) {
-      if (list != null) {
-        setState(
-          () {
-            selectedInterestsList = List.from(list);
-            addInterests();
-          },
-        );
-      }
-      Navigator.pop(context);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     // CollectionReference users = FirebaseFirestore.instance.collection('users');
     var mediaQD = MediaQuery.of(context);
     _safeAreaSize = mediaQD.size;
     return FutureBuilder<DocumentSnapshot>(
-      future: users.doc(auth.currentUser!.uid).get(),
+      future: users.doc(widget.user.userId).get(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.hasError) {
@@ -273,12 +216,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       letterSpacing: 0.5,
                                       fontSize: 3 * SizeConfig.textMultiplier),
                                 ),
-                                Spacer(),
-                                OutlinedButton(
-                                    onPressed: _openInterestsFilterDialog,
-                                    style: ButtonStyle(),
-                                    child: const Text('edit',
-                                        style: TextStyle(color: Colors.black))),
                               ],
                             ),
                           ),
@@ -1035,47 +972,6 @@ class socialProgressView extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class SizeConfig {
-  static double _screenWidth = 1;
-  static double _screenHeight = 1;
-  static double _blockSizeHorizontal = 0;
-  static double _blockSizeVertical = 0;
-
-  static double textMultiplier = 1;
-  static double imageSizeMultiplier = 1;
-  static double heightMultiplier = 1;
-  static double widthMultiplier = 1;
-  static bool isPortrait = true;
-  static bool isMobilePortrait = false;
-
-  void init(BoxConstraints constraints, Orientation orientation) {
-    if (orientation == Orientation.portrait) {
-      _screenWidth = constraints.maxWidth;
-      _screenHeight = constraints.maxHeight;
-      isPortrait = true;
-      if (_screenWidth < 450) {
-        isMobilePortrait = true;
-      }
-    } else {
-      _screenWidth = constraints.maxHeight;
-      _screenHeight = constraints.maxWidth;
-      isPortrait = false;
-      isMobilePortrait = false;
-    }
-
-    _blockSizeHorizontal = _screenWidth / 100;
-    _blockSizeVertical = _screenHeight / 100;
-
-    textMultiplier = _blockSizeVertical;
-    imageSizeMultiplier = _blockSizeHorizontal;
-    heightMultiplier = _blockSizeVertical;
-    widthMultiplier = _blockSizeHorizontal;
-
-    print(_blockSizeHorizontal);
-    print(_blockSizeVertical);
   }
 }
 
