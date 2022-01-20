@@ -20,7 +20,7 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
   CollectionReference events = FirebaseFirestore.instance.collection('Events');
 
   // Controller for Google Maps
-  Completer<GoogleMapController> _controller = Completer();
+  final Completer<GoogleMapController> _controller = Completer();
   late StreamSubscription locationSubscription;
 
   @override
@@ -29,9 +29,7 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
         Provider.of<ApplicationBloc>(context, listen: false);
     locationSubscription =
         applicationBloc.selectedLocation.stream.listen((place) {
-      if (place != null) {
-        _goToPlace(place);
-      }
+      _goToPlace(place);
     });
     super.initState();
   }
@@ -40,6 +38,7 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 14.4746,
   );
+
   @override
   void dispose() {
     final applicationBloc =
@@ -48,6 +47,8 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
     locationSubscription.cancel();
     super.dispose();
   }
+
+  Marker marker = Marker(markerId: MarkerId("chosen"));
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +66,22 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
                 initialCameraPosition: _kGooglePlex,
                 onMapCreated: (GoogleMapController controller) {
                   _controller.complete(controller);
+                },
+                markers: <Marker>{marker},
+                onTap: (latLng) {
+                  print(latLng);
+                  setState(() {
+                    marker = Marker(
+                      flat: true,
+                      markerId: MarkerId("chosen"),
+                      position: latLng,
+                      infoWindow: InfoWindow(
+                          title: "Choose location",
+                          onTap: () {
+                            Navigator.pop(context, 'Yep!');
+                          }),
+                    );
+                  });
                 },
               ),
             ),
@@ -115,7 +132,6 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
                                   onPressed: () {
                                     applicationBloc
                                         .setSelectedLocation(result.placeId);
-                                    print(applicationBloc.selectedLocation);
                                   },
                                   icon: Icon(Icons.search))
                             ],

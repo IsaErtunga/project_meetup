@@ -6,6 +6,7 @@ import 'package:project_meetup/google_maps_screen.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:intl/intl.dart';
 import 'dart:async';
 import 'discover_screen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -45,10 +46,18 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
   final applicationBloc = ApplicationBloc();
 
+  // Formatted strings for date button
+  final DateFormat formatter = DateFormat('yyyy-MM-dd');
+  String formattedString = "";
+
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
     setState(() {
       if (args.value is DateTime) {
+        // Set form state
         formData['date'] = args.value;
+
+        // Set button string value
+        formattedString = formatter.format(args.value);
       }
     });
   }
@@ -211,7 +220,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     ),
                   );
                 },
-                child: const Text("Select date"),
+                child: formData["date"] != null
+                    ? Text(formattedString)
+                    : const Text("Select date"),
               ),
             ),
             Container(
@@ -236,7 +247,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     ),
                   );
                 },
-                child: const Text("Select date"),
+                child: const Text("Select location"),
               ),
             ),
           ],

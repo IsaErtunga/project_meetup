@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -57,8 +58,10 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
               backgroundColor: Colors.black,
               icon: const FaIcon(FontAwesomeIcons.comments),
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const UsersPage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ChatScreen()));
               },
               label: const Text("Chat"),
             ),
@@ -93,9 +96,10 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                 ),
               ),
               centerTitle: true,
-              title: Text(
+              title: AutoSizeText(
                 widget.group.groupData["groupName"],
-                style: const TextStyle(color: Colors.white, fontSize: 16),
+                style: const TextStyle(color: Colors.white, fontSize: 14),
+                maxLines: 1,
               ),
             ),
           ),

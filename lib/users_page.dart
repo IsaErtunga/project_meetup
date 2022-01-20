@@ -12,7 +12,7 @@ class UsersPage extends StatelessWidget {
     print("Hej");
     // Navigate to the Chat screen
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ChatScreen(room)));
+        context, MaterialPageRoute(builder: (context) => ChatScreen()));
   }
 
   @override

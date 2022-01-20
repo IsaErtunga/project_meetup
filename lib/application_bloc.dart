@@ -9,7 +9,7 @@ class ApplicationBloc with ChangeNotifier {
 
   List<PlaceSearch> searchResults = [];
   StreamController<PlaceModel> selectedLocation =
-      StreamController<PlaceModel>();
+      StreamController<PlaceModel>.broadcast();
 
   searchPlaces(String searchTerm) async {
     searchResults = await placesService.getAutoComplete(searchTerm);

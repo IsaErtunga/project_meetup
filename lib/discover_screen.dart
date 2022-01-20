@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -83,12 +84,14 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                                 Expanded(
                                   child: Container(
                                     alignment: Alignment.center,
-                                    child: Text(
-                                        (doc.data() as Map<String, dynamic>)[
-                                                "groupName"]
-                                            .toString(),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold)),
+                                    child: AutoSizeText(
+                                      (doc.data() as Map<String, dynamic>)[
+                                              "groupName"]
+                                          .toString(),
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                      maxLines: 1,
+                                    ),
                                   ),
                                 ),
                               ],
