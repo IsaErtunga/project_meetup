@@ -1,9 +1,10 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:project_meetup/open_container_transform_demo.dart';
-import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'group_details_screen.dart';
+import 'create_group_screen.dart';
 
 /// Stateful Widget for bottom navigation bar.
 class DiscoverScreen extends StatefulWidget {
@@ -25,81 +26,98 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () => _refreshGroups(context),
-      child: FutureBuilder<QuerySnapshot>(
-          future: groups.get(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasError) {
-              return const Text("Something went wrong");
-            }
+    return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        heroTag: "btn1",
+        backgroundColor: Colors.black,
+        icon: const FaIcon(FontAwesomeIcons.plus),
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const CreateGroupScreen()));
+        },
+        label: const Text("Create group"),
+      ),
+      body: RefreshIndicator(
+        onRefresh: () => _refreshGroups(context),
+        child: FutureBuilder<QuerySnapshot>(
+            future: groups.get(),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return const Text("Something went wrong");
+              }
 
-            if (snapshot.connectionState == ConnectionState.done) {
-              return GridView.count(
-                crossAxisCount: 2,
-                children: snapshot.data!.docs.map((doc) {
-                  return Hero(
-                      tag: doc.id,
-                      child: Card(
-                        semanticContainer: true,
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        elevation: 5,
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 7, vertical: 7),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: GestureDetector(
-                          child: Column(
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: AspectRatio(
-                                  aspectRatio: 16 / 12,
-                                  child: Image(
-                                    fit: BoxFit.fill,
-                                    image: NetworkImage(
-                                      (doc.data() as Map<String, dynamic>)[
-                                              "groupPicture"]
-                                          .toString(),
+              if (snapshot.connectionState == ConnectionState.done) {
+                return GridView.count(
+                  crossAxisCount: 2,
+                  children: snapshot.data!.docs.map((doc) {
+                    return Hero(
+                        tag: doc.id,
+                        child: Card(
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          elevation: 5,
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 7, vertical: 7),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: GestureDetector(
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: AspectRatio(
+                                    aspectRatio: 16 / 12,
+                                    child: Image(
+                                      fit: BoxFit.fill,
+                                      image: NetworkImage(
+                                        (doc.data() as Map<String, dynamic>)[
+                                                "groupPicture"]
+                                            .toString(),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
+                                Expanded(
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    child: AutoSizeText(
                                       (doc.data() as Map<String, dynamic>)[
                                               "groupName"]
                                           .toString(),
                                       style: const TextStyle(
-                                          fontWeight: FontWeight.bold)),
+                                          fontWeight: FontWeight.bold),
+                                      maxLines: 1,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          onTap: () => {
-                            /*
-                            Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (BuildContext context) {
-                                  return const OpenContainerTransformDemo();
-                                },
-                              ),
-                            )*/
+                              ],
+                            ),
+                            onTap: () => {
+                              /*
+                              Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext context) {
+                                    return const OpenContainerTransformDemo();
+                                  },
+                                ),
+                              )*/
 
-                            Navigator.of(context).push(_createRoute(Group(
-                                doc.id, (doc.data() as Map<String, dynamic>))))
-                          },
-                        ),
-                      ));
-                }).toList(),
-              );
-            }
-            return const CircularProgressIndicator();
-          }),
+                              Navigator.of(context).push(_createRoute(Group(
+                                  doc.id,
+                                  (doc.data() as Map<String, dynamic>))))
+                            },
+                          ),
+                        ));
+                  }).toList(),
+                );
+              }
+              return const CircularProgressIndicator();
+            }),
+      ),
     );
   }
 }

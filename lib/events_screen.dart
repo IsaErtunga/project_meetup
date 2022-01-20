@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 /// Stateful Widget for bottom navigation bar.
 class EventsScreen extends StatefulWidget {
@@ -30,6 +30,14 @@ class _EventsScreenState extends State<EventsScreen> {
       target: LatLng(37.43296265331129, -122.08832357078792),
       tilt: 59.440717697143555,
       zoom: 19.151926040649414);
+
+  final Marker marker = Marker(
+      markerId: MarkerId("ds"),
+      position: LatLng(37.42796133580664, -122.085749655962));
+
+  final Marker marker2 = Marker(
+      markerId: MarkerId("ds"),
+      position: LatLng(38.42796133580664, -122.085749655962));
 
   @override
   Widget build(BuildContext context) {
@@ -114,6 +122,7 @@ class _EventsScreenState extends State<EventsScreen> {
       ),
       body: Center(
         child: GoogleMap(
+          markers: <Marker>{marker, marker2},
           mapType: MapType.normal,
           initialCameraPosition: _kGooglePlex,
           onMapCreated: (GoogleMapController controller) {

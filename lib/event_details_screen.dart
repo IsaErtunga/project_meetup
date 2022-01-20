@@ -21,7 +21,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("hej"),
+//        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFFF3F5F7),
+        elevation: 0,
+        title: Text(""),
+        iconTheme: IconThemeData(
+          color: Colors.black, //change your color here
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: () {
@@ -35,14 +41,26 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 return const Text("Something went wrong");
               }
               if (snapshot.connectionState == ConnectionState.done) {
+                Map<String, dynamic> data =
+                    snapshot.data!.data() as Map<String, dynamic>;
                 return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ElevatedButton(
-                        onPressed: () {
-                          print(snapshot.data!["eventName"]);
-                        },
-                        child: Text("Hej")),
-                    Text("hej"),
+                    Container(
+                      alignment: Alignment.center,
+                      margin: const EdgeInsets.only(left: 0, top: 0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Image(
+                            height: 150,
+                            width: 150,
+                            image: NetworkImage(data["eventPicture"])),
+                      ),
+                    ),
+                    Text(
+                      data["eventName"],
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
+                    ),
                   ],
                 );
               }

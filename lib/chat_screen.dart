@@ -12,18 +12,19 @@ String randomString() {
 }
 
 class ChatScreen extends StatefulWidget {
-  final types.Room room;
-  const ChatScreen(this.room, {Key? key}) : super(key: key);
+  //final types.Room room;
+  const ChatScreen({Key? key}) : super(key: key);
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  final String roomId = "jpbwkhXvwavvoTTALWCw";
   void _handleSendPressed(types.PartialText message) {
     FirebaseChatCore.instance.sendMessage(
       message,
-      widget.room.id,
+      roomId,
     );
   }
 
@@ -35,25 +36,37 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: Colors.black,
       ),
       body: StreamBuilder<types.Room>(
-        initialData: widget.room,
-        stream: FirebaseChatCore.instance.room(widget.room.id),
+        stream: FirebaseChatCore.instance.room(roomId),
         builder: (context, snapshot) {
-          return StreamBuilder<List<types.Message>>(
-            initialData: const [],
-            stream: FirebaseChatCore.instance.messages(snapshot.data!),
-            builder: (context, snapshot) {
-              return SafeArea(
-                bottom: false,
-                child: Chat(
-                  messages: snapshot.data ?? [],
-                  onSendPressed: _handleSendPressed,
-                  user: types.User(
-                    id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
-                  ),
-                ),
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else if (snapshot.connectionState == ConnectionState.active ||
+              snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              return const Text('Error');
+            } else if (snapshot.hasData) {
+              return StreamBuilder<List<types.Message>>(
+                initialData: const [],
+                stream: FirebaseChatCore.instance.messages(snapshot.data!),
+                builder: (context, snapshot) {
+                  return SafeArea(
+                    bottom: false,
+                    child: Chat(
+                      messages: snapshot.data ?? [],
+                      onSendPressed: _handleSendPressed,
+                      user: types.User(
+                        id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
+                      ),
+                    ),
+                  );
+                },
               );
-            },
-          );
+            } else {
+              return const Text('Empty data');
+            }
+          } else {
+            return const CircularProgressIndicator();
+          }
         },
       ),
     );
