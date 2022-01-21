@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +8,7 @@ import 'package:project_meetup/place_model.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'dart:async';
-import 'package:google_maps_webservice/places.dart';
+import 'package:project_meetup/places_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class GoogleMapsScreen extends StatefulWidget {
@@ -22,6 +23,7 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
   // Controller for Google Maps
   final Completer<GoogleMapController> _controller = Completer();
   late StreamSubscription locationSubscription;
+  final placesService = PlacesService();
 
   @override
   void initState() {
@@ -127,9 +129,15 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
                           height: 40,
                           child: Row(
                             children: [
-                              Text(result.description),
+                              Expanded(
+                                  child: AutoSizeText(result.description,
+                                      maxLines: 1)),
                               IconButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    var place = await placesService
+                                        .getPlace(result.placeId);
+                                    // print(place.geometry.location.lat);
+
                                     applicationBloc
                                         .setSelectedLocation(result.placeId);
                                   },
