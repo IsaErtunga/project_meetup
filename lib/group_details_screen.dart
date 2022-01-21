@@ -33,97 +33,93 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: Container(
-        margin: const EdgeInsets.only(
-          left: 35,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            FloatingActionButton.extended(
-              heroTag: "btn1",
-              backgroundColor: Colors.black,
-              icon: const FaIcon(FontAwesomeIcons.plus),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => CreateEventScreen(widget.group)));
-              },
-              label: const Text("Add event"),
-            ),
-            FloatingActionButton.extended(
-              heroTag: "btn2",
-              backgroundColor: Colors.black,
-              icon: const FaIcon(FontAwesomeIcons.comments),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ChatScreen()));
-              },
-              label: const Text("Chat"),
-            ),
-          ],
-        ),
-      ),
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            forceElevated: true,
-            expandedHeight: 200,
-            pinned: true,
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(30.0),
-                    bottomRight: Radius.circular(30.0))),
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                alignment: Alignment.center,
-                margin: const EdgeInsets.only(left: 0, top: 0),
-                child: Hero(
-                  tag: widget.group.id,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Image(
-                        height: 150,
-                        width: 150,
-                        image: NetworkImage(
-                            widget.group.groupData["groupPicture"])),
+    return FutureBuilder<DocumentSnapshot>(
+        future: groups.doc(widget.group.id).get(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Text("Something went wrong");
+          }
+
+          if (snapshot.hasData && !snapshot.data!.exists) {
+            return Text("Document does not exist");
+          }
+
+          if (snapshot.connectionState == ConnectionState.done) {
+            Map<String, dynamic> groupdata =
+                snapshot.data!.data() as Map<String, dynamic>;
+            return Scaffold(
+                floatingActionButton: Container(
+                  margin: const EdgeInsets.only(
+                    left: 35,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      FloatingActionButton.extended(
+                        heroTag: "btn1",
+                        backgroundColor: Colors.black,
+                        icon: const FaIcon(FontAwesomeIcons.plus),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      CreateEventScreen(widget.group)));
+                        },
+                        label: const Text("Add event"),
+                      ),
+                      FloatingActionButton.extended(
+                        heroTag: "btn2",
+                        backgroundColor: Colors.black,
+                        icon: const FaIcon(FontAwesomeIcons.comments),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const ChatScreen()));
+                        },
+                        label: const Text("Chat"),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              centerTitle: true,
-              title: AutoSizeText(
-                widget.group.groupData["groupName"],
-                style: const TextStyle(color: Colors.white, fontSize: 14),
-                maxLines: 1,
-              ),
-            ),
-          ),
-          SliverFillRemaining(
-            child: FutureBuilder<DocumentSnapshot>(
-              future: groups.doc(widget.group.id).get(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<DocumentSnapshot> snapshot) {
-                // If something went wrong
-                if (snapshot.hasError) {
-                  return const Text("Something went wrong");
-                }
-
-                // If document doesn't exist
-                if (snapshot.hasData && !snapshot.data!.exists) {
-                  return const Text("Document does not exist");
-                }
-
-                if (snapshot.connectionState == ConnectionState.done) {
-                  Map<String, dynamic> data =
-                      snapshot.data!.data() as Map<String, dynamic>;
-
-                  // Return actual list
-                  return Column(children: [
+                body: CustomScrollView(slivers: <Widget>[
+                  SliverAppBar(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    forceElevated: true,
+                    expandedHeight: 200,
+                    pinned: true,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(30.0),
+                            bottomRight: Radius.circular(30.0))),
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: Container(
+                        alignment: Alignment.center,
+                        margin: const EdgeInsets.only(left: 0, top: 0),
+                        child: Hero(
+                          tag: widget.group.id,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10.0),
+                            child: Image(
+                                height: 150,
+                                width: 150,
+                                image: NetworkImage(groupdata["groupPicture"])),
+                          ),
+                        ),
+                      ),
+                      centerTitle: true,
+                      title: AutoSizeText(
+                        groupdata["groupName"],
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 14),
+                        maxLines: 1,
+                      ),
+                    ),
+                  ),
+                  SliverFillRemaining(
+                      child: Column(children: [
                     Container(
                       alignment: Alignment.centerLeft,
                       margin: const EdgeInsets.symmetric(
@@ -134,14 +130,14 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                             fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    data["events"].isNotEmpty
+                    groupdata["events"].isNotEmpty
                         ? GridView.count(
                             padding: const EdgeInsets.only(top: 0),
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             crossAxisCount: 2,
-                            children: data["events"].map<Widget>((doc) {
+                            children: groupdata["events"].map<Widget>((doc) {
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.of(context)
@@ -197,13 +193,14 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                             fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    data["members"].isNotEmpty
+                    groupdata["members"].isNotEmpty
                         ? ListView(
                             padding: const EdgeInsets.only(top: 0),
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            children: data["members"].map<Widget>((document) {
+                            children:
+                                groupdata["members"].map<Widget>((document) {
                               return GestureDetector(
                                 onTap: () {
                                   print(document);
@@ -248,17 +245,13 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                             "No members",
                             style: TextStyle(fontSize: 24),
                           )
-                  ]);
-                }
+                  ]))
+                ]));
+          }
 
-                // TODO loading indicator
-                return const Text("loading");
-              },
-            ),
-          )
-        ],
-      ),
-    );
+          // TODO loading indicator
+          return const Text("loading");
+        });
   }
 }
 

@@ -31,7 +31,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     return events.doc(widget.event.eventId).get();
   }
 
-  final AsyncMemoizer _memoizer = AsyncMemoizer();
+  // final AsyncMemoizer _memoizer = AsyncMemoizer();
 
   String _eventAddress = "";
   String _eventAddressSecondLine = "";
@@ -60,15 +60,19 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     var hostingGroupID = "";
     var docSnapshot = await events.doc(widget.event.eventId).get();
     if (docSnapshot.exists) {
-      Map<String, dynamic>? data = docSnapshot.data() as Map<String, dynamic>;
-      hostingGroupID = data['hostingGroupID'][0];
+      Map<String, dynamic>? eventdata =
+          docSnapshot.data() as Map<String, dynamic>;
+      hostingGroupID = eventdata['hostingGroup'][0]['id'];
       print(hostingGroupID);
     }
     setState(() {
       _hostingGroupID = hostingGroupID;
       print(_hostingGroupID);
+
+      //to do: refresh the profile screen
     });
 
+    //edit this to add _hostingGroupID to 'myGroups' array of map
     return users.doc(auth.currentUser!.uid).update({
       'myGroups': FieldValue.arrayUnion([_hostingGroupID])
     });
@@ -111,11 +115,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     String eventAdressSecondLine = "${postalCode} ${locality}";
     //print(eventAdress);
 
-    initState() {
+    /*
+    setState(() {
       _eventAddress = eventAdress;
       _eventAddressSecondLine = eventAdressSecondLine;
-    }
-
+    });
+    */
     print(_eventAddress);
   }
 
@@ -137,7 +142,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             Map<String, dynamic> eventData =
                 snapshot.data!.data() as Map<String, dynamic>;
 
-            _getEventAdress(eventData["location"]);
+            // _getEventAdress(eventData["location"]);
             return Scaffold(
               backgroundColor: Colors.white,
               body: CustomScrollView(
@@ -231,84 +236,58 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               alignment: Alignment.center,
                               height: 100,
                               // width: 200,
-                              child: eventData["hostingGroupID"].isNotEmpty
+                              child: eventData["hostingGroup"].isNotEmpty
                                   ? ListView(
                                       /*   gridDelegate:
                                           SliverGridDelegateWithFixedCrossAxisCount(
                                               crossAxisCount: 1),*/
                                       padding: const EdgeInsets.only(
                                           left: 40, right: 40),
-                                      children: eventData["hostingGroupID"]
-                                          .map<Widget>((document) {
-                                        return FutureBuilder<DocumentSnapshot>(
-                                            future: groups.doc(document).get(),
-                                            builder: (BuildContext context,
-                                                AsyncSnapshot<DocumentSnapshot>
-                                                    snapshot) {
-                                              if (snapshot.hasError) {
-                                                return Text(
-                                                    "Something went wrong");
-                                              }
-
-                                              if (snapshot.hasData &&
-                                                  !snapshot.data!.exists) {
-                                                return Text(
-                                                    "Document does not exist");
-                                              }
-
-                                              if (snapshot.connectionState ==
-                                                  ConnectionState.done) {
-                                                Map<String, dynamic> groupData =
-                                                    snapshot.data!.data()
-                                                        as Map<String, dynamic>;
-                                                return GestureDetector(
-                                                  onTap: () => {
-                                                    Navigator.of(context).push(
-                                                        _createRouteToGroup(
-                                                            Group(document,
-                                                                groupData)))
-                                                  },
-                                                  child: Hero(
-                                                    tag: document,
-                                                    child: SizedBox(
-                                                      height: 100,
-                                                      child: Row(
-                                                        children: <Widget>[
-                                                          CircleAvatar(
-                                                            radius: 30,
-                                                            backgroundImage:
-                                                                NetworkImage(groupData[
-                                                                        "groupPicture"]
-                                                                    .toString()),
-                                                          ),
-                                                          SizedBox(width: 10),
-                                                          //edit join button: color change after group is joined, write function that checks if user is already group member; base the button color on this info
-                                                          SizedBox(
-                                                            width: 150,
-                                                            child: Text(groupData[
-                                                                    "groupName"]
-                                                                .toString()),
-                                                          ),
-                                                          SizedBox(width: 5),
-                                                          OutlinedButton(
-                                                              onPressed: () => {
-                                                                    _addUserToGroup(),
-                                                                    print(
-                                                                        'hurensohn $_hostingGroupID')
-                                                                  },
-                                                              child: const Text(
-                                                                  'JOIN',
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .black))),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              }
-                                              return Text("loading");
-                                            });
+                                      children: eventData["hostingGroup"]
+                                          .map<Widget>((hostingGroup) {
+                                        return GestureDetector(
+                                          onTap: () => {
+                                            Navigator.of(context)
+                                                .push(_createRouteToGroup(Group(
+                                              hostingGroup["id"],
+                                            )))
+                                          },
+                                          /* child: Hero(
+                                            tag: hostingGroup["id"],*/
+                                          child: SizedBox(
+                                            height: 100,
+                                            child: Row(
+                                              children: <Widget>[
+                                                CircleAvatar(
+                                                  radius: 30,
+                                                  backgroundImage: NetworkImage(
+                                                      hostingGroup[
+                                                              "groupPicture"]
+                                                          .toString()),
+                                                ),
+                                                SizedBox(width: 10),
+                                                //edit join button: color change after group is joined, write function that checks if user is already group member; base the button color on this info
+                                                SizedBox(
+                                                  width: 150,
+                                                  child: Text(
+                                                      hostingGroup["groupName"]
+                                                          .toString()),
+                                                ),
+                                                SizedBox(width: 5),
+                                                OutlinedButton(
+                                                    onPressed: () => {
+                                                          _addUserToGroup(),
+                                                          print(
+                                                              'hurensohn $_hostingGroupID')
+                                                        },
+                                                    child: const Text('JOIN',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.black))),
+                                              ],
+                                            ),
+                                          ),
+                                        );
                                       }).toList(),
                                     )
                                   : const Text("No group",
@@ -463,59 +442,31 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                         scrollDirection: Axis.vertical,
                                         physics: const BouncingScrollPhysics(),
                                         children: eventData["Participants"]
-                                            .map<Widget>((document) {
-                                          return FutureBuilder<
-                                                  DocumentSnapshot>(
-                                              future: users.doc(document).get(),
-                                              builder: (BuildContext context,
-                                                  AsyncSnapshot<
-                                                          DocumentSnapshot>
-                                                      snapshot) {
-                                                if (snapshot.hasError) {
-                                                  return Text(
-                                                      "something went wrong");
-                                                }
-
-                                                if (snapshot.hasData &&
-                                                    !snapshot.data!.exists) {
-                                                  return Text(
-                                                      "Document does not exist");
-                                                }
-
-                                                if (snapshot.connectionState ==
-                                                    ConnectionState.done) {
-                                                  Map<String, dynamic>
-                                                      userData =
-                                                      snapshot.data!.data()
-                                                          as Map<String,
-                                                              dynamic>;
-                                                  return GestureDetector(
-                                                    onTap: () => {
-                                                      Navigator.of(context).push(
-                                                          _createRouteToUser(
-                                                              User(document)))
-                                                    },
-                                                    child: Hero(
-                                                      tag: document,
-                                                      child: Card(
-                                                        elevation: 3,
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        15.0)),
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        15),
-                                                            /*   border: Border.all(
+                                            .map<Widget>((participant) {
+                                          return GestureDetector(
+                                            onTap: () => {
+                                              Navigator.of(context).push(
+                                                  _createRouteToUser(
+                                                      User(participant["id"])))
+                                            },
+                                            child: Hero(
+                                              tag: participant["id"],
+                                              child: Card(
+                                                elevation: 3,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15.0)),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                    /*   border: Border.all(
                                                               color:
                                                                   Colors.black,
                                                             ),*/
-                                                            /* boxShadow: [
+                                                    /* boxShadow: [
                                                               BoxShadow(
                                                                  color: Colors
                                                                     .grey
@@ -528,57 +479,53 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                                     0), // changes position of shadow
                                                               ),
                                                             ],*/
-                                                            color: Colors
-                                                                .grey[800],
-                                                          ),
-                                                          child: Row(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: <Widget>[
-                                                              Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .all(5)),
-                                                              Container(
-                                                                height: 5 *
-                                                                    SizeConfig
-                                                                        .heightMultiplier,
-                                                                width: 10 *
-                                                                    SizeConfig
-                                                                        .widthMultiplier,
-                                                                decoration: BoxDecoration(
-                                                                    shape: BoxShape
-                                                                        .rectangle,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            15),
-                                                                    image: DecorationImage(
-                                                                        fit: BoxFit
-                                                                            .cover,
-                                                                        image: NetworkImage(
-                                                                            userData["imageUrl"]))),
-                                                              ),
-                                                              SizedBox(
-                                                                  width: 10),
-                                                              Text(
-                                                                '${userData["firstName"]} ${userData["lastName"]}',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
+                                                    color: Colors.grey[800],
+                                                  ),
+                                                  child: Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: <Widget>[
+                                                      Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(5)),
+                                                      Container(
+                                                        height: 5 *
+                                                            SizeConfig
+                                                                .heightMultiplier,
+                                                        width: 10 *
+                                                            SizeConfig
+                                                                .widthMultiplier,
+                                                        decoration: BoxDecoration(
+                                                            shape: BoxShape
+                                                                .rectangle,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15),
+                                                            image: DecorationImage(
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                image: NetworkImage(
+                                                                    participant[
+                                                                        "imageUrl"]))),
                                                       ),
-                                                    ),
-                                                  );
-                                                }
-                                                return Text("loading");
-                                              });
+                                                      SizedBox(width: 10),
+                                                      Text(
+                                                        '${participant["firstName"]} ${participant["lastName"]}',
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
                                         }).toList(),
                                       )
                                     : const Text("No participants",
@@ -599,9 +546,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   }
 }
 
+/*
 class AsyncMemoizer {
   runOnce(Future<void> Function() param0) {}
 }
+*/
 
 Route _createRouteToGroup(data) {
   return PageRouteBuilder(

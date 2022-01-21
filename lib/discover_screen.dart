@@ -107,8 +107,8 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                               )*/
 
                               Navigator.of(context).push(_createRoute(Group(
-                                  doc.id,
-                                  (doc.data() as Map<String, dynamic>))))
+                                doc.id,
+                              )))
                             },
                           ),
                         ));
@@ -145,9 +145,8 @@ Route _createRoute(data) {
 
 class Group {
   final String id;
-  final Map groupData;
 
-  const Group(this.id, this.groupData);
+  const Group(this.id);
 }
 
 class _SmallerCard extends StatelessWidget {

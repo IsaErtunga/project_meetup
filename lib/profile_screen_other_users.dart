@@ -746,13 +746,11 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                       ),
                                                     ),
                                                     onTap: () => {
-                                                      Navigator.of(context).push(
-                                                          _createRoute(Group(
-                                                              document,
-                                                              snapshot.data!
-                                                                      .data()
-                                                                  as Map<String,
-                                                                      dynamic>)))
+                                                      Navigator.of(context)
+                                                          .push(_createRoute(
+                                                              Group(
+                                                        document,
+                                                      )))
                                                     },
                                                   ),
                                                 ));
