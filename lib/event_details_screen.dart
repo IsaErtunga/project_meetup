@@ -31,6 +31,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     return events.doc(widget.event.eventId).get();
   }
 
+  final AsyncMemoizer _memoizer = AsyncMemoizer();
+
   String _eventAddress = "";
   String _eventAddressSecondLine = "";
 
@@ -53,14 +55,49 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   }
 
   String _hostingGroupID = "";
-  //bool _joinHasBeenPressed = false;
 
-  Future<void> _addUserToGroup() {
+  void _addUserToGroup() async {
+    var hostingGroupID = "";
+    var docSnapshot = await events.doc(widget.event.eventId).get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic>? data = docSnapshot.data() as Map<String, dynamic>;
+      hostingGroupID = data['hostingGroupID'][0];
+      print(hostingGroupID);
+    }
+    setState(() {
+      _hostingGroupID = hostingGroupID;
+      print(_hostingGroupID);
+    });
+
     return users.doc(auth.currentUser!.uid).update({
       'myGroups': FieldValue.arrayUnion([_hostingGroupID])
     });
   }
 
+  //bool _joinHasBeenPressed = false;
+
+/*
+  checkIfUserInGroup() async {
+    Object blabla =
+        await users.doc(auth.currentUser!.uid).get("myGroups").then((value) {
+      return value.data();
+    });
+  }
+
+  Future<void> _addUserToGroup() {
+    dynamic blabla = users.doc(auth.currentUser!.uid).get();
+
+    if (blabla["myGroups"].containsNot(_hostingGroupID)) {
+      return Text("you are already a member");
+    } else {
+      return users.doc(auth.currentUser!.uid).update({
+        'myGroups': FieldValue.arrayUnion([_hostingGroupID])
+      });
+    }
+  }
+*/
+
+  //add get() doc snapshot of eventdata, then call the function after @override widget build
   void _getEventAdress(GeoPoint) async {
     var eventPlace =
         await placemarkFromCoordinates(GeoPoint.latitude, GeoPoint.longitude);
@@ -74,10 +111,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     String eventAdressSecondLine = "${postalCode} ${locality}";
     //print(eventAdress);
 
-    setState(() {
+    initState() {
       _eventAddress = eventAdress;
       _eventAddressSecondLine = eventAdressSecondLine;
-    });
+    }
+
+    print(_eventAddress);
   }
 
   @override
@@ -97,7 +136,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           if (snapshot.connectionState == ConnectionState.done) {
             Map<String, dynamic> eventData =
                 snapshot.data!.data() as Map<String, dynamic>;
-            //_getEventAdress(eventData["location"]);
+
+            _getEventAdress(eventData["location"]);
             return Scaffold(
               backgroundColor: Colors.white,
               body: CustomScrollView(
@@ -251,8 +291,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                           ),
                                                           SizedBox(width: 5),
                                                           OutlinedButton(
-                                                              onPressed: () =>
-                                                                  {},
+                                                              onPressed: () => {
+                                                                    _addUserToGroup(),
+                                                                    print(
+                                                                        'hurensohn $_hostingGroupID')
+                                                                  },
                                                               child: const Text(
                                                                   'JOIN',
                                                                   style: TextStyle(
@@ -415,7 +458,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                 crossAxisCount: 2,
                                                 mainAxisSpacing: 15,
                                                 crossAxisSpacing: 15,
-                                                childAspectRatio: 0.8),
+                                                childAspectRatio: 2.2),
                                         padding: const EdgeInsets.all(8),
                                         scrollDirection: Axis.vertical,
                                         physics: const BouncingScrollPhysics(),
@@ -454,45 +497,81 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                     },
                                                     child: Hero(
                                                       tag: document,
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
+                                                      child: Card(
+                                                        elevation: 3,
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15.0)),
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15),
+                                                            /*   border: Border.all(
+                                                              color:
+                                                                  Colors.black,
+                                                            ),*/
+                                                            /* boxShadow: [
+                                                              BoxShadow(
+                                                                 color: Colors
+                                                                    .grey
+                                                                    .withOpacity(
+                                                                        0.5),
+                                                                spreadRadius: 1,
+                                                                blurRadius: 5, 
+                                                                offset: Offset(
+                                                                    0,
+                                                                    0), // changes position of shadow
+                                                              ),
+                                                            ],*/
+                                                            color: Colors
+                                                                .grey[800],
+                                                          ),
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: <Widget>[
+                                                              Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(5)),
+                                                              Container(
+                                                                height: 5 *
+                                                                    SizeConfig
+                                                                        .heightMultiplier,
+                                                                width: 10 *
+                                                                    SizeConfig
+                                                                        .widthMultiplier,
+                                                                decoration: BoxDecoration(
+                                                                    shape: BoxShape
+                                                                        .rectangle,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
                                                                             15),
-                                                                border:
-                                                                    Border.all(
-                                                                  color: Colors
-                                                                      .black,
-                                                                )),
-                                                        child: Row(
-                                                          children: <Widget>[
-                                                            Container(
-                                                              height: 5 *
-                                                                  SizeConfig
-                                                                      .heightMultiplier,
-                                                              width: 10 *
-                                                                  SizeConfig
-                                                                      .widthMultiplier,
-                                                              decoration: BoxDecoration(
-                                                                  shape: BoxShape
-                                                                      .rectangle,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              30),
-                                                                  image: DecorationImage(
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                      image: NetworkImage(
-                                                                          userData[
-                                                                              "imageUrl"]))),
-                                                            ),
-                                                            SizedBox(width: 10),
-                                                            Text(
-                                                                '${userData["firstName"]} ${userData["lastName"]}'),
-                                                          ],
+                                                                    image: DecorationImage(
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                        image: NetworkImage(
+                                                                            userData["imageUrl"]))),
+                                                              ),
+                                                              SizedBox(
+                                                                  width: 10),
+                                                              Text(
+                                                                '${userData["firstName"]} ${userData["lastName"]}',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
@@ -518,6 +597,10 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           return Center(child: const CircularProgressIndicator());
         });
   }
+}
+
+class AsyncMemoizer {
+  runOnce(Future<void> Function() param0) {}
 }
 
 Route _createRouteToGroup(data) {
