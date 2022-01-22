@@ -5,9 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:project_meetup/create_event_screen.dart';
 import 'package:project_meetup/event_details_screen.dart';
-import 'package:project_meetup/users_page.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:project_meetup/chat_screen.dart';
 
 import 'discover_screen.dart';
@@ -250,7 +247,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
           }
 
           // TODO loading indicator
-          return const Text("loading");
+          return const Text("");
         });
   }
 }

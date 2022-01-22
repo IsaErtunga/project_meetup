@@ -23,6 +23,9 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
   final Completer<GoogleMapController> _controller = Completer();
   late StreamSubscription locationSubscription;
 
+  // String for saving placeid
+  String placeId = "";
+
   @override
   void initState() {
     final applicationBloc =
@@ -69,7 +72,6 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
                 },
                 markers: <Marker>{marker},
                 onTap: (latLng) {
-                  print(latLng);
                   setState(() {
                     marker = Marker(
                       flat: true,
@@ -78,6 +80,7 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
                       infoWindow: InfoWindow(
                           title: "Choose location",
                           onTap: () {
+                            applicationBloc.setApprovedLocation(latLng);
                             Navigator.pop(context, 'Yep!');
                           }),
                     );

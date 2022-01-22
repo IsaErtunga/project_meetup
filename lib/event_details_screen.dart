@@ -232,7 +232,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               ),
                             ),
                             SizedBox(height: 1.5 * SizeConfig.heightMultiplier),
-                            Container(
+                            /*Container(
                               alignment: Alignment.center,
                               height: 100,
                               // width: 200,
@@ -292,7 +292,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                     )
                                   : const Text("No group",
                                       style: TextStyle(fontSize: 24)),
-                            ),
+                            ),*/
                             SizedBox(height: 3 * SizeConfig.heightMultiplier),
                             Padding(
                               padding:
@@ -595,7 +595,6 @@ class User {
 
   const User(this.userId);
 }
-
 
 /*
 class _MyCustomAppBar extends StatelessWidget {

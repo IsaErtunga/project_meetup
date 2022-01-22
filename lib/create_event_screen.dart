@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_meetup/application_bloc.dart';
 import 'package:project_meetup/google_maps_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -22,14 +23,6 @@ class CreateEventScreen extends StatefulWidget {
 class _CreateEventScreenState extends State<CreateEventScreen> {
   CollectionReference events = FirebaseFirestore.instance.collection('Events');
 
-  // Controller for Google Maps
-  Completer<GoogleMapController> _controller = Completer();
-
-  static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
-
   final _formKey = GlobalKey<FormState>();
 
   final Map<String, dynamic> formData = {
@@ -43,8 +36,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     "attendingUsers": [],
     "numberOfAttendees": null,
   };
-
-  final applicationBloc = ApplicationBloc();
 
   // Formatted strings for date button
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -74,6 +65,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final applicationBloc = Provider.of<ApplicationBloc>(context);
     return Scaffold(
       backgroundColor: Colors.teal,
       appBar: AppBar(
@@ -92,10 +84,13 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
           ),
           onPressed: () {
+            setState(() {
+              formData["location"] = applicationBloc.approvedLocation;
+            });
             print('Submitting form');
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save(); //onSaved is called!
-              addEvent(widget.group.id);
+              //addEvent(widget.group.id);
             }
           },
           child: const Text("Add event"),
@@ -160,27 +155,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   });
                 },
               ),
-            ),
-            Container(
-              margin:
-                  const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-              child: TextField(
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    labelText: "Location",
-                    labelStyle: const TextStyle(color: Colors.white),
-                    floatingLabelBehavior: FloatingLabelBehavior.never,
-                    filled: true,
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                  onChanged: (value) {
-                    applicationBloc.searchPlaces(value);
-                    applicationBloc.searchResults.forEach((element) {
-                      print(element.description);
-                    });
-                  }),
             ),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 20.0),
