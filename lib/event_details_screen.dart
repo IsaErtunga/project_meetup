@@ -72,9 +72,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       //to do: refresh the profile screen
     });
 
-    //edit this to add _hostingGroupID to 'myGroups' array of map
+    /*  users.doc(auth.currentUser!.uid).get().then((DocumentSnapshot ds) {
+      if (ds["myGroups"].contains(_hostingGroupID)) {
+        */
+    //edit this so the function checks wether there is already a map in the myGroups array that contains the hostingGroupID
     return users.doc(auth.currentUser!.uid).update({
-      'myGroups': FieldValue.arrayUnion([_hostingGroupID])
+      'myGroups': FieldValue.arrayUnion([
+        {'id': _hostingGroupID}
+      ])
     });
   }
 
@@ -449,24 +454,21 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                   _createRouteToUser(
                                                       User(participant["id"])))
                                             },
-                                            child: Hero(
-                                              tag: participant["id"],
-                                              child: Card(
-                                                elevation: 3,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15.0)),
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15),
-                                                    /*   border: Border.all(
+                                            child: Card(
+                                              elevation: 3,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15.0)),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  /*   border: Border.all(
                                                               color:
                                                                   Colors.black,
                                                             ),*/
-                                                    /* boxShadow: [
+                                                  /* boxShadow: [
                                                               BoxShadow(
                                                                  color: Colors
                                                                     .grey
@@ -479,18 +481,19 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                                     0), // changes position of shadow
                                                               ),
                                                             ],*/
-                                                    color: Colors.grey[800],
-                                                  ),
-                                                  child: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(5)),
-                                                      Container(
+                                                  color: Colors.grey[800],
+                                                ),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(5)),
+                                                    Hero(
+                                                      tag: participant["id"],
+                                                      child: Container(
                                                         height: 5 *
                                                             SizeConfig
                                                                 .heightMultiplier,
@@ -511,17 +514,16 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                                     participant[
                                                                         "imageUrl"]))),
                                                       ),
-                                                      SizedBox(width: 10),
-                                                      Text(
-                                                        '${participant["firstName"]} ${participant["lastName"]}',
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ],
-                                                  ),
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    Text(
+                                                      '${participant["firstName"]} ${participant["lastName"]}',
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ),

@@ -55,7 +55,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   late Size _safeAreaSize;
 
-  int _socialProgressIndex = 3;
+  void calculateSocialProgressIndex() {
+    users.doc(auth.currentUser!.uid).get().then((DocumentSnapshot ds) {
+      if (ds['attendedEvents'].length <= 5) {
+        print(ds['attendedEvents'].length);
+      }
+    });
+  }
+
+  int _socialProgressIndex = 1;
 
   socialProgressView _getStepProgress() {
     return socialProgressView(
@@ -135,6 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // CollectionReference users = FirebaseFirestore.instance.collection('users');
     var mediaQD = MediaQuery.of(context);
     _safeAreaSize = mediaQD.size;
+    calculateSocialProgressIndex();
     return FutureBuilder<DocumentSnapshot>(
       future: users.doc(auth.currentUser!.uid).get(),
       builder:
@@ -157,10 +166,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               physics: const BouncingScrollPhysics(),
               slivers: <Widget>[
                 SliverAppBar(
-                  leading: IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.black),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
+                  leading: BackButton(color: Colors.black
+                      // icon: Icon(Icons.arrow_back, color: Colors.black),
+                      // onPressed: () => Navigator.of(context).pop(),
+                      ),
                   backgroundColor: Colors.white, //const Color(0xffF8F8FA),
                   forceElevated: true,
                   expandedHeight: 200,
@@ -622,12 +631,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       children: data["myGroups"]
                                           .map<Widget>((myGroups) {
                                         return Flexible(
-                                            child: InkWell(
-                                          splashColor: Colors.transparent,
-                                          //onTap: callback,
-                                          child: GestureDetector(
-                                            child: Hero(
-                                              tag: myGroups["id"],
+                                          child: InkWell(
+                                            splashColor: Colors.transparent,
+                                            //onTap: callback,
+                                            child: GestureDetector(
+                                              /*   child: Hero(
+                                              tag: myGroups["id"],*/
                                               child: SizedBox(
                                                 height: 280,
                                                 child: Stack(
@@ -786,7 +795,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               )))
                                             },
                                           ),
-                                        ));
+                                        );
                                       }).toList(),
                                     )
                                   : const Text(
