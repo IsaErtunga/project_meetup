@@ -170,7 +170,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                         Row(
                                           children: <Widget>[
                                             Text(
-                                              data["University"],
+                                              data["university"],
                                               style: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 1.5 *

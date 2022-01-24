@@ -233,7 +233,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         Row(
                                           children: <Widget>[
                                             Text(
-                                              data["University"],
+                                              data["university"],
                                               style: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 1.5 *

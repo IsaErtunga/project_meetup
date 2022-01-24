@@ -58,12 +58,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
   void _addUserToGroup() async {
     var hostingGroupID = "";
+    var groupName = "";
+    var groupPicture = "";
+    List groupMembersList = [];
     var docSnapshot = await events.doc(widget.event.eventId).get();
     if (docSnapshot.exists) {
       Map<String, dynamic>? eventdata =
           docSnapshot.data() as Map<String, dynamic>;
-      hostingGroupID = eventdata['hostingGroup'][0]['id'];
-      print(hostingGroupID);
+      hostingGroupID = eventdata['hostingGroup']['groupId'];
     }
     setState(() {
       _hostingGroupID = hostingGroupID;
@@ -72,13 +74,24 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       //to do: refresh the profile screen
     });
 
-    /*  users.doc(auth.currentUser!.uid).get().then((DocumentSnapshot ds) {
-      if (ds["myGroups"].contains(_hostingGroupID)) {
-        */
-    //edit this so the function checks wether there is already a map in the myGroups array that contains the hostingGroupID
+    var docSnapshot2 = await groups.doc(_hostingGroupID).get();
+    if (docSnapshot2.exists) {
+      Map<String, dynamic>? groupsData =
+          docSnapshot2.data() as Map<String, dynamic>;
+
+      groupName = groupsData['groupName'];
+      groupPicture = groupsData["groupPicture"];
+      groupMembersList = groupsData["members"];
+    }
+
     return users.doc(auth.currentUser!.uid).update({
       'myGroups': FieldValue.arrayUnion([
-        {'id': _hostingGroupID}
+        {
+          'id': _hostingGroupID,
+          'groupName': groupName,
+          'groupPicture': groupPicture,
+          'membersCount': groupMembersList.length
+        }
       ])
     });
   }
@@ -238,62 +251,48 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             ),
                             SizedBox(height: 1.5 * SizeConfig.heightMultiplier),
                             Container(
-                              alignment: Alignment.center,
                               height: 100,
                               // width: 200,
                               child: eventData["hostingGroup"].isNotEmpty
-                                  ? ListView(
-                                      /*   gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisCount: 1),*/
-                                      padding: const EdgeInsets.only(
-                                          left: 40, right: 40),
-                                      children: eventData["hostingGroup"]
-                                          .map<Widget>((hostingGroup) {
-                                        return GestureDetector(
-                                          onTap: () => {
-                                            Navigator.of(context)
-                                                .push(_createRouteToGroup(Group(
-                                              hostingGroup["id"],
-                                            )))
-                                          },
-                                          /* child: Hero(
-                                            tag: hostingGroup["id"],*/
-                                          child: SizedBox(
+                                  ? SizedBox.expand(
+                                      child: GestureDetector(
+                                        onTap: () => {
+                                          Navigator.of(context)
+                                              .push(_createRouteToGroup(Group(
+                                            eventData["hostingGroup"]
+                                                ["groupId"],
+                                          )))
+                                        },
+                                        child: SizedBox(
                                             height: 100,
                                             child: Row(
-                                              children: <Widget>[
-                                                CircleAvatar(
-                                                  radius: 30,
-                                                  backgroundImage: NetworkImage(
-                                                      hostingGroup[
-                                                              "groupPicture"]
-                                                          .toString()),
-                                                ),
-                                                SizedBox(width: 10),
-                                                //edit join button: color change after group is joined, write function that checks if user is already group member; base the button color on this info
-                                                SizedBox(
-                                                  width: 150,
-                                                  child: Text(
-                                                      hostingGroup["groupName"]
-                                                          .toString()),
-                                                ),
-                                                SizedBox(width: 5),
-                                                OutlinedButton(
-                                                    onPressed: () => {
-                                                          _addUserToGroup(),
-                                                          print(
-                                                              'hurensohn $_hostingGroupID')
-                                                        },
-                                                    child: const Text('JOIN',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.black))),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  CircleAvatar(
+                                                    radius: 30,
+                                                    backgroundImage: NetworkImage(
+                                                        eventData['hostingGroup']
+                                                                ['groupPicture']
+                                                            .toString()),
+                                                  ),
+                                                  SizedBox(width: 15),
+                                                  SizedBox(
+                                                    child: Text(eventData[
+                                                                'hostingGroup']
+                                                            ['groupName']
+                                                        .toString()),
+                                                  ),
+                                                  SizedBox(width: 20),
+                                                  OutlinedButton(
+                                                      onPressed: () =>
+                                                          {_addUserToGroup()},
+                                                      child: const Text('JOIN',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black))),
+                                                ])),
+                                      ),
                                     )
                                   : const Text("No group",
                                       style: TextStyle(fontSize: 24)),
@@ -315,7 +314,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                               color: Colors.black, size: 20),
                                           SizedBox(width: 10),
                                           Text((DateFormat.yMMMEd().format(
-                                                  eventData["Date_Time"]
+                                                  eventData["dateTime"]
                                                       .toDate()))
                                               .toString()),
                                         ],
@@ -329,7 +328,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                       children: <Widget>[
                                         Text(
                                           (DateFormat.Hm().format(
-                                                  eventData["Date_Time"]
+                                                  eventData["dateTime"]
                                                       .toDate()))
                                               .toString(),
                                           style: TextStyle(color: Colors.grey),
@@ -435,7 +434,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             Expanded(
                               child: Container(
                                 height: 50 * SizeConfig.heightMultiplier,
-                                child: eventData["Participants"].isNotEmpty
+                                child: eventData["participants"].isNotEmpty
                                     ? GridView(
                                         gridDelegate:
                                             SliverGridDelegateWithFixedCrossAxisCount(
@@ -446,13 +445,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                         padding: const EdgeInsets.all(8),
                                         scrollDirection: Axis.vertical,
                                         physics: const BouncingScrollPhysics(),
-                                        children: eventData["Participants"]
+                                        children: eventData["participants"]
                                             .map<Widget>((participant) {
                                           return GestureDetector(
                                             onTap: () => {
                                               Navigator.of(context).push(
-                                                  _createRouteToUser(
-                                                      User(participant["id"])))
+                                                  _createRouteToUser(User(
+                                                      participant["userId"])))
                                             },
                                             child: Card(
                                               elevation: 3,
@@ -492,7 +491,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                             const EdgeInsets
                                                                 .all(5)),
                                                     Hero(
-                                                      tag: participant["id"],
+                                                      tag:
+                                                          participant["userId"],
                                                       child: Container(
                                                         height: 5 *
                                                             SizeConfig
@@ -512,7 +512,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                                     .cover,
                                                                 image: NetworkImage(
                                                                     participant[
-                                                                        "imageUrl"]))),
+                                                                        "profilePicture"]))),
                                                       ),
                                                     ),
                                                     SizedBox(width: 10),
