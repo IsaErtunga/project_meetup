@@ -47,6 +47,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
   final applicationBloc = ApplicationBloc();
 
+  bool _pressed = false;
+
   // Formatted strings for date button
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
   String formattedString = "";
@@ -76,32 +78,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.deepPurpleAccent[400],
+      backgroundColor: Colors.deepPurple[800],
       appBar: AppBar(
-        backgroundColor: Colors.deepPurpleAccent[400],
+        backgroundColor: Colors.deepPurple[800],
         elevation: 0,
         title: Text("Create event"),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Container(
-        margin: const EdgeInsets.symmetric(vertical: 20.0),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            shadowColor: Colors.transparent,
-            primary: Colors.white24,
-            textStyle: const TextStyle(
-                color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
-            padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
-          ),
-          onPressed: () {
-            print('Submitting form');
-            if (_formKey.currentState!.validate()) {
-              _formKey.currentState!.save(); //onSaved is called!
-              addEvent(widget.group.id);
-            }
-          },
-          child: const Text("Publish event"),
-        ),
       ),
       body: Form(
         key: _formKey,
@@ -207,9 +188,10 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         borderSide: BorderSide(color: const Color(0xFFFFEBEE)),
                         borderRadius: BorderRadius.all(Radius.circular(25))),
                     focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.greenAccent, width: 1.5),
-                        borderRadius: BorderRadius.all(Radius.circular(25))),
+                      borderSide:
+                          BorderSide(color: Colors.greenAccent, width: 1.5),
+                      borderRadius: BorderRadius.all(Radius.circular(25)),
+                    ),
                     prefixIcon: Icon(
                       Icons.edit_location_outlined,
                       color: Colors.greenAccent,
@@ -228,7 +210,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    primary: Colors.white,
+                    primary: Colors.transparent,
+                    elevation: 0,
                     minimumSize: const Size.fromHeight(50),
                     textStyle: const TextStyle(
                         color: Colors.black,
@@ -237,7 +220,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 35, vertical: 15),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25))),
+                        borderRadius: BorderRadius.circular(25)),
+                    side: BorderSide(color: Color(0xFFFFEBEE))),
                 onPressed: () {
                   showCupertinoModalBottomSheet(
                     context: context,
@@ -263,10 +247,21 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     ),
                   );
                 },
-                child: formData["date"] != null
-                    ? Text(formattedString)
-                    : const Text("SELECT DATE",
-                        style: TextStyle(color: Colors.black)),
+                child: Stack(
+                  children: <Widget>[
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Icon(Icons.calendar_today_rounded,
+                            color: Colors.greenAccent)),
+                    Align(
+                      alignment: Alignment.center,
+                      child: formData["date"] != null
+                          ? Text(formattedString)
+                          : Text("SELECT DATE",
+                              style: TextStyle(color: Colors.greenAccent)),
+                    ),
+                  ],
+                ),
               ),
             ),
             Container(
@@ -274,16 +269,19 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    primary: Colors.white,
-                    minimumSize: const Size.fromHeight(50),
-                    textStyle: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 35, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25))),
+                  primary: Colors.transparent,
+                  elevation: 0,
+                  minimumSize: const Size.fromHeight(50),
+                  textStyle: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25)),
+                  side: BorderSide(color: const Color(0xFFFFEBEE)),
+                ),
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
@@ -293,18 +291,59 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     ),
                   );
                 },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: Stack(
                   children: <Widget>[
-                    Expanded(
-                        flex: 1,
+                    Align(
+                        alignment: Alignment.centerLeft,
                         child: Icon(Icons.location_on_outlined,
                             color: Colors.greenAccent)),
-                    Expanded(
-                      flex: 2,
-                      child: const Text(
+                    Align(
+                      alignment: Alignment.center,
+                      child: Text(
                         "SELECT LOCATION",
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(color: Colors.greenAccent),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              margin:
+                  const EdgeInsets.symmetric(vertical: 60.0, horizontal: 10),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  side: BorderSide(color: const Color(0xFFFFEBEE)),
+                  minimumSize: const Size.fromHeight(50),
+                  primary: Colors.white30,
+                  textStyle: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
+                ),
+                onPressed: () {
+                  print('Submitting form');
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save(); //onSaved is called!
+                    addEvent(widget.group.id);
+                  }
+                },
+                child: Stack(
+                  children: <Widget>[
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Icon(Icons.publish_rounded,
+                            color: Colors.greenAccent)),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "PUBLISH EVENT",
+                        style: TextStyle(color: Colors.greenAccent),
                       ),
                     ),
                   ],
