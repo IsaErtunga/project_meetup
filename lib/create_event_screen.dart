@@ -10,7 +10,6 @@ import 'package:intl/intl.dart';
 import 'dart:async';
 import 'discover_screen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-//import 'package:form_bloc/form_bloc.dart';
 
 class CreateEventScreen extends StatefulWidget {
   final Group group;
@@ -78,9 +77,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.deepPurple[800],
+      resizeToAvoidBottomInset:
+          false, //used to ovoid bottomoverflow, but now button does not move above keyboard anymore at all
+      backgroundColor: Colors.deepPurple[700],
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple[800],
+        backgroundColor: Colors.deepPurple[700],
         elevation: 0,
         title: Text("Create event"),
       ),
@@ -308,9 +309,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 ),
               ),
             ),
+            Spacer(flex: 3),
             Container(
-              margin:
-                  const EdgeInsets.symmetric(vertical: 60.0, horizontal: 10),
+              margin: EdgeInsets.only(bottom: 30.0, right: 10, left: 10),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(

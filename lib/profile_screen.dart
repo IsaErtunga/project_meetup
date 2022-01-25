@@ -76,7 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _inactiveColor,
       _headerStyle,
       _stepStyle,
-      decoration: BoxDecoration(color: Colors.white),
+      decoration: BoxDecoration(color: Colors.black),
       padding: EdgeInsets.only(
         top: 16.0,
         left: 5.0,
@@ -170,7 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       // icon: Icon(Icons.arrow_back, color: Colors.black),
                       // onPressed: () => Navigator.of(context).pop(),
                       ),
-                  backgroundColor: Colors.white, //const Color(0xffF8F8FA),
+                  backgroundColor: Colors.black, //const Color(0xffF8F8FA),
                   forceElevated: false,
                   expandedHeight: 200,
                   //s  collapsedHeight: 70,
@@ -214,7 +214,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     Text(
                                       '${data["firstName"]} ${data["lastName"]}',
                                       style: TextStyle(
-                                          color: Colors.black,
+                                          color: Colors.white,
                                           fontSize:
                                               3 * SizeConfig.textMultiplier,
                                           fontWeight: FontWeight.bold,
@@ -235,7 +235,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             Text(
                                               data["university"],
                                               style: TextStyle(
-                                                color: Colors.black,
+                                                color: Colors.white,
                                                 fontSize: 1.5 *
                                                     SizeConfig.textMultiplier,
                                               ),
