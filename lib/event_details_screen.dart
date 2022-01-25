@@ -454,7 +454,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                       participant["userId"])))
                                             },
                                             child: Card(
-                                              elevation: 3,
+                                              elevation: 0,
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -480,7 +480,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                                     0), // changes position of shadow
                                                               ),
                                                             ],*/
-                                                  color: Colors.grey[800],
+                                                  color: HexColor('#F8FAFB'),
                                                 ),
                                                 child: Row(
                                                   crossAxisAlignment:
@@ -519,7 +519,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                     Text(
                                                       '${participant["firstName"]} ${participant["lastName"]}',
                                                       style: TextStyle(
-                                                          color: Colors.white,
+                                                          color: Colors.black,
                                                           fontWeight:
                                                               FontWeight.bold),
                                                     ),
@@ -596,6 +596,18 @@ class User {
   final String userId;
 
   const User(this.userId);
+}
+
+class HexColor extends Color {
+  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
+
+  static int _getColorFromHex(String hexColor) {
+    hexColor = hexColor.toUpperCase().replaceAll('#', '');
+    if (hexColor.length == 6) {
+      hexColor = 'FF' + hexColor;
+    }
+    return int.parse(hexColor, radix: 16);
+  }
 }
 
 

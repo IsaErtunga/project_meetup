@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'dart:async';
 import 'discover_screen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+//import 'package:form_bloc/form_bloc.dart';
 
 class CreateEventScreen extends StatefulWidget {
   final Group group;
@@ -75,8 +76,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.teal,
+      backgroundColor: Colors.deepPurpleAccent[400],
       appBar: AppBar(
+        backgroundColor: Colors.deepPurpleAccent[400],
         elevation: 0,
         title: Text("Create event"),
       ),
@@ -98,7 +100,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               addEvent(widget.group.id);
             }
           },
-          child: const Text("Add event"),
+          child: const Text("Publish event"),
         ),
       ),
       body: Form(
@@ -110,14 +112,26 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   top: 15.0, left: 10.0, right: 10.0, bottom: 5.0),
               child: TextFormField(
                 style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: "Event",
-                  labelStyle: const TextStyle(color: Colors.white),
-                  floatingLabelBehavior: FloatingLabelBehavior.never,
-                  filled: true,
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(10)),
+                decoration: const InputDecoration(
+                  labelText: 'Event Name',
+                  labelStyle: TextStyle(
+                    color: Colors.white54,
+                    fontSize: 16,
+                    fontFamily: 'verdana_regular',
+                    fontWeight: FontWeight.w400,
+                  ),
+                  floatingLabelStyle: TextStyle(color: Colors.greenAccent),
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  filled: false,
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: const Color(0xFFFFEBEE)),
+                      borderRadius: BorderRadius.all(Radius.circular(25))),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.greenAccent, width: 1.5),
+                      borderRadius: BorderRadius.all(Radius.circular(25))),
+                  prefixIcon: Icon(Icons.keyboard_arrow_right_rounded,
+                      color: Colors.greenAccent),
                 ),
                 // The validator receives the text that the user has entered.
                 validator: (value) {
@@ -138,14 +152,26 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
               child: TextFormField(
                 style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: "Description",
-                  labelStyle: const TextStyle(color: Colors.white),
-                  floatingLabelBehavior: FloatingLabelBehavior.never,
-                  filled: true,
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(10)),
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                  labelStyle: TextStyle(
+                    color: Colors.white54,
+                    fontSize: 16,
+                    fontFamily: 'verdana_regular',
+                    fontWeight: FontWeight.w400,
+                  ),
+                  floatingLabelStyle: TextStyle(color: Colors.greenAccent),
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  filled: false,
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: const Color(0xFFFFEBEE)),
+                      borderRadius: BorderRadius.all(Radius.circular(25))),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.greenAccent, width: 1.5),
+                      borderRadius: BorderRadius.all(Radius.circular(25))),
+                  prefixIcon:
+                      Icon(Icons.textsms_outlined, color: Colors.greenAccent),
                 ),
                 // The validator receives the text that the user has entered.
                 validator: (value) {
@@ -164,16 +190,30 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             Container(
               margin:
                   const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-              child: TextField(
+              child: TextFormField(
                   style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    labelText: "Location",
-                    labelStyle: const TextStyle(color: Colors.white),
-                    floatingLabelBehavior: FloatingLabelBehavior.never,
-                    filled: true,
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(10)),
+                  decoration: const InputDecoration(
+                    labelText: 'Address',
+                    labelStyle: TextStyle(
+                      color: Colors.white54,
+                      fontSize: 16,
+                      fontFamily: 'verdana_regular',
+                      fontWeight: FontWeight.w400,
+                    ),
+                    floatingLabelBehavior: FloatingLabelBehavior.auto,
+                    floatingLabelStyle: TextStyle(color: Colors.greenAccent),
+                    filled: false,
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: const Color(0xFFFFEBEE)),
+                        borderRadius: BorderRadius.all(Radius.circular(25))),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Colors.greenAccent, width: 1.5),
+                        borderRadius: BorderRadius.all(Radius.circular(25))),
+                    prefixIcon: Icon(
+                      Icons.edit_location_outlined,
+                      color: Colors.greenAccent,
+                    ),
                   ),
                   onChanged: (value) {
                     applicationBloc.searchPlaces(value);
@@ -182,19 +222,22 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     });
                   }),
             ),
+            SizedBox(height: 30),
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 20.0),
+              margin:
+                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  shadowColor: Colors.transparent,
-                  primary: Colors.white24,
-                  textStyle: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
-                ),
+                    primary: Colors.white,
+                    minimumSize: const Size.fromHeight(50),
+                    textStyle: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 35, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25))),
                 onPressed: () {
                   showCupertinoModalBottomSheet(
                     context: context,
@@ -209,7 +252,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                           children: [
                             SfDateRangePicker(
                               selectionColor: Colors.black,
-                              todayHighlightColor: Colors.teal,
+                              todayHighlightColor: Colors.greenAccent,
                               onSelectionChanged: _onSelectionChanged,
                               selectionMode:
                                   DateRangePickerSelectionMode.single,
@@ -222,22 +265,25 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 },
                 child: formData["date"] != null
                     ? Text(formattedString)
-                    : const Text("Select date"),
+                    : const Text("SELECT DATE",
+                        style: TextStyle(color: Colors.black)),
               ),
             ),
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 20.0),
+              margin:
+                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  shadowColor: Colors.transparent,
-                  primary: Colors.white24,
-                  textStyle: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
-                ),
+                    primary: Colors.white,
+                    minimumSize: const Size.fromHeight(50),
+                    textStyle: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 35, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25))),
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
@@ -247,7 +293,22 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     ),
                   );
                 },
-                child: const Text("Select location"),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                        flex: 1,
+                        child: Icon(Icons.location_on_outlined,
+                            color: Colors.greenAccent)),
+                    Expanded(
+                      flex: 2,
+                      child: const Text(
+                        "SELECT LOCATION",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

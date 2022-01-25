@@ -171,7 +171,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       // onPressed: () => Navigator.of(context).pop(),
                       ),
                   backgroundColor: Colors.white, //const Color(0xffF8F8FA),
-                  forceElevated: true,
+                  forceElevated: false,
                   expandedHeight: 200,
                   //s  collapsedHeight: 70,
                   pinned: false,
