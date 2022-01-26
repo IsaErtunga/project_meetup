@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_meetup/discover_screen.dart';
 import 'package:project_meetup/profile_screen.dart';
+import 'package:uuid/uuid.dart';
 import 'group_details_screen.dart';
 import 'profile_screen_other_users.dart';
 
@@ -90,48 +91,25 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
   //bool _joinHasBeenPressed = false;
 
-/*
-  checkIfUserInGroup() async {
-    Object blabla =
-        await users.doc(auth.currentUser!.uid).get("myGroups").then((value) {
-      return value.data();
+  Future<void> joinEventBatch() {
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+
+    final String eventId = const Uuid().v4();
+
+    // event document reference
+    DocumentReference eventRef = FirebaseFirestore.instance
+        .collection('Events')
+        .doc(widget.event.eventId);
+    batch.update(eventRef, {
+      "participants": FieldValue.arrayUnion([{}])
     });
-  }
 
-  Future<void> _addUserToGroup() {
-    dynamic blabla = users.doc(auth.currentUser!.uid).get();
+    DocumentReference newEventForUser = FirebaseFirestore.instance
+        .collection('users')
+        .doc(auth.currentUser!.uid);
+    batch.update(newEventForUser, {});
 
-    if (blabla["myGroups"].containsNot(_hostingGroupID)) {
-      return Text("you are already a member");
-    } else {
-      return users.doc(auth.currentUser!.uid).update({
-        'myGroups': FieldValue.arrayUnion([_hostingGroupID])
-      });
-    }
-  }
-*/
-
-  //add get() doc snapshot of eventdata, then call the function after @override widget build
-  void _getEventAdress(GeoPoint) async {
-    var eventPlace =
-        await placemarkFromCoordinates(GeoPoint.latitude, GeoPoint.longitude);
-
-    String? name = eventPlace[0].name;
-    String? locality = eventPlace[0].locality;
-    String? street = eventPlace[0].street;
-    String? postalCode = eventPlace[0].postalCode;
-
-    String eventAdress = "${street} ${name} ";
-    String eventAdressSecondLine = "${postalCode} ${locality}";
-    //print(eventAdress);
-
-    /*
-    setState(() {
-      _eventAddress = eventAdress;
-      _eventAddressSecondLine = eventAdressSecondLine;
-    });
-    */
-    print(_eventAddress);
+    return batch.commit();
   }
 
   @override
@@ -346,17 +324,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                           CrossAxisAlignment.start,
                                     ),
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 5, bottom: 5),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(Icons.location_on,
-                                            color: Colors.black, size: 20),
-                                        SizedBox(width: 10),
-                                        Text(_eventAddress)
-                                      ],
-                                    ),
-                                  ),
+                                  ElevatedButton(
+                                      onPressed: () {},
+                                      child: Text("Attend event")),
                                   Padding(
                                     padding:
                                         EdgeInsets.only(bottom: 5, left: 30),
@@ -427,7 +397,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                   initialCameraPosition: CameraPosition(
                                     target: LatLng(
                                         eventData["location"].latitude,
-                                        eventData["location"].latitude),
+                                        eventData["location"].longitude),
                                     zoom: 14.4746,
                                   ),
                                 ),
