@@ -6,7 +6,7 @@ import 'package:project_meetup/google_maps_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:cloud_functions/cloud_functions.dart';
+import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'discover_screen.dart';
@@ -26,18 +26,16 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final Map<String, dynamic> formData = {
-    "name": null,
+    "eventName": null,
     "description": null,
-    "date": null,
+    "dateTime": null,
     "hostingGroup": null,
-    "picture": null,
+    "eventPicture": "",
     "location": null,
-    "eventImages": [],
-    "attendingUsers": [],
-    "numberOfAttendees": null,
+    "participants": [],
   };
 
-  // Formatted strings for date button
+  // Formatted strings for dateTime button
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
   String formattedString = "";
 
@@ -45,7 +43,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     setState(() {
       if (args.value is DateTime) {
         // Set form state
-        formData['date'] = args.value;
+        formData['dateTime'] = args.value;
 
         // Set button string value
         formattedString = formatter.format(args.value);
@@ -53,12 +51,36 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     });
   }
 
-  Future<void> addEvent(String hostingGroup) {
-    formData["hostingGroup"] = hostingGroup;
+  Future<void> addEvent() {
     return events
         .add(formData)
         .then((value) => print("Event Added"))
         .catchError((error) => print("Failed to add event: $error"));
+  }
+
+  Future<void> addEventBatch() {
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+
+    final String eventId = const Uuid().v4();
+
+    // event document reference
+    DocumentReference newEvent =
+        FirebaseFirestore.instance.collection('Events').doc(eventId);
+    batch.set(newEvent, formData);
+
+    DocumentReference newGroupEvent =
+        FirebaseFirestore.instance.collection('Groups').doc(widget.group.id);
+    batch.update(newGroupEvent, {
+      "events": FieldValue.arrayUnion([
+        {
+          "eventName": formData["eventName"],
+          "id": eventId,
+          "image": formData["eventPicture"]
+        }
+      ])
+    });
+
+    return batch.commit();
   }
 
   String radioValue = "hej";
@@ -85,12 +107,19 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           ),
           onPressed: () {
             setState(() {
-              formData["location"] = applicationBloc.approvedLocation;
+              formData["location"] = GeoPoint(
+                  applicationBloc.approvedLocation.latitude,
+                  applicationBloc.approvedLocation.longitude);
+              formData["hostingGroup"] = {
+                "groupId": widget.group.id,
+                "groupName": widget.group.groupName,
+                "groupPicture": widget.group.groupPicture
+              };
             });
             print('Submitting form');
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save(); //onSaved is called!
-              //addEvent(widget.group.id);
+              addEventBatch();
             }
           },
           child: const Text("Add event"),
@@ -123,7 +152,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 },
                 onSaved: (String? value) {
                   setState(() {
-                    formData['name'] = value;
+                    formData['eventName'] = value;
                   });
                 },
               ),
@@ -194,7 +223,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     ),
                   );
                 },
-                child: formData["date"] != null
+                child: formData["dateTime"] != null
                     ? Text(formattedString)
                     : const Text("Select date"),
               ),

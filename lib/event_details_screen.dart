@@ -1,11 +1,14 @@
 //import 'dart:html';
+import 'dart:async';
 import 'dart:ffi';
 import 'dart:math' as math;
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart'; //for timestamp to date and time conversion
 import 'package:geocoding/geocoding.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_meetup/discover_screen.dart';
@@ -30,6 +33,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   Future _refreshEvent(BuildContext context) async {
     return events.doc(widget.event.eventId).get();
   }
+
+  Completer<GoogleMapController> _controller = Completer();
+
+  static final CameraPosition _kGooglePlex = CameraPosition(
+    target: LatLng(37.42796133580664, -122.085749655962),
+    zoom: 14.4746,
+  );
 
   // final AsyncMemoizer _memoizer = AsyncMemoizer();
 
@@ -219,14 +229,16 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                   top: 3 * SizeConfig.heightMultiplier),
                               child: Row(
                                 children: <Widget>[
-                                  Text(
-                                    eventData["eventName"].toString(),
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 0.5,
-                                        fontSize:
-                                            3 * SizeConfig.heightMultiplier),
+                                  Flexible(
+                                    child: Text(
+                                      eventData["eventName"].toString(),
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 0.5,
+                                          fontSize:
+                                              3 * SizeConfig.heightMultiplier),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -310,7 +322,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                               color: Colors.black, size: 20),
                                           SizedBox(width: 10),
                                           Text((DateFormat.yMMMEd().format(
-                                                  eventData["Date_Time"]
+                                                  eventData["dateTime"]
                                                       .toDate()))
                                               .toString()),
                                         ],
@@ -324,7 +336,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                       children: <Widget>[
                                         Text(
                                           (DateFormat.Hm().format(
-                                                  eventData["Date_Time"]
+                                                  eventData["dateTime"]
                                                       .toDate()))
                                               .toString(),
                                           style: TextStyle(color: Colors.grey),
@@ -391,7 +403,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               child: Row(
                                 children: <Widget>[
                                   Text(
-                                    "Location",
+                                    "location",
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 0.5,
@@ -405,8 +417,20 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               padding:
                                   const EdgeInsets.only(left: 10, right: 10),
                               child: SizedBox(
-                                height: 100,
-                                child: Text("enter >Google API here"),
+                                height: 300,
+                                child: GoogleMap(
+                                  myLocationEnabled: false,
+                                  zoomGesturesEnabled: false,
+                                  myLocationButtonEnabled: false,
+                                  scrollGesturesEnabled: false,
+                                  mapType: MapType.normal,
+                                  initialCameraPosition: CameraPosition(
+                                    target: LatLng(
+                                        eventData["location"].latitude,
+                                        eventData["location"].latitude),
+                                    zoom: 14.4746,
+                                  ),
+                                ),
                               ),
                             ),
                             SizedBox(height: 5 * SizeConfig.heightMultiplier),
@@ -430,7 +454,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             Expanded(
                               child: Container(
                                 height: 50 * SizeConfig.heightMultiplier,
-                                child: eventData["Participants"].isNotEmpty
+                                child: eventData["participants"].isNotEmpty
                                     ? GridView(
                                         gridDelegate:
                                             SliverGridDelegateWithFixedCrossAxisCount(
@@ -441,16 +465,16 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                         padding: const EdgeInsets.all(8),
                                         scrollDirection: Axis.vertical,
                                         physics: const BouncingScrollPhysics(),
-                                        children: eventData["Participants"]
+                                        children: eventData["participants"]
                                             .map<Widget>((participant) {
                                           return GestureDetector(
                                             onTap: () => {
                                               Navigator.of(context).push(
                                                   _createRouteToUser(
-                                                      User(participant["id"])))
+                                                      participant["userId"]))
                                             },
                                             child: Hero(
-                                              tag: participant["id"],
+                                              tag: participant["userId"],
                                               child: Card(
                                                 elevation: 3,
                                                 shape: RoundedRectangleBorder(
@@ -509,7 +533,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                                     .cover,
                                                                 image: NetworkImage(
                                                                     participant[
-                                                                        "imageUrl"]))),
+                                                                        "profilePicture"]))),
                                                       ),
                                                       SizedBox(width: 10),
                                                       Text(

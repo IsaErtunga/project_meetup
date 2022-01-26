@@ -8,8 +8,8 @@ import 'discover_screen.dart';
 import 'profile_screen.dart';
 
 class ProfileScreenOtherUsers extends StatefulWidget {
-  final User user;
-  const ProfileScreenOtherUsers(this.user, {Key? key}) : super(key: key);
+  final String userId;
+  const ProfileScreenOtherUsers(this.userId, {Key? key}) : super(key: key);
 
   @override
   State<ProfileScreenOtherUsers> createState() =>
@@ -79,7 +79,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
     var mediaQD = MediaQuery.of(context);
     _safeAreaSize = mediaQD.size;
     return FutureBuilder<DocumentSnapshot>(
-      future: users.doc(widget.user.userId).get(),
+      future: users.doc(widget.userId).get(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.hasError) {
@@ -167,7 +167,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                         Row(
                                           children: <Widget>[
                                             Text(
-                                              data["University"],
+                                              data["university"],
                                               style: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 1.5 *
@@ -311,143 +311,143 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                     physics: const BouncingScrollPhysics(),
                                     children: data["attendedEvents"]
                                         .map<Widget>((document) {
-                                      return FutureBuilder<DocumentSnapshot>(
-                                          future: events.doc(document).get(),
-                                          builder: (BuildContext context,
-                                              AsyncSnapshot<DocumentSnapshot>
-                                                  snapshot) {
-                                            if (snapshot.hasError) {
-                                              return Text(
-                                                  "Something went wrong");
-                                            }
-
-                                            if (snapshot.hasData &&
-                                                !snapshot.data!.exists) {
-                                              return Text(
-                                                  "Document does not exist");
-                                            }
-
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.done) {
-                                              Map<String, dynamic> eventData =
-                                                  snapshot.data!.data()
-                                                      as Map<String, dynamic>;
-                                              return GestureDetector(
-                                                onTap: () => {
-                                                  Navigator.of(context).push(
-                                                      _createRouteEvents(
-                                                          Event(document)))
-                                                },
-                                                child: Hero(
-                                                  tag: document,
-                                                  child: SizedBox(
-                                                    width: 280,
-                                                    child: Stack(
-                                                      children: <Widget>[
-                                                        Container(
+                                      return GestureDetector(
+                                        onTap: () => {
+                                          Navigator.of(context).push(
+                                              _createRouteEvents(
+                                                  Event(document)))
+                                        },
+                                        child: Hero(
+                                          tag: document,
+                                          child: SizedBox(
+                                            width: 280,
+                                            child: Stack(
+                                              children: <Widget>[
+                                                Container(
+                                                  child: Row(
+                                                    children: <Widget>[
+                                                      const SizedBox(
+                                                        width: 48,
+                                                      ),
+                                                      Expanded(
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: HexColor(
+                                                                '#F8FAFB'),
+                                                            borderRadius:
+                                                                const BorderRadius
+                                                                        .all(
+                                                                    Radius.circular(
+                                                                        16.0)),
+                                                          ),
                                                           child: Row(
                                                             children: <Widget>[
                                                               const SizedBox(
-                                                                width: 48,
+                                                                width:
+                                                                    48 + 24.0,
                                                               ),
                                                               Expanded(
                                                                 child:
                                                                     Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: HexColor(
-                                                                        '#F8FAFB'),
-                                                                    borderRadius: const BorderRadius
-                                                                            .all(
-                                                                        Radius.circular(
-                                                                            16.0)),
-                                                                  ),
-                                                                  child: Row(
+                                                                  child: Column(
                                                                     children: <
                                                                         Widget>[
-                                                                      const SizedBox(
-                                                                        width: 48 +
-                                                                            24.0,
-                                                                      ),
-                                                                      Expanded(
+                                                                      Align(
+                                                                        alignment:
+                                                                            Alignment.centerLeft,
                                                                         child:
-                                                                            Container(
+                                                                            Padding(
+                                                                          padding:
+                                                                              const EdgeInsets.only(top: 10),
+                                                                          child:
+                                                                              Text(
+                                                                            (DateFormat.MMMEd().add_Hm().format(document["eventTime"].toDate()).toString()),
+
+                                                                            //  maxLines: 1,
+                                                                            //overflow: TextOverflow.ellipsis,
+                                                                            textAlign:
+                                                                                TextAlign.left,
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontWeight: FontWeight.w400,
+                                                                              fontSize: 14,
+                                                                              letterSpacing: 0.27,
+                                                                              color: Colors.red[900],
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      Align(
+                                                                        alignment:
+                                                                            Alignment.centerLeft,
+                                                                        child:
+                                                                            Padding(
+                                                                          padding:
+                                                                              const EdgeInsets.only(top: 2),
+                                                                          child:
+                                                                              Text(
+                                                                            document["eventName"].toString(),
+                                                                            textAlign:
+                                                                                TextAlign.left,
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontWeight: FontWeight.w600,
+                                                                              fontSize: 16,
+                                                                              letterSpacing: 0.27,
+                                                                              color: Colors.black,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      Align(
+                                                                        alignment:
+                                                                            Alignment.centerLeft,
+                                                                        child:
+                                                                            Padding(
+                                                                          padding:
+                                                                              const EdgeInsets.only(top: 5),
+                                                                          child:
+                                                                              Row(
+                                                                            //    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                            //  crossAxisAlignment: CrossAxisAlignment.center,
+                                                                            children: <Widget>[
+                                                                              Expanded(
+                                                                                child: Text(
+                                                                                  'by ${document["hostingGroup"].toString()}',
+                                                                                  textAlign: TextAlign.left,
+                                                                                  style: TextStyle(
+                                                                                    fontWeight: FontWeight.w300,
+                                                                                    fontSize: 12,
+                                                                                    letterSpacing: 0.27,
+                                                                                    color: Colors.blueGrey[700],
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      const Expanded(
+                                                                        child:
+                                                                            SizedBox(),
+                                                                      ),
+                                                                      Align(
+                                                                        alignment:
+                                                                            Alignment.centerRight,
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets.only(
+                                                                              right: 10,
+                                                                              bottom: 10),
                                                                           child:
                                                                               Column(
+                                                                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                            //crossAxisAlignment: CrossAxisAlignment.start,
                                                                             children: <Widget>[
-                                                                              Align(
-                                                                                alignment: Alignment.centerLeft,
-                                                                                child: Padding(
-                                                                                  padding: const EdgeInsets.only(top: 10),
-                                                                                  child: Text(
-                                                                                    (DateFormat.MMMEd().add_Hm().format(eventData["Date_Time"].toDate()).toString()),
-
-                                                                                    //  maxLines: 1,
-                                                                                    //overflow: TextOverflow.ellipsis,
-                                                                                    textAlign: TextAlign.left,
-                                                                                    style: TextStyle(
-                                                                                      fontWeight: FontWeight.w400,
-                                                                                      fontSize: 14,
-                                                                                      letterSpacing: 0.27,
-                                                                                      color: Colors.red[900],
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              Align(
-                                                                                alignment: Alignment.centerLeft,
-                                                                                child: Padding(
-                                                                                  padding: const EdgeInsets.only(top: 2),
-                                                                                  child: Text(
-                                                                                    eventData["eventName"].toString(),
-                                                                                    textAlign: TextAlign.left,
-                                                                                    style: TextStyle(
-                                                                                      fontWeight: FontWeight.w600,
-                                                                                      fontSize: 16,
-                                                                                      letterSpacing: 0.27,
-                                                                                      color: Colors.black,
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              Align(
-                                                                                alignment: Alignment.centerLeft,
-                                                                                child: Padding(
-                                                                                  padding: const EdgeInsets.only(top: 5),
-                                                                                  child: Row(
-                                                                                    //    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                    //  crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                    children: <Widget>[
-                                                                                      Expanded(
+                                                                              /*Container(
                                                                                         child: Text(
-                                                                                          'by ${eventData["hostingGroup"].toString()}',
-                                                                                          textAlign: TextAlign.left,
-                                                                                          style: TextStyle(
-                                                                                            fontWeight: FontWeight.w300,
-                                                                                            fontSize: 12,
-                                                                                            letterSpacing: 0.27,
-                                                                                            color: Colors.blueGrey[700],
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              const Expanded(
-                                                                                child: SizedBox(),
-                                                                              ),
-                                                                              Align(
-                                                                                alignment: Alignment.centerRight,
-                                                                                child: Padding(
-                                                                                  padding: const EdgeInsets.only(right: 10, bottom: 10),
-                                                                                  child: Column(
-                                                                                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                    //crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                    children: <Widget>[
-                                                                                      Container(
-                                                                                        child: Text(
-                                                                                          '${eventData["attendants_count"].toString()} going',
+                                                                                          '${document["attendants_count"].toString()} going',
                                                                                           //  textAlign: TextAlign.right,
                                                                                           style: TextStyle(
                                                                                             fontWeight: FontWeight.w300,
@@ -456,11 +456,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                                                             color: Colors.blueGrey[600],
                                                                                           ),
                                                                                         ),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                              ),
+                                                                                      ),*/
                                                                             ],
                                                                           ),
                                                                         ),
@@ -468,54 +464,52 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                                     ],
                                                                   ),
                                                                 ),
-                                                              )
+                                                              ),
                                                             ],
                                                           ),
                                                         ),
-                                                        Container(
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    top: 24,
-                                                                    bottom: 24,
-                                                                    left: 16),
-                                                            child: Row(
-                                                              children: <
-                                                                  Widget>[
-                                                                ClipRRect(
-                                                                  borderRadius: const BorderRadius
-                                                                          .all(
-                                                                      Radius.circular(
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                Container(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 24,
+                                                            bottom: 24,
+                                                            left: 16),
+                                                    child: Row(
+                                                      children: <Widget>[
+                                                        ClipRRect(
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                      .all(
+                                                                  Radius
+                                                                      .circular(
                                                                           16.0)),
-                                                                  child:
-                                                                      AspectRatio(
-                                                                    aspectRatio:
-                                                                        1.0,
-                                                                    child:
-                                                                        Image(
-                                                                      fit: BoxFit
-                                                                          .fill,
-                                                                      image:
-                                                                          NetworkImage(
-                                                                        eventData["eventPicture"]
-                                                                            .toString(),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                )
-                                                              ],
+                                                          child: AspectRatio(
+                                                            aspectRatio: 1.0,
+                                                            child: Image(
+                                                              fit: BoxFit.fill,
+                                                              image:
+                                                                  NetworkImage(
+                                                                document[
+                                                                        "eventPicture"]
+                                                                    .toString(),
+                                                              ),
                                                             ),
                                                           ),
-                                                        ),
+                                                        )
                                                       ],
                                                     ),
                                                   ),
                                                 ),
-                                              );
-                                            }
-                                            return Text("loading");
-                                          });
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
                                     }).toList(),
                                   )
                                 : const Text(
@@ -572,86 +566,66 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                       physics: const BouncingScrollPhysics(),
                                       children: data["myGroups"]
                                           .map<Widget>((document) {
-                                        return FutureBuilder<DocumentSnapshot>(
-                                            future: groups.doc(document).get(),
-                                            builder: (BuildContext context,
-                                                AsyncSnapshot<DocumentSnapshot>
-                                                    snapshot) {
-                                              if (snapshot.hasError) {
-                                                return Text(
-                                                    "Something went wrong");
-                                              }
-
-                                              if (snapshot.hasData &&
-                                                  !snapshot.data!.exists) {
-                                                return Text(
-                                                    "Document does not exist");
-                                              }
-
-                                              if (snapshot.connectionState ==
-                                                  ConnectionState.done) {
-                                                Map<String, dynamic> groupData =
-                                                    snapshot.data!.data()
-                                                        as Map<String, dynamic>;
-
-                                                return Flexible(
-                                                    child: InkWell(
-                                                  splashColor:
-                                                      Colors.transparent,
-                                                  //onTap: callback,
-                                                  child: GestureDetector(
-                                                    child: Hero(
-                                                      tag: document,
-                                                      child: SizedBox(
-                                                        height: 280,
-                                                        child: Stack(
-                                                          alignment:
-                                                              AlignmentDirectional
-                                                                  .bottomCenter,
-                                                          children: <Widget>[
-                                                            Container(
+                                        return InkWell(
+                                          splashColor: Colors.transparent,
+                                          //onTap: callback,
+                                          child: GestureDetector(
+                                            child: Hero(
+                                              tag: document,
+                                              child: SizedBox(
+                                                height: 280,
+                                                child: Stack(
+                                                  alignment:
+                                                      AlignmentDirectional
+                                                          .bottomCenter,
+                                                  children: <Widget>[
+                                                    Container(
+                                                      child: Column(
+                                                        children: <Widget>[
+                                                          Expanded(
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: HexColor(
+                                                                    '#F8FAFB'),
+                                                                borderRadius:
+                                                                    const BorderRadius
+                                                                            .all(
+                                                                        Radius.circular(
+                                                                            16.0)),
+                                                                // border: new Border.all(
+                                                                //     color: DesignCourseAppTheme.notWhite),
+                                                              ),
                                                               child: Column(
                                                                 children: <
                                                                     Widget>[
                                                                   Expanded(
                                                                     child:
                                                                         Container(
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: HexColor(
-                                                                            '#F8FAFB'),
-                                                                        borderRadius:
-                                                                            const BorderRadius.all(Radius.circular(16.0)),
-                                                                        // border: new Border.all(
-                                                                        //     color: DesignCourseAppTheme.notWhite),
-                                                                      ),
                                                                       child:
                                                                           Column(
                                                                         children: <
                                                                             Widget>[
-                                                                          Expanded(
+                                                                          //  Expanded(
+                                                                          Align(
+                                                                            alignment:
+                                                                                Alignment.centerLeft,
                                                                             child:
-                                                                                Container(
-                                                                              child: Column(
-                                                                                children: <Widget>[
-                                                                                  //  Expanded(
-                                                                                  Align(
-                                                                                    alignment: Alignment.centerLeft,
-                                                                                    child: Padding(
-                                                                                      padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-                                                                                      child: Text(
-                                                                                        groupData["groupName"].toString(),
-                                                                                        textAlign: TextAlign.left,
-                                                                                        style: TextStyle(
-                                                                                          fontWeight: FontWeight.w600,
-                                                                                          fontSize: 16,
-                                                                                          letterSpacing: 0.27,
-                                                                                          color: ProfileTheme.darkerText,
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-
+                                                                                Padding(
+                                                                              padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+                                                                              child: Text(
+                                                                                document["groupName"].toString(),
+                                                                                textAlign: TextAlign.left,
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.w600,
+                                                                                  fontSize: 16,
+                                                                                  letterSpacing: 0.27,
+                                                                                  color: ProfileTheme.darkerText,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          /*
                                                                                   Padding(
                                                                                     padding: const EdgeInsets.only(top: 8, left: 16, right: 16, bottom: 8),
                                                                                     child: Row(
@@ -659,7 +633,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                                                       crossAxisAlignment: CrossAxisAlignment.center,
                                                                                       children: <Widget>[
                                                                                         Text(
-                                                                                          '${groupData['memberAmount'].toString()} members',
+                                                                                          '${document['memberAmount'].toString()} members',
                                                                                           textAlign: TextAlign.left,
                                                                                           style: TextStyle(
                                                                                             fontWeight: FontWeight.w300,
@@ -670,93 +644,88 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                                                         ),
                                                                                       ],
                                                                                     ),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          const SizedBox(
-                                                                            width:
-                                                                                48,
-                                                                          ),
+                                                                                  ),*/
                                                                         ],
                                                                       ),
                                                                     ),
                                                                   ),
                                                                   const SizedBox(
-                                                                    height: 48,
+                                                                    width: 48,
                                                                   ),
                                                                 ],
                                                               ),
                                                             ),
-                                                            Container(
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .only(
-                                                                        top: 24,
-                                                                        right:
-                                                                            16,
-                                                                        left:
-                                                                            16),
-                                                                child:
-                                                                    Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    borderRadius: const BorderRadius
-                                                                            .all(
-                                                                        Radius.circular(
-                                                                            16.0)),
-                                                                    boxShadow: <
-                                                                        BoxShadow>[
-                                                                      BoxShadow(
-                                                                          color: ProfileTheme.grey.withOpacity(
-                                                                              0.8),
-                                                                          offset: const Offset(
-                                                                              0.0,
-                                                                              0.0),
-                                                                          blurRadius:
-                                                                              6.0),
-                                                                    ],
-                                                                  ),
-                                                                  child:
-                                                                      ClipRRect(
-                                                                    borderRadius: const BorderRadius
-                                                                            .all(
-                                                                        Radius.circular(
-                                                                            16.0)),
-                                                                    child:
-                                                                        AspectRatio(
-                                                                      aspectRatio:
-                                                                          1.28,
-                                                                      child:
-                                                                          Image(
-                                                                        fit: BoxFit
-                                                                            .fill,
-                                                                        image: NetworkImage(
-                                                                            groupData['groupPicture'].toString()),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 48,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                top: 24,
+                                                                right: 16,
+                                                                left: 16),
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                const BorderRadius
+                                                                        .all(
+                                                                    Radius.circular(
+                                                                        16.0)),
+                                                            boxShadow: <
+                                                                BoxShadow>[
+                                                              BoxShadow(
+                                                                  color: ProfileTheme
+                                                                      .grey
+                                                                      .withOpacity(
+                                                                          0.8),
+                                                                  offset:
+                                                                      const Offset(
+                                                                          0.0,
+                                                                          0.0),
+                                                                  blurRadius:
+                                                                      6.0),
+                                                            ],
+                                                          ),
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                const BorderRadius
+                                                                        .all(
+                                                                    Radius.circular(
+                                                                        16.0)),
+                                                            child: AspectRatio(
+                                                              aspectRatio: 1.28,
+                                                              child: Image(
+                                                                fit:
+                                                                    BoxFit.fill,
+                                                                image: NetworkImage(
+                                                                    document[
+                                                                            'groupPicture']
+                                                                        .toString()),
                                                               ),
                                                             ),
-                                                          ],
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
-                                                    onTap: () => {
-                                                      Navigator.of(context)
-                                                          .push(_createRoute(
-                                                              Group(
-                                                        document,
-                                                      )))
-                                                    },
-                                                  ),
-                                                ));
-                                              }
-                                              return Text("loading");
-                                            });
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            onTap: () => {
+                                              Navigator.of(context)
+                                                  .push(_createRoute(Group(
+                                                document,
+                                              )))
+                                            },
+                                          ),
+                                        );
                                       }).toList(),
                                     )
                                   : const Text(
@@ -770,12 +739,11 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                     ),
                   ),
                 ),
-                //  ),
               ],
             ),
           );
         }
-        return Text("loading");
+        return CircularProgressIndicator();
       },
     );
   }

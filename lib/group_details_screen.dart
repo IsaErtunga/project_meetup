@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:project_meetup/create_event_screen.dart';
 import 'package:project_meetup/event_details_screen.dart';
 import 'package:project_meetup/chat_screen.dart';
+import 'package:project_meetup/profile_screen_other_users.dart';
 
 import 'discover_screen.dart';
 import 'create_event_screen.dart';
@@ -165,10 +166,11 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                       ),
                                       Expanded(
                                           child: Center(
-                                              child: Text(
+                                              child: AutoSizeText(
                                         doc["eventName"],
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold),
+                                        maxLines: 1,
                                       ))),
                                     ],
                                   ),
@@ -198,40 +200,44 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                             physics: const NeverScrollableScrollPhysics(),
                             children:
                                 groupdata["members"].map<Widget>((document) {
-                              return GestureDetector(
-                                onTap: () {
-                                  print(document);
-                                  users
-                                      .doc(document)
-                                      .get()
-                                      .then((value) => print(value.data()));
-                                },
-                                child: SizedBox(
-                                  height: 80,
-                                  child: Card(
-                                    semanticContainer: true,
-                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                    elevation: 5,
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 7, vertical: 7),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10.0, horizontal: 15.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: const [
-                                          CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                                "https://i.picsum.photos/id/555/200/200.jpg?hmac=SPdHg_AxaDTFgZCoJymemxudcniLOiP2P5k6T8Eb-kc"),
-                                          ),
-                                          Text('Isa Ertunga'),
-                                          FaIcon(FontAwesomeIcons.arrowRight),
-                                        ],
-                                      ),
+                              return SizedBox(
+                                height: 80,
+                                child: Card(
+                                  semanticContainer: true,
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  elevation: 5,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 7, vertical: 7),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 15.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundImage: NetworkImage(
+                                              "https://i.picsum.photos/id/555/200/200.jpg?hmac=SPdHg_AxaDTFgZCoJymemxudcniLOiP2P5k6T8Eb-kc"),
+                                        ),
+                                        Text(document["firstName"] +
+                                            " " +
+                                            document["lastName"]),
+                                        IconButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ProfileScreenOtherUsers(
+                                                              document[
+                                                                  "userId"])));
+                                            },
+                                            icon: FaIcon(
+                                                FontAwesomeIcons.arrowRight)),
+                                      ],
                                     ),
                                   ),
                                 ),

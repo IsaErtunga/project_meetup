@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -130,7 +131,9 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
                           height: 40,
                           child: Row(
                             children: [
-                              Text(result.description),
+                              Expanded(
+                                  child: AutoSizeText(result.description,
+                                      maxLines: 1)),
                               IconButton(
                                   onPressed: () {
                                     applicationBloc
