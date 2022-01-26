@@ -224,7 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         Row(
                                           children: <Widget>[
                                             Text(
-                                              data["University"],
+                                              data["university"],
                                               style: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 1.5 *
@@ -621,8 +621,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       physics: const BouncingScrollPhysics(),
                                       children: data["myGroups"]
                                           .map<Widget>((myGroups) {
-                                        return Flexible(
-                                            child: InkWell(
+                                        return InkWell(
                                           splashColor: Colors.transparent,
                                           //onTap: callback,
                                           child: GestureDetector(
@@ -786,7 +785,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               )))
                                             },
                                           ),
-                                        ));
+                                        );
                                       }).toList(),
                                     )
                                   : const Text(

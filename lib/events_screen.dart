@@ -1,9 +1,13 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:project_meetup/application_bloc.dart';
+import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:project_meetup/place_model.dart';
 
 /// Stateful Widget for bottom navigation bar.
 class EventsScreen extends StatefulWidget {
@@ -16,32 +20,35 @@ class EventsScreen extends StatefulWidget {
 class _EventsScreenState extends State<EventsScreen> {
   // Events firestore reference
   CollectionReference events = FirebaseFirestore.instance.collection('Events');
-
+  final PanelController _pc = new PanelController();
   // Controller for Google Maps
   Completer<GoogleMapController> _controller = Completer();
 
-  static final CameraPosition _kGooglePlex = CameraPosition(
+  static final CameraPosition _kGooglePlex = const CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 14.4746,
   );
 
-  static final CameraPosition _kLake = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(37.43296265331129, -122.08832357078792),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
+  Set markerSet = <Marker>{};
 
-  final Marker marker = Marker(
-      markerId: MarkerId("ds"),
-      position: LatLng(37.42796133580664, -122.085749655962));
-
-  final Marker marker2 = Marker(
-      markerId: MarkerId("ds"),
-      position: LatLng(38.42796133580664, -122.085749655962));
+  void initState() {
+    events.get().then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        GeoPoint pos = doc["location"];
+        var marker = Marker(
+            markerId: MarkerId(doc.id),
+            position: LatLng(pos.latitude, pos.longitude));
+        markerSet.add(marker);
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final applicationBloc = Provider.of<ApplicationBloc>(context);
     return SlidingUpPanel(
+      controller: _pc,
       panel: Container(
         decoration: const BoxDecoration(
           color: const Color(0xFFF3F5F7),
@@ -69,22 +76,50 @@ class _EventsScreenState extends State<EventsScreen> {
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                           children: snapshot.data!.docs.map((doc) {
+                            Map<String, dynamic> docData =
+                                doc.data() as Map<String, dynamic>;
                             return SizedBox(
                               height: 80,
-                              child: Card(
-                                semanticContainer: true,
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                elevation: 5,
-                                margin: const EdgeInsets.symmetric(
-                                    vertical: 7, horizontal: 5),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    (doc.data() as Map<String, dynamic>)[
-                                            "eventName"]
-                                        .toString(),
+                              child: GestureDetector(
+                                onTap: () {
+                                  print("hej");
+                                },
+                                child: Card(
+                                  semanticContainer: true,
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  elevation: 5,
+                                  margin: const EdgeInsets.symmetric(
+                                      vertical: 7, horizontal: 5),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Flexible(
+                                          child: AutoSizeText(
+                                            (doc.data() as Map<String,
+                                                    dynamic>)["eventName"]
+                                                .toString(),
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              final loc = LatLng(
+                                                  docData["location"].latitude,
+                                                  docData["location"]
+                                                      .longitude);
+                                              _goToPlace(loc);
+                                              _pc.close();
+                                            },
+                                            child: Icon(Icons.search))
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -122,7 +157,7 @@ class _EventsScreenState extends State<EventsScreen> {
       ),
       body: Center(
         child: GoogleMap(
-          markers: <Marker>{marker, marker2},
+          markers: markerSet as Set<Marker>,
           mapType: MapType.normal,
           initialCameraPosition: _kGooglePlex,
           onMapCreated: (GoogleMapController controller) {
@@ -141,9 +176,10 @@ class _EventsScreenState extends State<EventsScreen> {
     );
   }
 
-  Future<void> _goToTheLake() async {
+  Future<void> _goToPlace(LatLng goToPos) async {
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: goToPos, zoom: 14)));
   }
 }
 
