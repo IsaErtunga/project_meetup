@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:project_meetup/application_bloc.dart';
+import 'package:project_meetup/event_details_screen.dart';
+import 'package:project_meetup/group_details_screen.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -82,7 +84,13 @@ class _EventsScreenState extends State<EventsScreen> {
                               height: 80,
                               child: GestureDetector(
                                 onTap: () {
-                                  print("hej");
+                                  _pc.close();
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              EventDetailsScreen(
+                                                  Event(doc.id))));
                                 },
                                 child: Card(
                                   semanticContainer: true,
