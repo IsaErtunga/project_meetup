@@ -11,6 +11,7 @@ import 'package:project_meetup/profile_screen.dart';
 import 'package:project_meetup/sign_in_screen.dart';
 import 'package:project_meetup/user_authentication.dart';
 import 'package:provider/provider.dart';
+import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
 
 import 'discover_screen.dart';
 import 'profile_screen.dart';
@@ -82,10 +83,12 @@ class _MyAppState extends State<MyApp> {
                       title: 'Meetup',
                       theme: ThemeData(
                           primaryColor: Colors.lightBlue,
-                          scaffoldBackgroundColor: const Color(0xFFF3F5F7),
+                          scaffoldBackgroundColor:
+                              Colors.black, //const Color(0xFFF3F5F7),
                           colorScheme: ColorScheme.fromSwatch().copyWith(
-                              primary: Colors.teal,
-                              secondary: const Color(0xFFF3F5F7))),
+                              primary: Colors.white,
+                              secondary:
+                                  Colors.black)), // const Color(0xFFF3F5F7))),
                       home: const AuthenticationWrapper(),
                       debugShowCheckedModeBanner: false,
                     ),
@@ -144,24 +147,19 @@ class _BottomNavigationState extends State<BottomNavigation> {
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.stream),
-            label: 'Discover',
-          ),
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.calendarDay),
-            label: 'Events',
-          ),
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.solidUser),
-            label: 'Profile',
-          ),
+      extendBody: true,
+      bottomNavigationBar: FloatingNavbar(
+        backgroundColor: Colors.black87,
+        items: [
+          FloatingNavbarItem(icon: Icons.home_filled, title: 'Home'),
+          FloatingNavbarItem(icon: Icons.explore, title: 'Events'),
+          FloatingNavbarItem(icon: Icons.person_pin, title: 'Profile'),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor:
+            Colors.black, // Theme.of(context).colorScheme.primary,
+        selectedBackgroundColor: Colors.white,
+        unselectedItemColor: Colors.white,
         onTap: _onItemTapped,
       ),
     );

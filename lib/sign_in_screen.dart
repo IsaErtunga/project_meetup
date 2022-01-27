@@ -113,13 +113,11 @@ class _SignInPageState extends State<SignInPage> {
                     color: Colors.black,
                     fontSize: 16,
                     fontWeight: FontWeight.bold),
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 35, vertical: 15),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
               ),
-              onPressed: () {
-
-              },
-              child: const Text("Sign in"),
+              onPressed: () {},
+              child: const Text("Register"),
             ),
           ),
         ],

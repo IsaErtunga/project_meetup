@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:project_meetup/attended_events_all.dart';
 import 'package:project_meetup/theme_profile_screen.dart';
@@ -46,7 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Color _activeColor = Colors.amber;
 
-  Color _inactiveColor = Color(0xFFD6D6D6);
+  Color _inactiveColor = Color(0xFF303030); //0xFF424242
 
   TextStyle _headerStyle =
       TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold);
@@ -63,7 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  int _socialProgressIndex = 1;
+  int _socialProgressIndex = 3;
 
   socialProgressView _getStepProgress() {
     return socialProgressView(
@@ -161,23 +162,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               snapshot.data!.data() as Map<String, dynamic>;
 
           return Scaffold(
-            backgroundColor: Colors.white, //const Color(0xffF8F8FA),
+            backgroundColor: Colors.black, //const Color(0xffF8F8FA),
             body: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: <Widget>[
                 SliverAppBar(
-                  leading: BackButton(color: Colors.black
+                  leading: BackButton(color: Colors.white
                       // icon: Icon(Icons.arrow_back, color: Colors.black),
                       // onPressed: () => Navigator.of(context).pop(),
                       ),
                   backgroundColor: Colors.black, //const Color(0xffF8F8FA),
                   forceElevated: false,
-                  expandedHeight: 200,
-                  //s  collapsedHeight: 70,
-                  pinned: false,
-                  shape: const RoundedRectangleBorder(
+                  expandedHeight: 180,
+                  collapsedHeight: 180,
+                  pinned: true,
+                  /*  shape: const RoundedRectangleBorder(
                       borderRadius:
-                          BorderRadius.only(bottomRight: Radius.circular(30))),
+                          BorderRadius.only(bottomRight: Radius.circular(30))),*/
                   flexibleSpace: FlexibleSpaceBar(
                     /*centerTitle: false,
                      titlePadding:
@@ -275,19 +276,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: Row(
                               children: <Widget>[
                                 Text(
-                                  "My Interests",
+                                  "MY INTERESTS",
                                   style: TextStyle(
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 0.5,
                                       fontSize: 3 * SizeConfig.textMultiplier),
                                 ),
                                 Spacer(),
-                                OutlinedButton(
+                                ElevatedButton(
                                     onPressed: _openInterestsFilterDialog,
-                                    style: ButtonStyle(),
-                                    child: const Text('edit',
-                                        style: TextStyle(color: Colors.black))),
+                                    style: ElevatedButton.styleFrom(
+                                        primary: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15))),
+                                    child: const Text('EDIT',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold))),
                               ],
                             ),
                           ),
@@ -305,15 +312,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         top: 0, bottom: 0, right: 16, left: 13),
                                     children: data["myInterests"]
                                         .map<Widget>((interest) {
-                                      return Chip(
-                                        backgroundColor: Colors.black,
-                                        side: BorderSide(
-                                            color: Colors.white, width: 4),
-                                        label: Text(
-                                          interest.toString(),
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      );
+                                      //    SizedBox(width: 10);
+                                      return Container(
+                                          padding: EdgeInsets.only(right: 12),
+                                          child: Chip(
+                                            backgroundColor: Colors.black,
+                                            side: BorderSide(
+                                                color: Colors.white, width: 1),
+                                            label: Text(
+                                              interest.toString(),
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ));
+
                                       /*Align(
                                         child: DecoratedBox(
                                             decoration: BoxDecoration(
@@ -337,7 +349,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     }).toList(),
                                   )
                                 : const Text("   No interests chosen yet",
-                                    style: TextStyle(fontSize: 15)),
+                                    style: TextStyle(
+                                        fontSize: 15, color: Colors.white)),
                           ),
                           Padding(
                             padding: EdgeInsets.only(
@@ -346,9 +359,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: Row(
                               children: <Widget>[
                                 Text(
-                                  "Attended events",
+                                  "ATTENDED EVENTS",
                                   style: TextStyle(
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 0.5,
                                       fontSize: 3 * SizeConfig.textMultiplier),
@@ -405,8 +418,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                         child: Container(
                                                           decoration:
                                                               BoxDecoration(
-                                                            color: HexColor(
-                                                                '#F8FAFB'),
+                                                            color: Colors
+                                                                .deepPurple
+                                                                .withOpacity(
+                                                                    0.4),
+                                                            /*    border: Border.all(
+                                                                color: Colors
+                                                                    .greenAccent,
+                                                                width: 1.5),*/
                                                             borderRadius:
                                                                 const BorderRadius
                                                                         .all(
@@ -445,7 +464,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                               fontWeight: FontWeight.w400,
                                                                               fontSize: 14,
                                                                               letterSpacing: 0.27,
-                                                                              color: Colors.red[900],
+                                                                              color: Colors.greenAccent,
                                                                             ),
                                                                           ),
                                                                         ),
@@ -467,7 +486,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                               fontWeight: FontWeight.w600,
                                                                               fontSize: 16,
                                                                               letterSpacing: 0.27,
-                                                                              color: Colors.black,
+                                                                              color: HexColor('#F8FAFB'),
                                                                             ),
                                                                           ),
                                                                         ),
@@ -492,7 +511,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                                     fontWeight: FontWeight.w300,
                                                                                     fontSize: 12,
                                                                                     letterSpacing: 0.27,
-                                                                                    color: Colors.blueGrey[700],
+                                                                                    color: HexColor('#F8FAFB'),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -525,7 +544,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                                     fontWeight: FontWeight.w300,
                                                                                     fontSize: 12,
                                                                                     letterSpacing: 0.27,
-                                                                                    color: Colors.blueGrey[600],
+                                                                                    color: HexColor('#F8FAFB'),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -600,9 +619,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: Row(
                               children: <Widget>[
                                 Text(
-                                  "My Groups",
+                                  "MY GROUPS",
                                   style: TextStyle(
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 0.5,
                                       fontSize: 3 * SizeConfig.textMultiplier),
@@ -651,8 +670,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                             child: Container(
                                                               decoration:
                                                                   BoxDecoration(
-                                                                color: HexColor(
-                                                                    '#F8FAFB'),
+                                                                color: Colors
+                                                                    .grey
+                                                                    .withOpacity(
+                                                                        0.1),
                                                                 borderRadius:
                                                                     const BorderRadius
                                                                             .all(
@@ -681,12 +702,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                               child: Text(
                                                                                 myGroups["groupName"].toString(),
                                                                                 textAlign: TextAlign.left,
-                                                                                style: TextStyle(
-                                                                                  fontWeight: FontWeight.w600,
-                                                                                  fontSize: 16,
-                                                                                  letterSpacing: 0.27,
-                                                                                  color: ProfileTheme.darkerText,
-                                                                                ),
+                                                                                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, letterSpacing: 0.27, color: Colors.white),
                                                                               ),
                                                                             ),
                                                                           ),
@@ -709,7 +725,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                                     fontWeight: FontWeight.w300,
                                                                                     fontSize: 12,
                                                                                     letterSpacing: 0.27,
-                                                                                    color: Colors.blueGrey[700],
+                                                                                    color: Colors.red[600],
                                                                                   ),
                                                                                 ),
                                                                               ],
@@ -748,7 +764,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                         .all(
                                                                     Radius.circular(
                                                                         16.0)),
-                                                            boxShadow: <
+                                                            /*  boxShadow: <
                                                                 BoxShadow>[
                                                               BoxShadow(
                                                                   color: ProfileTheme
@@ -761,7 +777,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                           0.0),
                                                                   blurRadius:
                                                                       6.0),
-                                                            ],
+                                                            ],*/
                                                           ),
                                                           child: ClipRRect(
                                                             borderRadius:
@@ -846,7 +862,7 @@ class socialProgressView extends StatelessWidget {
     //Key key,
     required this.decoration,
     required this.padding,
-    this.lineHeight = 7.0,
+    this.lineHeight = 20.0,
   })  : _stepsText = stepsText,
         _curStep = curStep,
         _height = height,
@@ -898,7 +914,7 @@ class socialProgressView extends StatelessWidget {
 
       if (i == 0) {
         wids.add(Tooltip(
-            message: 'couch potato ',
+            message: 'COUCH POTATO ',
             triggerMode: TooltipTriggerMode.tap,
             child: CircleAvatar(
               backgroundImage: AssetImage('images/CouchPotatoe.png'),
@@ -907,7 +923,7 @@ class socialProgressView extends StatelessWidget {
             )));
       } else if (i == 1) {
         wids.add(Tooltip(
-            message: 'dancing queen',
+            message: 'DANCING QUEEN',
             triggerMode: TooltipTriggerMode.tap,
             child: CircleAvatar(
               backgroundImage: AssetImage('images/dancingQueen.png'),
@@ -916,7 +932,7 @@ class socialProgressView extends StatelessWidget {
             )));
       } else if (i == 2) {
         wids.add(Tooltip(
-            message: 'social butterfly',
+            message: 'SOCIAL BUTTERFLY',
             triggerMode: TooltipTriggerMode.tap,
             child: CircleAvatar(
               backgroundImage: AssetImage('images/SocialButterfly.png'),
@@ -925,7 +941,7 @@ class socialProgressView extends StatelessWidget {
             )));
       } else if (i == 3) {
         wids.add(Tooltip(
-            message: 'Nieves',
+            message: 'NIEVES',
             triggerMode: TooltipTriggerMode.tap,
             child: CircleAvatar(
               backgroundImage: AssetImage('images/BNOC.png'),

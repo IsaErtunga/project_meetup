@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -27,18 +28,23 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerTop,
       floatingActionButton: FloatingActionButton.extended(
-        heroTag: "btn1",
-        backgroundColor: Colors.black,
-        icon: const FaIcon(FontAwesomeIcons.plus),
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const CreateGroupScreen()));
-        },
-        label: const Text("Create group"),
-      ),
+          heroTag: "btn1",
+          backgroundColor: Colors.white,
+          icon: Icon(Icons.add_circle,
+              color: Colors.black), //const FaIcon(FontAwesomeIcons.plus),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const CreateGroupScreen()));
+          },
+          label: const Text("Create group",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ))),
       body: RefreshIndicator(
         onRefresh: () => _refreshGroups(context),
         child: FutureBuilder<QuerySnapshot>(

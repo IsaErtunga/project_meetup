@@ -56,11 +56,11 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey[900],
+        backgroundColor: Colors.black,
         appBar: AppBar(
             elevation: 0,
             title: Text("Create group"),
-            backgroundColor: Colors.grey[900]),
+            backgroundColor: Colors.black),
         body: Form(
             key: _formKey,
             child: Column(
@@ -77,17 +77,17 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                           fontSize: 16,
                           fontFamily: 'verdana_regular',
                           fontWeight: FontWeight.w400),
-                      floatingLabelStyle: TextStyle(color: Colors.orange),
+                      floatingLabelStyle: TextStyle(color: Colors.red[600]),
                       floatingLabelBehavior: FloatingLabelBehavior.auto,
                       filled: false,
                       enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
                           borderRadius: BorderRadius.circular(25)),
                       focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.orange),
+                          borderSide: BorderSide(color: Color(0xFFE53935)),
                           borderRadius: BorderRadius.circular(25)),
                       prefixIcon: Icon(Icons.keyboard_arrow_right_rounded,
-                          color: Colors.orange),
+                          color: Colors.red[600]),
                     ),
                     // The validator receives the text that the user has entered.
                     validator: (value) {
@@ -116,7 +116,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         fontFamily: 'verdana_regular',
                         fontWeight: FontWeight.w400,
                       ),
-                      floatingLabelStyle: TextStyle(color: Colors.orange),
+                      floatingLabelStyle: TextStyle(color: Colors.red[600]),
                       floatingLabelBehavior: FloatingLabelBehavior.auto,
                       filled: false,
                       enabledBorder: OutlineInputBorder(
@@ -124,10 +124,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                           borderRadius: BorderRadius.all(Radius.circular(25))),
                       focusedBorder: OutlineInputBorder(
                           borderSide:
-                              BorderSide(color: Colors.orange, width: 1.5),
+                              BorderSide(color: Color(0xFFE53935), width: 1.5),
                           borderRadius: BorderRadius.all(Radius.circular(25))),
                       prefixIcon:
-                          Icon(Icons.textsms_outlined, color: Colors.orange),
+                          Icon(Icons.textsms_outlined, color: Colors.red[600]),
                     ),
                     // The validator receives the text that the user has entered.
                     validator: (value) {
@@ -165,7 +165,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Icon(Icons.privacy_tip_outlined, color: Colors.orange),
+                        Icon(Icons.privacy_tip_outlined,
+                            color: Colors.red[600]),
                         Align(
                           alignment: Alignment.center,
                           child: Text("Is group private",
@@ -174,7 +175,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: Switch(
-                            activeColor: Colors.orange,
+                            activeColor: Colors.red[600],
                             inactiveTrackColor: Colors.white,
                             value: isPrivate,
                             onChanged: (value) {
@@ -196,9 +197,9 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25)),
-                      side: BorderSide(color: Colors.orange),
+                      side: BorderSide(color: Color(0xFFE53935)),
                       minimumSize: const Size.fromHeight(50),
-                      primary: Colors.orange,
+                      primary: Colors.red[600],
                       textStyle: const TextStyle(
                           color: Colors.black,
                           fontSize: 16,

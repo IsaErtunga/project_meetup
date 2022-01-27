@@ -79,9 +79,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     return Scaffold(
       resizeToAvoidBottomInset:
           false, //used to ovoid bottomoverflow, but now button does not move above keyboard anymore at all
-      backgroundColor: Colors.deepPurple[700],
+      backgroundColor: Colors.black, //Colors.deepPurple.withOpacity(0.4),
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple[700],
+        backgroundColor: Colors.deepPurple.withOpacity(0),
         elevation: 0,
         title: Text("Create event"),
       ),
@@ -317,9 +317,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(25),
                   ),
-                  side: BorderSide(color: const Color(0xFFFFEBEE)),
+                  side: BorderSide(
+                      color: Colors
+                          .deepPurple), //(color: const Color(0xFFFFEBEE)),
                   minimumSize: const Size.fromHeight(50),
-                  primary: Colors.white30,
+                  primary: Colors.deepPurple, //Colors.white30,
                   textStyle: const TextStyle(
                       color: Colors.black,
                       fontSize: 16,

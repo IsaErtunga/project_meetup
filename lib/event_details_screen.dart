@@ -1,6 +1,7 @@
 //import 'dart:html';
 import 'dart:ffi';
 import 'dart:math' as math;
+import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart'; //for timestamp to date and time conversion
 import 'package:geocoding/geocoding.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,6 +28,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   CollectionReference groups = FirebaseFirestore.instance.collection('Groups');
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
+  Color _iconColor = Colors.white;
+
   Future _refreshEvent(BuildContext context) async {
     return events.doc(widget.event.eventId).get();
   }
@@ -41,7 +44,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
   Widget getTitle(String text) {
     return Padding(
-      padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 20.0),
+      padding: const EdgeInsets.only(left: 40.0, right: 8.0, top: 20.0),
       child: Text(
         text,
         textAlign: TextAlign.center,
@@ -55,6 +58,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   }
 
   String _hostingGroupID = "";
+  void _testtest() {}
 
   void _addUserToGroup() async {
     var hostingGroupID = "";
@@ -94,6 +98,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         }
       ])
     });
+    //add user to group doc as member
   }
 
   //bool _joinHasBeenPressed = false;
@@ -162,12 +167,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
             // _getEventAdress(eventData["location"]);
             return Scaffold(
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.black,
               body: CustomScrollView(
                 physics: const BouncingScrollPhysics(),
                 slivers: <Widget>[
                   SliverAppBar(
-                      backgroundColor: Colors.black54,
+                      backgroundColor:
+                          Colors.black54, //Colors.deepPurple.withOpacity(0.6),
                       expandedHeight: 200,
                       collapsedHeight: 60,
                       pinned: true,
@@ -234,17 +240,44 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             Padding(
                               padding: EdgeInsets.only(
                                   left: 10,
+                                  right: 10,
                                   top: 3 * SizeConfig.heightMultiplier),
                               child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  Text(
-                                    eventData["eventName"].toString(),
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 0.5,
-                                        fontSize:
-                                            3 * SizeConfig.heightMultiplier),
+                                  Flexible(
+                                    child: Text(
+                                      eventData["eventName"].toString(),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 0.5,
+                                          fontSize:
+                                              3 * SizeConfig.heightMultiplier),
+                                    ),
+                                  ),
+                                  SizedBox(width: 20),
+                                  CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor: Colors.grey[800],
+                                    child: IconButton(
+                                      // disabledColor: Colors.white,
+
+                                      //  padding: EdgeInsets.all(20),
+                                      iconSize: 25,
+                                      icon: Icon(Icons.favorite,
+                                          color: _iconColor),
+                                      onPressed: () {
+                                        setState(() {
+                                          if (_iconColor == Colors.white) {
+                                            _iconColor = Colors.purple;
+                                          } else {
+                                            _iconColor = Colors.white;
+                                          }
+                                        });
+                                      },
+                                    ),
                                   ),
                                 ],
                               ),
@@ -269,28 +302,55 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 children: <Widget>[
-                                                  CircleAvatar(
-                                                    radius: 30,
-                                                    backgroundImage: NetworkImage(
-                                                        eventData['hostingGroup']
-                                                                ['groupPicture']
-                                                            .toString()),
+                                                  Hero(
+                                                    tag: eventData[
+                                                                'hostingGroup']
+                                                            ['groupId']
+                                                        .toString(),
+                                                    child: CircleAvatar(
+                                                      radius: 30,
+                                                      backgroundImage:
+                                                          NetworkImage(eventData[
+                                                                      'hostingGroup']
+                                                                  [
+                                                                  'groupPicture']
+                                                              .toString()),
+                                                    ),
                                                   ),
                                                   SizedBox(width: 15),
                                                   SizedBox(
-                                                    child: Text(eventData[
-                                                                'hostingGroup']
-                                                            ['groupName']
-                                                        .toString()),
+                                                    child: Text(
+                                                        eventData['hostingGroup']
+                                                                ['groupName']
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white)),
                                                   ),
                                                   SizedBox(width: 20),
-                                                  OutlinedButton(
-                                                      onPressed: () =>
-                                                          {_addUserToGroup()},
-                                                      child: const Text('JOIN',
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .black))),
+                                                  ElevatedButton(
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            25)),
+                                                            primary: Colors.red[
+                                                                600], // Colors.white.withOpacity(0),
+                                                            side: BorderSide(
+                                                                color: Color(
+                                                                    0xFFE53935),
+                                                                width: 1.5)),
+                                                    onPressed: () =>
+                                                        {_addUserToGroup()},
+                                                    child: const Text('JOIN',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold)),
+                                                  )
                                                 ])),
                                       ),
                                     )
@@ -311,12 +371,16 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                       child: Row(
                                         children: <Widget>[
                                           Icon(Icons.calendar_today,
-                                              color: Colors.black, size: 20),
+                                              color: Colors.greenAccent,
+                                              size: 20),
                                           SizedBox(width: 10),
-                                          Text((DateFormat.yMMMEd().format(
-                                                  eventData["dateTime"]
-                                                      .toDate()))
-                                              .toString()),
+                                          Text(
+                                              (DateFormat.yMMMEd().format(
+                                                      eventData["dateTime"]
+                                                          .toDate()))
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  color: Colors.greenAccent)),
                                         ],
                                       ),
                                     ),
@@ -331,7 +395,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                   eventData["dateTime"]
                                                       .toDate()))
                                               .toString(),
-                                          style: TextStyle(color: Colors.grey),
+                                          style: TextStyle(
+                                              color: Colors.greenAccent),
                                         ),
                                       ],
                                       crossAxisAlignment:
@@ -342,10 +407,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                     padding: EdgeInsets.only(top: 5, bottom: 5),
                                     child: Row(
                                       children: <Widget>[
-                                        Icon(Icons.location_on,
-                                            color: Colors.black, size: 20),
+                                        Icon(Icons.groups_rounded,
+                                            color: Colors.greenAccent,
+                                            size: 20),
                                         SizedBox(width: 10),
-                                        Text(_eventAddress)
+                                        Text(
+                                            '${eventData["participants"].length.toString()} going',
+                                            style: TextStyle(
+                                                color: Colors.greenAccent))
                                       ],
                                     ),
                                   ),
@@ -372,6 +441,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                   Text(
                                     "About",
                                     style: TextStyle(
+                                        color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 0.5,
                                         fontSize:
@@ -385,7 +455,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               padding:
                                   const EdgeInsets.only(left: 10, right: 10),
                               child: Container(
-                                child: Text(eventData["description"]),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(eventData["description"],
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(color: Colors.white)),
+                                ),
                               ),
                             ),
                             SizedBox(height: 5 * SizeConfig.heightMultiplier),
@@ -397,6 +472,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                   Text(
                                     "Location",
                                     style: TextStyle(
+                                        color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 0.5,
                                         fontSize:
@@ -422,6 +498,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                   Text(
                                     "Participants",
                                     style: TextStyle(
+                                        color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 0.5,
                                         fontSize:
