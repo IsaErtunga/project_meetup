@@ -93,41 +93,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           false, //used to ovoid bottomoverflow, but now button does not move above keyboard anymore at all
       backgroundColor: Colors.black, //Colors.deepPurple.withOpacity(0.4),
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple.withOpacity(0),
+        backgroundColor: Colors.black, //Colors.deepPurple.withOpacity(0),
         elevation: 0,
         title: Text("Create event"),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Container(
-        margin: const EdgeInsets.symmetric(vertical: 20.0),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            shadowColor: Colors.transparent,
-            primary: Colors.white24,
-            textStyle: const TextStyle(
-                color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
-            padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
-          ),
-          onPressed: () {
-            setState(() {
-              formData["location"] = GeoPoint(
-                  applicationBloc.approvedLocation.latitude,
-                  applicationBloc.approvedLocation.longitude);
-              formData["hostingGroup"] = {
-                "groupId": widget.group.id,
-                "groupName": widget.group.groupName,
-                "groupPicture": widget.group.groupPicture
-              };
-            });
-            print('Submitting form');
-            if (_formKey.currentState!.validate()) {
-              _formKey.currentState!.save(); //onSaved is called!
-              addEventBatch();
-            }
-          },
-          child: const Text("Add event"),
-        ),
-      ),
+
       body: Form(
         key: _formKey,
         child: Column(
@@ -373,10 +343,20 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                       const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
                 ),
                 onPressed: () {
+                  setState(() {
+                    formData["location"] = GeoPoint(
+                        applicationBloc.approvedLocation.latitude,
+                        applicationBloc.approvedLocation.longitude);
+                    formData["hostingGroup"] = {
+                      "groupId": widget.group.id,
+                      "groupName": widget.group.groupName,
+                      "groupPicture": widget.group.groupPicture
+                    };
+                  });
                   print('Submitting form');
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save(); //onSaved is called!
-                    //   addEvent(widget.group.id);
+                    addEventBatch();
                   }
                 },
                 child: Stack(

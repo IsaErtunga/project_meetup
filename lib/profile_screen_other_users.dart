@@ -8,8 +8,8 @@ import 'discover_screen.dart';
 import 'profile_screen.dart';
 
 class ProfileScreenOtherUsers extends StatefulWidget {
-  final String userId;
-  const ProfileScreenOtherUsers(this.userId, {Key? key}) : super(key: key);
+  final User user;
+  const ProfileScreenOtherUsers(this.user, {Key? key}) : super(key: key);
 
   @override
   State<ProfileScreenOtherUsers> createState() =>
@@ -79,7 +79,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
     var mediaQD = MediaQuery.of(context);
     _safeAreaSize = mediaQD.size;
     return FutureBuilder<DocumentSnapshot>(
-      future: users.doc(widget.userId).get(),
+      future: users.doc(widget.user.userId).get(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.hasError) {
