@@ -55,9 +55,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   late Size _safeAreaSize;
 
-  int _socialProgressIndex = 3;
+  socialProgressView _getStepProgress(Map<String, dynamic> data) {
+    int _socialProgressIndex = 0;
+    int attendedEventsAmount = data["attendedEvents"].length;
 
-  socialProgressView _getStepProgress() {
+    if (attendedEventsAmount >= 0) {
+      if (attendedEventsAmount <= 5) {
+        _socialProgressIndex = 1;
+      }
+      if (attendedEventsAmount <= 10 && attendedEventsAmount > 5) {
+        _socialProgressIndex = 2;
+      }
+      if (attendedEventsAmount <= 20 && attendedEventsAmount > 10) {
+        _socialProgressIndex = 3;
+      }
+      if (attendedEventsAmount > 20) {
+        _socialProgressIndex = 4;
+      }
+    }
+
     return socialProgressView(
       _socialLevelsText,
       _socialProgressIndex,
@@ -240,7 +256,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ],
                             ),
                             SizedBox(height: 2 * SizeConfig.widthMultiplier),
-                            Container(height: 50, child: _getStepProgress()),
+                            Container(
+                                height: 50, child: _getStepProgress(data)),
                           ],
                         ),
                       ),
