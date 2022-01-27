@@ -56,10 +56,11 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color(0xFFF3F5F7),
+        backgroundColor: Colors.black,
         appBar: AppBar(
-          title: Text("Create group"),
-        ),
+            elevation: 0,
+            title: Text("Create group"),
+            backgroundColor: Colors.black),
         body: Form(
             key: _formKey,
             child: Column(
@@ -68,15 +69,25 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   margin: const EdgeInsets.only(
                       top: 15.0, left: 10.0, right: 10.0, bottom: 5.0),
                   child: TextFormField(
-                    style: const TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                      labelText: "Name",
-                      labelStyle: const TextStyle(color: Colors.black),
-                      floatingLabelBehavior: FloatingLabelBehavior.never,
-                      filled: true,
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(10)),
+                      labelText: "Group Name",
+                      labelStyle: const TextStyle(
+                          color: Colors.white54,
+                          fontSize: 16,
+                          fontFamily: 'verdana_regular',
+                          fontWeight: FontWeight.w400),
+                      floatingLabelStyle: TextStyle(color: Colors.red[600]),
+                      floatingLabelBehavior: FloatingLabelBehavior.auto,
+                      filled: false,
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                          borderRadius: BorderRadius.circular(25)),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xFFE53935)),
+                          borderRadius: BorderRadius.circular(25)),
+                      prefixIcon: Icon(Icons.keyboard_arrow_right_rounded,
+                          color: Colors.red[600]),
                     ),
                     // The validator receives the text that the user has entered.
                     validator: (value) {
@@ -93,18 +104,30 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(
-                      top: 15.0, left: 10.0, right: 10.0, bottom: 5.0),
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 5.0, horizontal: 10.0),
                   child: TextFormField(
-                    style: const TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       labelText: "Description",
-                      labelStyle: const TextStyle(color: Colors.black),
-                      floatingLabelBehavior: FloatingLabelBehavior.never,
-                      filled: true,
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(10)),
+                      labelStyle: TextStyle(
+                        color: Colors.white54,
+                        fontSize: 16,
+                        fontFamily: 'verdana_regular',
+                        fontWeight: FontWeight.w400,
+                      ),
+                      floatingLabelStyle: TextStyle(color: Colors.red[600]),
+                      floatingLabelBehavior: FloatingLabelBehavior.auto,
+                      filled: false,
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                          borderRadius: BorderRadius.all(Radius.circular(25))),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Color(0xFFE53935), width: 1.5),
+                          borderRadius: BorderRadius.all(Radius.circular(25))),
+                      prefixIcon:
+                          Icon(Icons.textsms_outlined, color: Colors.red[600]),
                     ),
                     // The validator receives the text that the user has entered.
                     validator: (value) {
@@ -121,59 +144,62 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(
-                      top: 15.0, left: 10.0, right: 10.0, bottom: 5.0),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Color(0xFFEEEEEE),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Is group private"),
-                      Switch(
-                        value: isPrivate,
-                        onChanged: (value) {
-                          setState(() {
-                            isPrivate = value;
-                            formData["isPrivate"] = value;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                /*DropdownButton<String>(
-                    value: dropdownValue,
-                    icon: const Icon(Icons.arrow_downward),
-                    elevation: 16,
-                    style: const TextStyle(color: Colors.deepPurple),
-                    underline: Container(
-                      height: 2,
-                      color: Colors.deepPurpleAccent,
-                    ),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        dropdownValue = newValue!;
-                      });
-                    },
-                    items: <String>['One', 'Two', 'Free', 'Four']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  )*/
-                Spacer(flex: 3),
-                Container(
-                  margin: EdgeInsets.only(bottom: 30.0),
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 5.0, horizontal: 10.0),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      shadowColor: Colors.transparent,
-                      primary: Colors.teal,
+                      primary: Colors.transparent,
+                      elevation: 0,
+                      minimumSize: const Size.fromHeight(50),
+                      textStyle: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 7),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25)),
+                      side: BorderSide(color: Colors.white),
+                    ),
+                    onPressed: () {},
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Icon(Icons.privacy_tip_outlined,
+                            color: Colors.red[600]),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text("Is group private",
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Switch(
+                            activeColor: Colors.red[600],
+                            inactiveTrackColor: Colors.white,
+                            value: isPrivate,
+                            onChanged: (value) {
+                              setState(() {
+                                isPrivate = value;
+                                formData["isPrivate"] = value;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Spacer(flex: 3),
+                Container(
+                  margin: EdgeInsets.only(bottom: 30.0, right: 10, left: 10),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25)),
+                      side: BorderSide(color: Color(0xFFE53935)),
+                      minimumSize: const Size.fromHeight(50),
+                      primary: Colors.red[600],
                       textStyle: const TextStyle(
                           color: Colors.black,
                           fontSize: 16,
@@ -188,7 +214,21 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         createGroup();
                       }
                     },
-                    child: const Text("Create group"),
+                    child: Stack(
+                      children: <Widget>[
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Icon(Icons.publish_rounded,
+                                color: Colors.black)),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "CREATE GROUP",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

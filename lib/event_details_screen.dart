@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:ffi';
 import 'dart:math' as math;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart'; //for timestamp to date and time conversion
 import 'package:geocoding/geocoding.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,6 +32,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   CollectionReference groups = FirebaseFirestore.instance.collection('Groups');
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
+  Color _iconColor = Colors.white;
+
   Future _refreshEvent(BuildContext context) async {
     return events.doc(widget.event.eventId).get();
   }
@@ -52,7 +55,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
   Widget getTitle(String text) {
     return Padding(
-      padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 20.0),
+      padding: const EdgeInsets.only(left: 40.0, right: 8.0, top: 20.0),
       child: Text(
         text,
         textAlign: TextAlign.center,
@@ -66,15 +69,18 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   }
 
   String _hostingGroupID = "";
+  void _testtest() {}
 
   void _addUserToGroup() async {
     var hostingGroupID = "";
+    var groupName = "";
+    var groupPicture = "";
+    List groupMembersList = [];
     var docSnapshot = await events.doc(widget.event.eventId).get();
     if (docSnapshot.exists) {
       Map<String, dynamic>? eventdata =
           docSnapshot.data() as Map<String, dynamic>;
-      hostingGroupID = eventdata['hostingGroup'][0]['id'];
-      print(hostingGroupID);
+      hostingGroupID = eventdata['hostingGroup']['groupId'];
     }
     setState(() {
       _hostingGroupID = hostingGroupID;
@@ -83,10 +89,27 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       //to do: refresh the profile screen
     });
 
-    //edit this to add _hostingGroupID to 'myGroups' array of map
+    var docSnapshot2 = await groups.doc(_hostingGroupID).get();
+    if (docSnapshot2.exists) {
+      Map<String, dynamic>? groupsData =
+          docSnapshot2.data() as Map<String, dynamic>;
+
+      groupName = groupsData['groupName'];
+      groupPicture = groupsData["groupPicture"];
+      groupMembersList = groupsData["members"];
+    }
+
     return users.doc(auth.currentUser!.uid).update({
-      'myGroups': FieldValue.arrayUnion([_hostingGroupID])
+      'myGroups': FieldValue.arrayUnion([
+        {
+          'id': _hostingGroupID,
+          'groupName': groupName,
+          'groupPicture': groupPicture,
+          'membersCount': groupMembersList.length
+        }
+      ])
     });
+    //add user to group doc as member
   }
 
   //bool _joinHasBeenPressed = false;
@@ -132,12 +155,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
             // _getEventAdress(eventData["location"]);
             return Scaffold(
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.black,
               body: CustomScrollView(
                 physics: const BouncingScrollPhysics(),
                 slivers: <Widget>[
                   SliverAppBar(
-                      backgroundColor: Colors.black54,
+                      backgroundColor:
+                          Colors.black54, //Colors.deepPurple.withOpacity(0.6),
                       expandedHeight: 200,
                       collapsedHeight: 60,
                       pinned: true,
@@ -204,85 +228,124 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             Padding(
                               padding: EdgeInsets.only(
                                   left: 10,
+                                  right: 10,
                                   top: 3 * SizeConfig.heightMultiplier),
                               child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   Flexible(
                                     child: Text(
                                       eventData["eventName"].toString(),
                                       style: TextStyle(
-                                          color: Colors.black,
+                                          color: Colors.white,
                                           fontWeight: FontWeight.bold,
                                           letterSpacing: 0.5,
                                           fontSize:
                                               3 * SizeConfig.heightMultiplier),
                                     ),
                                   ),
+                                  SizedBox(width: 20),
+                                  CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor: Colors.grey[800],
+                                    child: IconButton(
+                                      // disabledColor: Colors.white,
+
+                                      //  padding: EdgeInsets.all(20),
+                                      iconSize: 25,
+                                      icon: Icon(Icons.favorite,
+                                          color: _iconColor),
+                                      onPressed: () {
+                                        joinEventBatch();
+                                        setState(() {
+                                          if (_iconColor == Colors.white) {
+                                            _iconColor = Colors.purple;
+                                          } else {
+                                            _iconColor = Colors.white;
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
                             SizedBox(height: 1.5 * SizeConfig.heightMultiplier),
-                            /*Container(
-                              alignment: Alignment.center,
+                            Container(
                               height: 100,
                               // width: 200,
                               child: eventData["hostingGroup"].isNotEmpty
-                                  ? ListView(
-                                      /*   gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisCount: 1),*/
-                                      padding: const EdgeInsets.only(
-                                          left: 40, right: 40),
-                                      children: eventData["hostingGroup"]
-                                          .map<Widget>((hostingGroup) {
-                                        return GestureDetector(
-                                          onTap: () => {
-                                            Navigator.of(context)
-                                                .push(_createRouteToGroup(Group(
-                                              hostingGroup["id"],
-                                            )))
-                                          },
-                                          /* child: Hero(
-                                            tag: hostingGroup["id"],*/
-                                          child: SizedBox(
+                                  ? SizedBox.expand(
+                                      child: GestureDetector(
+                                        onTap: () => {
+                                          Navigator.of(context)
+                                              .push(_createRouteToGroup(Group(
+                                            eventData["hostingGroup"]
+                                                ["groupId"],
+                                          )))
+                                        },
+                                        child: SizedBox(
                                             height: 100,
                                             child: Row(
-                                              children: <Widget>[
-                                                CircleAvatar(
-                                                  radius: 30,
-                                                  backgroundImage: NetworkImage(
-                                                      hostingGroup[
-                                                              "groupPicture"]
-                                                          .toString()),
-                                                ),
-                                                SizedBox(width: 10),
-                                                //edit join button: color change after group is joined, write function that checks if user is already group member; base the button color on this info
-                                                SizedBox(
-                                                  width: 150,
-                                                  child: Text(
-                                                      hostingGroup["groupName"]
-                                                          .toString()),
-                                                ),
-                                                SizedBox(width: 5),
-                                                OutlinedButton(
-                                                    onPressed: () => {
-                                                          _addUserToGroup(),
-                                                          print(
-                                                              'hurensohn $_hostingGroupID')
-                                                        },
-                                                    child: const Text('JOIN',
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Hero(
+                                                    tag: eventData[
+                                                                'hostingGroup']
+                                                            ['groupId']
+                                                        .toString(),
+                                                    child: CircleAvatar(
+                                                      radius: 30,
+                                                      backgroundImage:
+                                                          NetworkImage(eventData[
+                                                                      'hostingGroup']
+                                                                  [
+                                                                  'groupPicture']
+                                                              .toString()),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 15),
+                                                  SizedBox(
+                                                    child: Text(
+                                                        eventData['hostingGroup']
+                                                                ['groupName']
+                                                            .toString(),
                                                         style: TextStyle(
                                                             color:
-                                                                Colors.black))),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
+                                                                Colors.white)),
+                                                  ),
+                                                  SizedBox(width: 20),
+                                                  ElevatedButton(
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            25)),
+                                                            primary: Colors.red[
+                                                                600], // Colors.white.withOpacity(0),
+                                                            side: BorderSide(
+                                                                color: Color(
+                                                                    0xFFE53935),
+                                                                width: 1.5)),
+                                                    onPressed: () =>
+                                                        {_addUserToGroup()},
+                                                    child: const Text('JOIN',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold)),
+                                                  )
+                                                ])),
+                                      ),
                                     )
                                   : const Text("No group",
                                       style: TextStyle(fontSize: 24)),
-                            ),*/
+                            ),
                             SizedBox(height: 3 * SizeConfig.heightMultiplier),
                             Padding(
                               padding:
@@ -297,12 +360,16 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                       child: Row(
                                         children: <Widget>[
                                           Icon(Icons.calendar_today,
-                                              color: Colors.black, size: 20),
+                                              color: Colors.greenAccent,
+                                              size: 20),
                                           SizedBox(width: 10),
-                                          Text((DateFormat.yMMMEd().format(
-                                                  eventData["dateTime"]
-                                                      .toDate()))
-                                              .toString()),
+                                          Text(
+                                              (DateFormat.yMMMEd().format(
+                                                      eventData["dateTime"]
+                                                          .toDate()))
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  color: Colors.greenAccent)),
                                         ],
                                       ),
                                     ),
@@ -317,16 +384,29 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                   eventData["dateTime"]
                                                       .toDate()))
                                               .toString(),
-                                          style: TextStyle(color: Colors.grey),
+                                          style: TextStyle(
+                                              color: Colors.greenAccent),
                                         ),
                                       ],
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                     ),
                                   ),
-                                  ElevatedButton(
-                                      onPressed: () {},
-                                      child: Text("Attend event")),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 5, bottom: 5),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Icon(Icons.groups_rounded,
+                                            color: Colors.greenAccent,
+                                            size: 20),
+                                        SizedBox(width: 10),
+                                        Text(
+                                            '${eventData["participants"].length.toString()} going',
+                                            style: TextStyle(
+                                                color: Colors.greenAccent))
+                                      ],
+                                    ),
+                                  ),
                                   Padding(
                                     padding:
                                         EdgeInsets.only(bottom: 5, left: 30),
@@ -350,6 +430,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                   Text(
                                     "About",
                                     style: TextStyle(
+                                        color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 0.5,
                                         fontSize:
@@ -363,7 +444,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               padding:
                                   const EdgeInsets.only(left: 10, right: 10),
                               child: Container(
-                                child: Text(eventData["description"]),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(eventData["description"],
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(color: Colors.white)),
+                                ),
                               ),
                             ),
                             SizedBox(height: 5 * SizeConfig.heightMultiplier),
@@ -375,6 +461,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                   Text(
                                     "location",
                                     style: TextStyle(
+                                        color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 0.5,
                                         fontSize:
@@ -412,6 +499,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                   Text(
                                     "Participants",
                                     style: TextStyle(
+                                        color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 0.5,
                                         fontSize:
@@ -440,27 +528,24 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                           return GestureDetector(
                                             onTap: () => {
                                               Navigator.of(context).push(
-                                                  _createRouteToUser(
-                                                      participant["userId"]))
+                                                  _createRouteToUser(User(
+                                                      participant["userId"])))
                                             },
-                                            child: Hero(
-                                              tag: participant["userId"],
-                                              child: Card(
-                                                elevation: 3,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15.0)),
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15),
-                                                    /*   border: Border.all(
+                                            child: Card(
+                                              elevation: 0,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15.0)),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  /*   border: Border.all(
                                                               color:
                                                                   Colors.black,
                                                             ),*/
-                                                    /* boxShadow: [
+                                                  /* boxShadow: [
                                                               BoxShadow(
                                                                  color: Colors
                                                                     .grey
@@ -473,18 +558,20 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                                     0), // changes position of shadow
                                                               ),
                                                             ],*/
-                                                    color: Colors.grey[800],
-                                                  ),
-                                                  child: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(5)),
-                                                      Container(
+                                                  color: HexColor('#F8FAFB'),
+                                                ),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(5)),
+                                                    Hero(
+                                                      tag:
+                                                          participant["userId"],
+                                                      child: Container(
                                                         height: 5 *
                                                             SizeConfig
                                                                 .heightMultiplier,
@@ -505,17 +592,16 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                                     participant[
                                                                         "profilePicture"]))),
                                                       ),
-                                                      SizedBox(width: 10),
-                                                      Text(
-                                                        '${participant["firstName"]} ${participant["lastName"]}',
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ],
-                                                  ),
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    Text(
+                                                      '${participant["firstName"]} ${participant["lastName"]}',
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ),
@@ -589,6 +675,19 @@ class User {
 
   const User(this.userId);
 }
+
+class HexColor extends Color {
+  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
+
+  static int _getColorFromHex(String hexColor) {
+    hexColor = hexColor.toUpperCase().replaceAll('#', '');
+    if (hexColor.length == 6) {
+      hexColor = 'FF' + hexColor;
+    }
+    return int.parse(hexColor, radix: 16);
+  }
+}
+
 
 /*
 class _MyCustomAppBar extends StatelessWidget {

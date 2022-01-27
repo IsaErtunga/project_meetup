@@ -100,10 +100,10 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
               physics: const BouncingScrollPhysics(),
               slivers: <Widget>[
                 SliverAppBar(
-                  leading: IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.black),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
+                  leading: BackButton(color: Colors.black
+                      //icon: Icon(Icons.arrow_back, color: Colors.black),
+                      //onPressed: () => Navigator.of(context).pop(),
+                      ),
                   backgroundColor: Colors.white, //const Color(0xffF8F8FA),
                   forceElevated: true,
                   expandedHeight: 200,
@@ -128,16 +128,19 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                           children: <Widget>[
                             Row(
                               children: <Widget>[
-                                Container(
-                                  height: 11 * SizeConfig.heightMultiplier,
-                                  width: 21 * SizeConfig.widthMultiplier,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.rectangle,
-                                      borderRadius: BorderRadius.circular(30),
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image:
-                                              NetworkImage(data["imageUrl"]))),
+                                Hero(
+                                  tag: widget.user.userId,
+                                  child: Container(
+                                    height: 11 * SizeConfig.heightMultiplier,
+                                    width: 21 * SizeConfig.widthMultiplier,
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.rectangle,
+                                        borderRadius: BorderRadius.circular(30),
+                                        image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: NetworkImage(
+                                                data["imageUrl"]))),
+                                  ),
                                 ),
                                 SizedBox(
                                   width: 5 * SizeConfig.widthMultiplier,
@@ -310,15 +313,15 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                     scrollDirection: Axis.horizontal,
                                     physics: const BouncingScrollPhysics(),
                                     children: data["attendedEvents"]
-                                        .map<Widget>((document) {
+                                        .map<Widget>((attendedEvent) {
                                       return GestureDetector(
                                         onTap: () => {
                                           Navigator.of(context).push(
                                               _createRouteEvents(
-                                                  Event(document)))
+                                                  Event(attendedEvent["id"])))
                                         },
                                         child: Hero(
-                                          tag: document,
+                                          tag: attendedEvent["id"],
                                           child: SizedBox(
                                             width: 280,
                                             child: Stack(
@@ -362,7 +365,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                                               const EdgeInsets.only(top: 10),
                                                                           child:
                                                                               Text(
-                                                                            (DateFormat.MMMEd().add_Hm().format(document["eventTime"].toDate()).toString()),
+                                                                            (DateFormat.MMMEd().add_Hm().format(attendedEvent["eventTime"].toDate()).toString()),
 
                                                                             //  maxLines: 1,
                                                                             //overflow: TextOverflow.ellipsis,
@@ -387,7 +390,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                                               const EdgeInsets.only(top: 2),
                                                                           child:
                                                                               Text(
-                                                                            document["eventName"].toString(),
+                                                                            attendedEvent["eventName"].toString(),
                                                                             textAlign:
                                                                                 TextAlign.left,
                                                                             style:
@@ -414,7 +417,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                                             children: <Widget>[
                                                                               Expanded(
                                                                                 child: Text(
-                                                                                  'by ${document["hostingGroup"].toString()}',
+                                                                                  'by ${attendedEvent["hostingGroup"].toString()}',
                                                                                   textAlign: TextAlign.left,
                                                                                   style: TextStyle(
                                                                                     fontWeight: FontWeight.w300,
@@ -445,18 +448,18 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                                             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                             //crossAxisAlignment: CrossAxisAlignment.start,
                                                                             children: <Widget>[
-                                                                              /*Container(
-                                                                                        child: Text(
-                                                                                          '${document["attendants_count"].toString()} going',
-                                                                                          //  textAlign: TextAlign.right,
-                                                                                          style: TextStyle(
-                                                                                            fontWeight: FontWeight.w300,
-                                                                                            fontSize: 12,
-                                                                                            letterSpacing: 0.27,
-                                                                                            color: Colors.blueGrey[600],
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),*/
+                                                                              Container(
+                                                                                child: Text(
+                                                                                  '${attendedEvent["participantsCount"].toString()} going',
+                                                                                  //  textAlign: TextAlign.right,
+                                                                                  style: TextStyle(
+                                                                                    fontWeight: FontWeight.w300,
+                                                                                    fontSize: 12,
+                                                                                    letterSpacing: 0.27,
+                                                                                    color: Colors.blueGrey[600],
+                                                                                  ),
+                                                                                ),
+                                                                              ),
                                                                             ],
                                                                           ),
                                                                         ),
@@ -494,7 +497,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                               fit: BoxFit.fill,
                                                               image:
                                                                   NetworkImage(
-                                                                document[
+                                                                attendedEvent[
                                                                         "eventPicture"]
                                                                     .toString(),
                                                               ),
@@ -565,13 +568,14 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                       padding: const EdgeInsets.all(8),
                                       physics: const BouncingScrollPhysics(),
                                       children: data["myGroups"]
-                                          .map<Widget>((document) {
-                                        return InkWell(
-                                          splashColor: Colors.transparent,
-                                          //onTap: callback,
-                                          child: GestureDetector(
-                                            child: Hero(
-                                              tag: document,
+                                          .map<Widget>((myGroups) {
+                                        return Flexible(
+                                          child: InkWell(
+                                            splashColor: Colors.transparent,
+                                            //onTap: callback,
+                                            child: GestureDetector(
+                                              /*   child: Hero(
+                                                tag: myGroups["id"],  */
                                               child: SizedBox(
                                                 height: 280,
                                                 child: Stack(
@@ -614,7 +618,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                                                 Padding(
                                                                               padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
                                                                               child: Text(
-                                                                                document["groupName"].toString(),
+                                                                                myGroups["groupName"].toString(),
                                                                                 textAlign: TextAlign.left,
                                                                                 style: TextStyle(
                                                                                   fontWeight: FontWeight.w600,
@@ -625,26 +629,31 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                                               ),
                                                                             ),
                                                                           ),
-                                                                          /*
-                                                                                  Padding(
-                                                                                    padding: const EdgeInsets.only(top: 8, left: 16, right: 16, bottom: 8),
-                                                                                    child: Row(
-                                                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                      children: <Widget>[
-                                                                                        Text(
-                                                                                          '${document['memberAmount'].toString()} members',
-                                                                                          textAlign: TextAlign.left,
-                                                                                          style: TextStyle(
-                                                                                            fontWeight: FontWeight.w300,
-                                                                                            fontSize: 12,
-                                                                                            letterSpacing: 0.27,
-                                                                                            color: Colors.blueGrey[700],
-                                                                                          ),
-                                                                                        ),
-                                                                                      ],
-                                                                                    ),
-                                                                                  ),*/
+
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.only(
+                                                                                top: 8,
+                                                                                left: 16,
+                                                                                right: 16,
+                                                                                bottom: 8),
+                                                                            child:
+                                                                                Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                                              children: <Widget>[
+                                                                                Text(
+                                                                                  '${myGroups['membersCount'].toString()} members',
+                                                                                  textAlign: TextAlign.left,
+                                                                                  style: TextStyle(
+                                                                                    fontWeight: FontWeight.w300,
+                                                                                    fontSize: 12,
+                                                                                    letterSpacing: 0.27,
+                                                                                    color: Colors.blueGrey[700],
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
                                                                         ],
                                                                       ),
                                                                     ),
@@ -705,7 +714,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                                 fit:
                                                                     BoxFit.fill,
                                                                 image: NetworkImage(
-                                                                    document[
+                                                                    myGroups[
                                                                             'groupPicture']
                                                                         .toString()),
                                                               ),
@@ -719,10 +728,13 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                               ),
                                             ),
                                             onTap: () => {
-                                              Navigator.of(context)
-                                                  .push(_createRoute(Group(
-                                                document,
-                                              )))
+                                              Navigator.of(context).push(
+                                                _createRoute(
+                                                  Group(
+                                                    myGroups["id"],
+                                                  ),
+                                                ),
+                                              ),
                                             },
                                           ),
                                         );
