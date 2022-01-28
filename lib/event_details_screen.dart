@@ -1,20 +1,16 @@
 //import 'dart:html';
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:math' as math;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart'; //for timestamp to date and time conversion
-import 'package:geocoding/geocoding.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:provider/provider.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_meetup/discover_screen.dart';
 import 'package:project_meetup/profile_screen.dart';
-import 'package:uuid/uuid.dart';
 import 'group_details_screen.dart';
 import 'profile_screen_other_users.dart';
 
