@@ -459,7 +459,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               child: Row(
                                 children: <Widget>[
                                   Text(
-                                    "location",
+                                    "Location",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -470,6 +470,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                 ],
                               ),
                             ),
+                            SizedBox(height: 3 * SizeConfig.heightMultiplier),
                             Padding(
                               padding:
                                   const EdgeInsets.only(left: 10, right: 10),

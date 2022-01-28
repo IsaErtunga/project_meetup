@@ -7,7 +7,7 @@ import 'package:project_meetup/create_event_screen.dart';
 import 'package:project_meetup/event_details_screen.dart';
 import 'package:project_meetup/chat_screen.dart';
 import 'package:project_meetup/profile_screen_other_users.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fireauth;
 import 'profile_screen.dart'; //for sizeconfig fun
 import 'package:intl/intl.dart'; //to convert timestamp to a date in ddmmyy format
 
@@ -23,7 +23,7 @@ class GroupDetailsScreen extends StatefulWidget {
 }
 
 class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
-  final FirebaseAuth auth = FirebaseAuth.instance;
+  final fireauth.FirebaseAuth auth = fireauth.FirebaseAuth.instance;
   CollectionReference groups = FirebaseFirestore.instance.collection('Groups');
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
@@ -161,43 +161,51 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                         ),
                       ),
                       SliverFillRemaining(
-
-                          // hasScrollBody: false,
+                          hasScrollBody: false,
                           child: Container(
                               child: Padding(
                                   padding: const EdgeInsets.only(
                                       left: 10.0, right: 10),
                                   child: Column(children: [
                                     Center(
-                                        child: SizedBox(
-                                      width: 100,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(25)),
-                                            primary: Colors.red[
-                                                600], // Colors.white.withOpacity(0),
-                                            side: BorderSide(
-                                                color: Color(0xFFE53935),
-                                                width: 1.5)),
-                                        onPressed: () => {_addUserToGroup()},
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Icon(Icons.group_add,
-                                                color: Colors.black),
-                                            SizedBox(width: 10),
-                                            Text('JOIN',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          ],
+                                      child: SizedBox(
+                                        width: 100,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          25)),
+                                              primary: Colors.red[
+                                                  600], // Colors.white.withOpacity(0),
+                                              side: BorderSide(
+                                                  color: Color(0xFFE53935),
+                                                  width: 1.5)),
+                                          onPressed: () => {_addUserToGroup()},
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              Icon(Icons.group_add,
+                                                  color: Colors.black),
+                                              SizedBox(width: 10),
+                                              Text('JOIN',
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    )),
+                                    ),
+                                    SizedBox(height: 6),
+                                    Align(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                            '${groupdata["members"].length.toString()} MEMBERS',
+                                            style:
+                                                TextStyle(color: Colors.red))),
                                     SizedBox(
                                         height:
                                             2 * SizeConfig.heightMultiplier),
@@ -467,85 +475,116 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                     ),
                                     Expanded(
                                       child: Container(
-                                          height:
-                                              50 * SizeConfig.heightMultiplier,
-                                          child: groupdata["members"].isNotEmpty
-                                              ? ListView(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 0),
-                                                  scrollDirection:
-                                                      Axis.vertical,
-                                                  shrinkWrap: true,
-                                                  physics:
-                                                      const NeverScrollableScrollPhysics(),
-                                                  children: groupdata["members"]
-                                                      .map<Widget>((document) {
-                                                    return GestureDetector(
-                                                      onTap: () {
-                                                        print(document);
-                                                        users
-                                                            .doc(document)
-                                                            .get()
-                                                            .then((value) =>
-                                                                print(value
-                                                                    .data()));
-                                                      },
-                                                      child: SizedBox(
-                                                        height: 80,
-                                                        child: Card(
-                                                          semanticContainer:
-                                                              true,
-                                                          clipBehavior: Clip
-                                                              .antiAliasWithSaveLayer,
-                                                          elevation: 5,
-                                                          margin:
-                                                              const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal: 7,
-                                                                  vertical: 7),
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        15.0),
-                                                          ),
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .symmetric(
-                                                                    vertical:
-                                                                        10.0,
-                                                                    horizontal:
-                                                                        15.0),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: const [
-                                                                CircleAvatar(
-                                                                  backgroundImage:
-                                                                      NetworkImage(
-                                                                          "https://i.picsum.photos/id/555/200/200.jpg?hmac=SPdHg_AxaDTFgZCoJymemxudcniLOiP2P5k6T8Eb-kc"),
-                                                                ),
-                                                                Text(
-                                                                    'Isa Ertunga'),
-                                                                FaIcon(FontAwesomeIcons
-                                                                    .arrowRight),
-                                                              ],
+                                        height:
+                                            50 * SizeConfig.heightMultiplier,
+                                        child: groupdata["members"].isNotEmpty
+                                            ? GridView(
+                                                gridDelegate:
+                                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                                        crossAxisCount: 2,
+                                                        mainAxisSpacing: 15,
+                                                        crossAxisSpacing: 15,
+                                                        childAspectRatio: 2.2),
+                                                padding:
+                                                    const EdgeInsets.all(8),
+                                                scrollDirection: Axis.vertical,
+                                                physics:
+                                                    const BouncingScrollPhysics(),
+                                                children: groupdata["members"]
+                                                    .map<Widget>((member) {
+                                                  return GestureDetector(
+                                                    onTap: () => {
+                                                      Navigator.of(context).push(
+                                                          _createRouteToUser(
+                                                              User(member[
+                                                                  "userId"])))
+                                                    },
+                                                    child: Card(
+                                                      elevation: 0,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          15.0)),
+                                                      child: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(15),
+                                                          /*   border: Border.all(
+                                                              color:
+                                                                  Colors.black,
+                                                            ),*/
+                                                          /* boxShadow: [
+                                                              BoxShadow(
+                                                                 color: Colors
+                                                                    .grey
+                                                                    .withOpacity(
+                                                                        0.5),
+                                                                spreadRadius: 1,
+                                                                blurRadius: 5, 
+                                                                offset: Offset(
+                                                                    0,
+                                                                    0), // changes position of shadow
+                                                              ),
+                                                            ],*/
+                                                          color:
+                                                              Color(0xF8FAFB),
+                                                        ),
+                                                        child: Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: <Widget>[
+                                                            Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(5)),
+                                                            Hero(
+                                                              tag: member[
+                                                                  "userId"],
+                                                              child: Container(
+                                                                height: 5 *
+                                                                    SizeConfig
+                                                                        .heightMultiplier,
+                                                                width: 10 *
+                                                                    SizeConfig
+                                                                        .widthMultiplier,
+                                                                decoration: BoxDecoration(
+                                                                    shape: BoxShape
+                                                                        .rectangle,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            15),
+                                                                    image: DecorationImage(
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                        image: NetworkImage(
+                                                                            member["profilePicture"]))),
+                                                              ),
                                                             ),
-                                                          ),
+                                                            SizedBox(width: 10),
+                                                            Text(
+                                                              '${member["firstName"]} ${member["lastName"]}',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
-                                                    );
-                                                  }).toList(),
-                                                )
-                                              : const Text(
-                                                  "No members",
-                                                  style:
-                                                      TextStyle(fontSize: 24),
-                                                )),
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                              )
+                                            : const Text("No participants",
+                                                style: TextStyle(fontSize: 24)),
+                                      ),
                                     ),
                                   ])))),
                     ]));
@@ -580,4 +619,23 @@ class Event {
   final String eventId;
 
   const Event(this.eventId);
+}
+
+Route _createRouteToUser(userId) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        ProfileScreenOtherUsers(userId),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(1.0, 0.0);
+      const end = Offset.zero;
+      const curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
 }
