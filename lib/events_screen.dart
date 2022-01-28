@@ -64,7 +64,7 @@ class _EventsScreenState extends State<EventsScreen> {
             const FaIcon(FontAwesomeIcons.chevronDown),
             Expanded(
               child: Container(
-                padding: const EdgeInsets.only(top: 50.0),
+                padding: const EdgeInsets.only(top: 0.0),
                 child: FutureBuilder<QuerySnapshot>(
                     future: events.get(),
                     builder: (BuildContext context,
@@ -97,7 +97,7 @@ class _EventsScreenState extends State<EventsScreen> {
                                   clipBehavior: Clip.antiAliasWithSaveLayer,
                                   elevation: 5,
                                   margin: const EdgeInsets.symmetric(
-                                      vertical: 7, horizontal: 5),
+                                      vertical: 5, horizontal: 5),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15.0),
                                   ),

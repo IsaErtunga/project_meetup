@@ -189,11 +189,14 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                             Icon(Icons.group_add,
                                                 color: Colors.black),
                                             SizedBox(width: 10),
-                                            Text('JOIN',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
+                                            Expanded(
+                                              child: AutoSizeText('JOIN',
+                                                  maxLines: 1,
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -483,13 +486,13 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                                       .map<Widget>((document) {
                                                     return GestureDetector(
                                                       onTap: () {
-                                                        print(document);
-                                                        users
-                                                            .doc(document)
-                                                            .get()
-                                                            .then((value) =>
-                                                                print(value
-                                                                    .data()));
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    ProfileScreenOtherUsers(
+                                                                        document[
+                                                                            "userId"])));
                                                       },
                                                       child: SizedBox(
                                                         height: 80,
