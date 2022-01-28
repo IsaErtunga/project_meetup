@@ -168,34 +168,35 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                       left: 10.0, right: 10),
                                   child: Column(children: [
                                     Center(
-                                      child: SizedBox(
-                                        width: 100,
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          25)),
-                                              primary: Colors.red[
-                                                  600], // Colors.white.withOpacity(0),
-                                              side: BorderSide(
-                                                  color: Color(0xFFE53935),
-                                                  width: 1.5)),
-                                          onPressed: () => {_addUserToGroup()},
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: <Widget>[
-                                              Icon(Icons.group_add,
-                                                  color: Colors.black),
-                                              SizedBox(width: 10),
-                                              Text('JOIN',
+                                        child: SizedBox(
+                                      width: 100,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(25)),
+                                            primary: Colors.red[
+                                                600], // Colors.white.withOpacity(0),
+                                            side: BorderSide(
+                                                color: Color(0xFFE53935),
+                                                width: 1.5)),
+                                        onPressed: () => {_addUserToGroup()},
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Icon(Icons.group_add,
+                                                color: Colors.black),
+                                            SizedBox(width: 10),
+                                            Expanded(
+                                              child: AutoSizeText('JOIN',
+                                                  maxLines: 1,
                                                   style: TextStyle(
                                                       color: Colors.black,
                                                       fontWeight:
                                                           FontWeight.bold)),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),

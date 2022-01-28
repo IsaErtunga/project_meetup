@@ -114,23 +114,47 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
   //bool _joinHasBeenPressed = false;
 
-  Future<void> joinEventBatch() {
-    WriteBatch batch = FirebaseFirestore.instance.batch();
+  Future<void> joinEventBatch() async {
+    // Get user
+    final userDataSnapshot = await users.doc(auth.currentUser!.uid).get();
+    final userData = userDataSnapshot.data() as Map<String, dynamic>;
 
-    final String eventId = const Uuid().v4();
+    // Get event
+    final eventDataSnapshot = await events.doc(widget.event.eventId).get();
+    final eventData = eventDataSnapshot.data() as Map<String, dynamic>;
+
+    WriteBatch batch = FirebaseFirestore.instance.batch();
 
     // event document reference
     DocumentReference eventRef = FirebaseFirestore.instance
         .collection('Events')
         .doc(widget.event.eventId);
     batch.update(eventRef, {
-      "participants": FieldValue.arrayUnion([{}])
+      "participants": FieldValue.arrayUnion([
+        {
+          "firstName": userData["firstName"],
+          "lastName": userData["lastName"],
+          "profilePicture": userData["imageUrl"],
+          "userId": userDataSnapshot.id
+        }
+      ])
     });
 
     DocumentReference newEventForUser = FirebaseFirestore.instance
         .collection('users')
         .doc(auth.currentUser!.uid);
-    batch.update(newEventForUser, {});
+    batch.update(newEventForUser, {
+      "attendedEvents": FieldValue.arrayUnion([
+        {
+          "eventName": eventData["eventName"],
+          "eventPicture": eventData["eventPicture"],
+          "eventTime": eventData["dateTime"],
+          "hostingGroup": eventData["hostingGroup"],
+          "id": eventDataSnapshot.id,
+          "participantsCount": eventData["participants"].length + 1
+        }
+      ])
+    });
 
     return batch.commit();
   }
@@ -528,9 +552,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                             .map<Widget>((participant) {
                                           return GestureDetector(
                                             onTap: () => {
-                                              Navigator.of(context).push(
-                                                  _createRouteToUser(User(
-                                                      participant["userId"])))
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ProfileScreenOtherUsers(
+                                                              participant[
+                                                                  "userId"])))
                                             },
                                             child: Card(
                                               elevation: 0,
@@ -688,7 +716,6 @@ class HexColor extends Color {
     return int.parse(hexColor, radix: 16);
   }
 }
-
 
 /*
 class _MyCustomAppBar extends StatelessWidget {
