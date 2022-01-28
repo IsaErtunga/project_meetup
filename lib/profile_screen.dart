@@ -181,8 +181,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                   backgroundColor: Colors.black, //const Color(0xffF8F8FA),
                   forceElevated: false,
-                  expandedHeight: 180,
-                  collapsedHeight: 180,
+                  expandedHeight: 200,
+                  collapsedHeight: 200,
                   pinned: true,
                   /*  shape: const RoundedRectangleBorder(
                       borderRadius:
@@ -658,122 +658,125 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       physics: const BouncingScrollPhysics(),
                                       children: data["myGroups"]
                                           .map<Widget>((myGroups) {
-                                        return Flexible(
-                                          child: InkWell(
-                                            splashColor: Colors.transparent,
-                                            //onTap: callback,
-                                            child: GestureDetector(
-                                              /*   child: Hero(
+                                        return InkWell(
+                                          splashColor: Colors.transparent,
+                                          //onTap: callback,
+                                          child: GestureDetector(
+                                            /*   child: Hero(
                                               tag: myGroups["id"],*/
-                                              child: SizedBox(
-                                                height: 280,
-                                                child: Stack(
-                                                  alignment:
-                                                      AlignmentDirectional
-                                                          .bottomCenter,
-                                                  children: <Widget>[
-                                                    Container(
-                                                      child: Column(
-                                                        children: <Widget>[
-                                                          Expanded(
-                                                            child: Container(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Colors
-                                                                    .grey
-                                                                    .withOpacity(
-                                                                        0.1),
-                                                                borderRadius:
-                                                                    const BorderRadius
-                                                                            .all(
-                                                                        Radius.circular(
-                                                                            16.0)),
-                                                                // border: new Border.all(
-                                                                //     color: DesignCourseAppTheme.notWhite),
-                                                              ),
-                                                              child: Column(
-                                                                children: <
-                                                                    Widget>[
-                                                                  Expanded(
+                                            child: SizedBox(
+                                              height: 280,
+                                              child: Stack(
+                                                alignment: AlignmentDirectional
+                                                    .bottomCenter,
+                                                children: <Widget>[
+                                                  Container(
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        Expanded(
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Colors.grey
+                                                                  .withOpacity(
+                                                                      0.1),
+                                                              borderRadius:
+                                                                  const BorderRadius
+                                                                          .all(
+                                                                      Radius.circular(
+                                                                          16.0)),
+                                                              // border: new Border.all(
+                                                              //     color: DesignCourseAppTheme.notWhite),
+                                                            ),
+                                                            child: Column(
+                                                              children: <
+                                                                  Widget>[
+                                                                Expanded(
+                                                                  child:
+                                                                      Container(
                                                                     child:
-                                                                        Container(
-                                                                      child:
-                                                                          Column(
-                                                                        children: <
-                                                                            Widget>[
-                                                                          //  Expanded(
-                                                                          Align(
-                                                                            alignment:
-                                                                                Alignment.centerLeft,
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-                                                                              child: Text(
-                                                                                myGroups["groupName"].toString(),
-                                                                                textAlign: TextAlign.left,
-                                                                                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, letterSpacing: 0.27, color: Colors.white),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-
-                                                                          Padding(
+                                                                        Column(
+                                                                      children: <
+                                                                          Widget>[
+                                                                        //  Expanded(
+                                                                        Align(
+                                                                          alignment:
+                                                                              Alignment.centerLeft,
+                                                                          child:
+                                                                              Padding(
                                                                             padding: const EdgeInsets.only(
-                                                                                top: 8,
+                                                                                top: 16,
                                                                                 left: 16,
-                                                                                right: 16,
-                                                                                bottom: 8),
+                                                                                right: 16),
                                                                             child:
-                                                                                Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                                                              children: <Widget>[
                                                                                 Text(
-                                                                                  '${myGroups['membersCount'].toString()} members',
-                                                                                  textAlign: TextAlign.left,
-                                                                                  style: TextStyle(
-                                                                                    fontWeight: FontWeight.w300,
-                                                                                    fontSize: 12,
-                                                                                    letterSpacing: 0.27,
-                                                                                    color: Colors.red[600],
-                                                                                  ),
-                                                                                ),
-                                                                              ],
+                                                                              myGroups["groupName"].toString(),
+                                                                              textAlign: TextAlign.left,
+                                                                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, letterSpacing: 0.27, color: Colors.white),
                                                                             ),
                                                                           ),
-                                                                        ],
-                                                                      ),
+                                                                        ),
+
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.only(
+                                                                              top: 8,
+                                                                              left: 16,
+                                                                              right: 16,
+                                                                              bottom: 8),
+                                                                          child:
+                                                                              Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.center,
+                                                                            children: <Widget>[
+                                                                              Text(
+                                                                                '${myGroups['membersCount'].toString()} members',
+                                                                                textAlign: TextAlign.left,
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.w300,
+                                                                                  fontSize: 12,
+                                                                                  letterSpacing: 0.27,
+                                                                                  color: Colors.red[600],
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ],
                                                                     ),
                                                                   ),
-                                                                  const SizedBox(
-                                                                    width: 48,
-                                                                  ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 48,
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
-                                                          const SizedBox(
-                                                            height: 48,
-                                                          ),
-                                                        ],
-                                                      ),
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 48,
+                                                        ),
+                                                      ],
                                                     ),
-                                                    Container(
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                top: 24,
-                                                                right: 16,
-                                                                left: 16),
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                const BorderRadius
-                                                                        .all(
-                                                                    Radius.circular(
-                                                                        16.0)),
-                                                            /*  boxShadow: <
+                                                  ),
+                                                  Container(
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 24,
+                                                              right: 16,
+                                                              left: 16),
+                                                      child: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                      .all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          16.0)),
+                                                          /*  boxShadow: <
                                                                 BoxShadow>[
                                                               BoxShadow(
                                                                   color: ProfileTheme
@@ -787,39 +790,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                   blurRadius:
                                                                       6.0),
                                                             ],*/
-                                                          ),
-                                                          child: ClipRRect(
-                                                            borderRadius:
-                                                                const BorderRadius
-                                                                        .all(
-                                                                    Radius.circular(
-                                                                        16.0)),
-                                                            child: AspectRatio(
-                                                              aspectRatio: 1.28,
-                                                              child: Image(
-                                                                fit:
-                                                                    BoxFit.fill,
-                                                                image: NetworkImage(
-                                                                    myGroups[
-                                                                            'groupPicture']
-                                                                        .toString()),
-                                                              ),
+                                                        ),
+                                                        child: ClipRRect(
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                      .all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          16.0)),
+                                                          child: AspectRatio(
+                                                            aspectRatio: 1.28,
+                                                            child: Image(
+                                                              fit: BoxFit.fill,
+                                                              image: NetworkImage(
+                                                                  myGroups[
+                                                                          'groupPicture']
+                                                                      .toString()),
                                                             ),
                                                           ),
                                                         ),
                                                       ),
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                            onTap: () => {
-                                              Navigator.of(context)
-                                                  .push(_createRoute(Group(
-                                                myGroups["id"],
-                                              )))
-                                            },
                                           ),
+                                          onTap: () => {
+                                            Navigator.of(context)
+                                                .push(_createRoute(Group(
+                                              myGroups["id"],
+                                            )))
+                                          },
                                         );
                                       }).toList(),
                                     )

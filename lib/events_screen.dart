@@ -49,137 +49,138 @@ class _EventsScreenState extends State<EventsScreen> {
   @override
   Widget build(BuildContext context) {
     final applicationBloc = Provider.of<ApplicationBloc>(context);
-    return SlidingUpPanel(
-      controller: _pc,
-      panel: Container(
-        decoration: const BoxDecoration(
-          color: const Color(0xFFF3F5F7),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24.0),
-            topRight: Radius.circular(24.0),
+    return Scaffold(
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton.extended(
+              onPressed: () {
+                if (_pc.isPanelClosed == true) {
+                  _pc.open();
+                } else {
+                  _pc.close();
+                }
+              },
+              label: Text("Events")),
+          SizedBox(
+            height: 70,
+          )
+        ],
+      ),
+      body: SlidingUpPanel(
+        minHeight: 0,
+        controller: _pc,
+        parallaxEnabled: true,
+        panel: Container(
+          decoration: const BoxDecoration(
+            color: const Color(0xFFF3F5F7),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(24.0),
+              topRight: Radius.circular(24.0),
+            ),
           ),
-        ),
-        child: Column(
-          children: [
-            const FaIcon(FontAwesomeIcons.chevronDown),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.only(top: 0.0),
-                child: FutureBuilder<QuerySnapshot>(
-                    future: events.get(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      // If something went wrong
-                      if (snapshot.hasError) {
-                        return const Text("Something went wrong");
-                      }
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        return ListView(
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          children: snapshot.data!.docs.map((doc) {
-                            Map<String, dynamic> docData =
-                                doc.data() as Map<String, dynamic>;
-                            return SizedBox(
-                              height: 80,
-                              child: GestureDetector(
-                                onTap: () {
-                                  _pc.close();
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              EventDetailsScreen(
-                                                  Event(doc.id))));
-                                },
-                                child: Card(
-                                  semanticContainer: true,
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  elevation: 5,
-                                  margin: const EdgeInsets.symmetric(
-                                      vertical: 5, horizontal: 5),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  child: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Flexible(
-                                          child: AutoSizeText(
-                                            (doc.data() as Map<String,
-                                                    dynamic>)["eventName"]
-                                                .toString(),
-                                            maxLines: 1,
+          child: Column(
+            children: [
+              const FaIcon(FontAwesomeIcons.chevronDown),
+              Expanded(
+                child: Container(
+                  child: FutureBuilder<QuerySnapshot>(
+                      future: events.get(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        // If something went wrong
+                        if (snapshot.hasError) {
+                          return const Text("Something went wrong");
+                        }
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return ListView(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            children: snapshot.data!.docs.map((doc) {
+                              Map<String, dynamic> docData =
+                                  doc.data() as Map<String, dynamic>;
+                              return SizedBox(
+                                height: 80,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    _pc.close();
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                EventDetailsScreen(
+                                                    Event(doc.id))));
+                                  },
+                                  child: Card(
+                                    semanticContainer: true,
+                                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                                    elevation: 5,
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 5, horizontal: 5),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                    ),
+                                    child: Container(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Flexible(
+                                            child: AutoSizeText(
+                                              (doc.data() as Map<String,
+                                                      dynamic>)["eventName"]
+                                                  .toString(),
+                                              maxLines: 1,
+                                            ),
                                           ),
-                                        ),
-                                        ElevatedButton(
-                                            onPressed: () {
-                                              final loc = LatLng(
-                                                  docData["location"].latitude,
-                                                  docData["location"]
-                                                      .longitude);
-                                              _goToPlace(loc);
-                                              _pc.close();
-                                            },
-                                            child: Icon(Icons.search))
-                                      ],
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                final loc = LatLng(
+                                                    docData["location"]
+                                                        .latitude,
+                                                    docData["location"]
+                                                        .longitude);
+                                                _goToPlace(loc);
+                                                _pc.close();
+                                              },
+                                              child: Icon(Icons.search))
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            );
-                          }).toList(),
-                        );
-                      }
-                      return const CircularProgressIndicator();
-                    }),
+                              );
+                            }).toList(),
+                          );
+                        }
+                        return const CircularProgressIndicator();
+                      }),
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
-      collapsed: Container(
-        decoration: const BoxDecoration(
-          color: Colors.blueGrey,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24.0),
-            topRight: Radius.circular(24.0),
+            ],
           ),
         ),
-        //color: Colors.blueGrey,
-        child: Column(
-          children: [
-            const FaIcon(FontAwesomeIcons.chevronUp),
-            const Center(
-              child: Text(
-                "Slide up for events",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
+        body: Center(
+          child: GoogleMap(
+            zoomControlsEnabled: false,
+            markers: markerSet as Set<Marker>,
+            mapType: MapType.normal,
+            initialCameraPosition: _kGooglePlex,
+            onMapCreated: (GoogleMapController controller) {
+              _controller.complete(controller);
+            },
+          ),
         ),
-      ),
-      body: Center(
-        child: GoogleMap(
-          markers: markerSet as Set<Marker>,
-          mapType: MapType.normal,
-          initialCameraPosition: _kGooglePlex,
-          onMapCreated: (GoogleMapController controller) {
-            _controller.complete(controller);
-          },
+        header: Align(
+          alignment: Alignment.center,
+          child: Text(""),
         ),
-      ),
-      header: Align(
-        alignment: Alignment.center,
-        child: Text(""),
-      ),
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(24.0),
-        topRight: Radius.circular(24.0),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24.0),
+          topRight: Radius.circular(24.0),
+        ),
       ),
     );
   }

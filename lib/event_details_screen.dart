@@ -28,26 +28,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   CollectionReference groups = FirebaseFirestore.instance.collection('Groups');
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
-  Color _iconColor = Colors.white;
-
   Future _refreshEvent(BuildContext context) async {
     return events.doc(widget.event.eventId).get();
   }
 
   Completer<GoogleMapController> _controller = Completer();
-
-  static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
-
-  // final AsyncMemoizer _memoizer = AsyncMemoizer();
-
-  String _eventAddress = "";
-  String _eventAddressSecondLine = "";
-
-  //Future<void> getEventAddress (Position position)
-  //  List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude)
 
   Widget getTitle(String text) {
     return Padding(
@@ -64,53 +49,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     );
   }
 
-  String _hostingGroupID = "";
-  void _testtest() {}
-
-  void _addUserToGroup() async {
-    var hostingGroupID = "";
-    var groupName = "";
-    var groupPicture = "";
-    List groupMembersList = [];
-    var docSnapshot = await events.doc(widget.event.eventId).get();
-    if (docSnapshot.exists) {
-      Map<String, dynamic>? eventdata =
-          docSnapshot.data() as Map<String, dynamic>;
-      hostingGroupID = eventdata['hostingGroup']['groupId'];
-    }
-    setState(() {
-      _hostingGroupID = hostingGroupID;
-      print(_hostingGroupID);
-
-      //to do: refresh the profile screen
-    });
-
-    var docSnapshot2 = await groups.doc(_hostingGroupID).get();
-    if (docSnapshot2.exists) {
-      Map<String, dynamic>? groupsData =
-          docSnapshot2.data() as Map<String, dynamic>;
-
-      groupName = groupsData['groupName'];
-      groupPicture = groupsData["groupPicture"];
-      groupMembersList = groupsData["members"];
-    }
-
-    return users.doc(auth.currentUser!.uid).update({
-      'myGroups': FieldValue.arrayUnion([
-        {
-          'id': _hostingGroupID,
-          'groupName': groupName,
-          'groupPicture': groupPicture,
-          'membersCount': groupMembersList.length
-        }
-      ])
-    });
-    //add user to group doc as member
-  }
-
-  //bool _joinHasBeenPressed = false;
-
-  Future<void> joinEventBatch() async {
+  Future<bool> joinEventBatch() async {
     // Get user
     final userDataSnapshot = await users.doc(auth.currentUser!.uid).get();
     final userData = userDataSnapshot.data() as Map<String, dynamic>;
@@ -119,40 +58,47 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     final eventDataSnapshot = await events.doc(widget.event.eventId).get();
     final eventData = eventDataSnapshot.data() as Map<String, dynamic>;
 
-    WriteBatch batch = FirebaseFirestore.instance.batch();
+    var contain = eventData["participants"]
+        .where((element) => element == userDataSnapshot.id);
+    if (contain == true) {
+      return Future.value(true);
+    } else {
+      WriteBatch batch = FirebaseFirestore.instance.batch();
 
-    // event document reference
-    DocumentReference eventRef = FirebaseFirestore.instance
-        .collection('Events')
-        .doc(widget.event.eventId);
-    batch.update(eventRef, {
-      "participants": FieldValue.arrayUnion([
-        {
-          "firstName": userData["firstName"],
-          "lastName": userData["lastName"],
-          "profilePicture": userData["imageUrl"],
-          "userId": userDataSnapshot.id
-        }
-      ])
-    });
+      // event document reference
+      DocumentReference eventRef = FirebaseFirestore.instance
+          .collection('Events')
+          .doc(widget.event.eventId);
+      batch.update(eventRef, {
+        "participants": FieldValue.arrayUnion([
+          {
+            "firstName": userData["firstName"],
+            "lastName": userData["lastName"],
+            "profilePicture": userData["imageUrl"],
+            "userId": userDataSnapshot.id
+          }
+        ])
+      });
 
-    DocumentReference newEventForUser = FirebaseFirestore.instance
-        .collection('users')
-        .doc(auth.currentUser!.uid);
-    batch.update(newEventForUser, {
-      "attendedEvents": FieldValue.arrayUnion([
-        {
-          "eventName": eventData["eventName"],
-          "eventPicture": eventData["eventPicture"],
-          "eventTime": eventData["dateTime"],
-          "hostingGroup": eventData["hostingGroup"],
-          "id": eventDataSnapshot.id,
-          "participantsCount": eventData["participants"].length + 1
-        }
-      ])
-    });
+      DocumentReference newEventForUser = FirebaseFirestore.instance
+          .collection('users')
+          .doc(auth.currentUser!.uid);
+      batch.update(newEventForUser, {
+        "attendedEvents": FieldValue.arrayUnion([
+          {
+            "eventName": eventData["eventName"],
+            "eventPicture": eventData["eventPicture"],
+            "eventTime": eventData["dateTime"],
+            "hostingGroup": eventData["hostingGroup"]["groupName"],
+            "id": eventDataSnapshot.id,
+            "participantsCount": eventData["participants"].length + 1
+          }
+        ])
+      });
 
-    return batch.commit();
+      await batch.commit();
+      return Future.value(false);
+    }
   }
 
   @override
@@ -265,29 +211,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                               3 * SizeConfig.heightMultiplier),
                                     ),
                                   ),
-                                  SizedBox(width: 20),
-                                  CircleAvatar(
-                                    radius: 20,
-                                    backgroundColor: Colors.grey[800],
-                                    child: IconButton(
-                                      // disabledColor: Colors.white,
-
-                                      //  padding: EdgeInsets.all(20),
-                                      iconSize: 25,
-                                      icon: Icon(Icons.favorite,
-                                          color: _iconColor),
-                                      onPressed: () {
-                                        joinEventBatch();
-                                        setState(() {
-                                          if (_iconColor == Colors.white) {
-                                            _iconColor = Colors.purple;
-                                          } else {
-                                            _iconColor = Colors.white;
-                                          }
-                                        });
-                                      },
-                                    ),
-                                  ),
                                 ],
                               ),
                             ),
@@ -351,9 +274,54 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                                 color: Color(
                                                                     0xFFE53935),
                                                                 width: 1.5)),
-                                                    onPressed: () =>
-                                                        {_addUserToGroup()},
-                                                    child: const Text('JOIN',
+                                                    onPressed: () => {
+                                                      joinEventBatch()
+                                                          .then((value) {
+                                                        if (value == false) {
+                                                          final snackBar =
+                                                              SnackBar(
+                                                            content: const Text(
+                                                                'Joined Event!'),
+                                                            action:
+                                                                SnackBarAction(
+                                                              label: 'Close',
+                                                              onPressed: () {
+                                                                // Some code to undo the change.
+                                                              },
+                                                            ),
+                                                          );
+
+                                                          // Find the ScaffoldMessenger in the widget tree
+                                                          // and use it to show a SnackBar.
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                                  snackBar);
+                                                        } else {
+                                                          final snackBar =
+                                                              SnackBar(
+                                                            content: const Text(
+                                                                'Already Joined Event!'),
+                                                            action:
+                                                                SnackBarAction(
+                                                              label: 'Close',
+                                                              onPressed: () {
+                                                                // Some code to undo the change.
+                                                              },
+                                                            ),
+                                                          );
+
+                                                          // Find the ScaffoldMessenger in the widget tree
+                                                          // and use it to show a SnackBar.
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                                  snackBar);
+                                                        }
+                                                      })
+                                                    },
+                                                    child: const Text(
+                                                        'JOIN EVENT ',
                                                         style: TextStyle(
                                                             color: Colors.black,
                                                             fontWeight:
@@ -424,17 +392,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                             '${eventData["participants"].length.toString()} going',
                                             style: TextStyle(
                                                 color: Colors.greenAccent))
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.only(bottom: 5, left: 30),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Text(_eventAddressSecondLine,
-                                            style:
-                                                TextStyle(color: Colors.grey)),
                                       ],
                                     ),
                                   ),

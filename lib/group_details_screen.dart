@@ -337,32 +337,6 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                                const Expanded(
-                                                                                  child: SizedBox(),
-                                                                                ),
-                                                                                Align(
-                                                                                  alignment: Alignment.centerRight,
-                                                                                  child: Padding(
-                                                                                    padding: const EdgeInsets.only(right: 15, bottom: 9),
-                                                                                    child: Column(
-                                                                                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                      //crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                      children: <Widget>[
-                                                                                        Container(
-                                                                                          child: CircleAvatar(
-                                                                                            radius: 20,
-                                                                                            backgroundColor: Colors.grey[800],
-                                                                                            child: IconButton(
-                                                                                              iconSize: 25,
-                                                                                              icon: Icon(Icons.favorite, color: Colors.white),
-                                                                                              onPressed: () {},
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ],
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
                                                                               ],
                                                                             ),
                                                                           ),
@@ -465,8 +439,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                                     onTap: () => {
                                                       Navigator.of(context).push(
                                                           _createRouteToUser(
-                                                              User(member[
-                                                                  "userId"])))
+                                                              member["userId"]))
                                                     },
                                                     child: Card(
                                                       elevation: 0,
