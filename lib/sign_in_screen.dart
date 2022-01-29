@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_meetup/sign_up_screen.dart';
 import 'package:project_meetup/user_authentication.dart';
 import 'package:provider/provider.dart';
 
@@ -116,7 +117,10 @@ class _SignInPageState extends State<SignInPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SignUpPage()));
+              },
               child: const Text("Register"),
             ),
           ),
