@@ -70,7 +70,6 @@ class _EventsScreenState extends State<EventsScreen> {
       body: SlidingUpPanel(
         minHeight: 0,
         controller: _pc,
-        parallaxEnabled: true,
         panel: Container(
           decoration: const BoxDecoration(
             color: const Color(0xFFF3F5F7),
