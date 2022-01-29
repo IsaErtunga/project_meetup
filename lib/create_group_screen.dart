@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/painting.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -66,7 +67,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             backgroundColor: Colors.black),
         body: Form(
             key: _formKey,
-            child: Column(
+            child: ListView(
               children: <Widget>[
                 Container(
                   margin: const EdgeInsets.only(
@@ -110,6 +111,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   margin: const EdgeInsets.symmetric(
                       vertical: 5.0, horizontal: 10.0),
                   child: TextFormField(
+                    maxLines: null,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       labelText: "Description",
@@ -237,7 +239,54 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     ],
                   ),
                 ),
-                Spacer(flex: 3),
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 200,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25)),
+                              primary:
+                                  Colors.black, // Colors.white.withOpacity(0),
+                              side: BorderSide(color: Colors.white, width: 1)),
+                          onPressed: () => {},
+                          child: Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(Icons.add_a_photo_outlined,
+                                    color: Colors.red[600]),
+                                SizedBox(width: 10),
+                                Flexible(
+                                  child: AutoSizeText('UPLOAD GROUP PICTURE',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      )),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 15),
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white),
+                            borderRadius: BorderRadius.circular(60)),
+                        child: CircleAvatar(
+                            backgroundColor: Colors.black,
+                            backgroundImage: NetworkImage(''),
+                            radius: 55),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 15),
                 Container(
                   margin: EdgeInsets.only(bottom: 30.0, right: 10, left: 10),
                   child: ElevatedButton(

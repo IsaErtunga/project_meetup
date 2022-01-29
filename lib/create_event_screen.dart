@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_meetup/application_bloc.dart';
@@ -100,7 +101,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
       body: Form(
         key: _formKey,
-        child: Column(
+        child: ListView(
           children: <Widget>[
             Container(
               margin: const EdgeInsets.only(
@@ -146,6 +147,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               margin:
                   const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
               child: TextFormField(
+                maxLines: null,
                 style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
                   labelText: 'Description',
@@ -322,7 +324,54 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 ),
               ),
             ),
-            Spacer(flex: 3),
+            SizedBox(height: 15),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 200,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25)),
+                          primary: Colors.black, // Colors.white.withOpacity(0),
+                          side: BorderSide(color: Colors.white, width: 1)),
+                      onPressed: () => {},
+                      child: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(Icons.add_a_photo_outlined,
+                                color: Colors.greenAccent),
+                            SizedBox(width: 10),
+                            Flexible(
+                              child: AutoSizeText('UPLOAD EVENT PICTURE',
+                                  style: TextStyle(
+                                    color: Colors.greenAccent,
+                                  )),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 15),
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white),
+                        borderRadius: BorderRadius.circular(60)),
+                    child: CircleAvatar(
+                        backgroundColor: Colors.black,
+                        backgroundImage: NetworkImage(''),
+                        radius: 55),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
             Container(
               margin: EdgeInsets.only(bottom: 30.0, right: 10, left: 10),
               child: ElevatedButton(
