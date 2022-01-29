@@ -1,3 +1,6 @@
+import 'dart:ui';
+import 'package:intl/intl.dart'; //to convert timestamp to a date in ddmmyy format
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -68,97 +71,196 @@ class _EventsScreenState extends State<EventsScreen> {
         ],
       ),
       body: SlidingUpPanel(
+        color: Colors.transparent,
         minHeight: 0,
         controller: _pc,
         panel: Container(
-          decoration: const BoxDecoration(
-            color: const Color(0xFFF3F5F7),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(24.0),
-              topRight: Radius.circular(24.0),
-            ),
-          ),
-          child: Column(
-            children: [
-              const FaIcon(FontAwesomeIcons.chevronDown),
-              Expanded(
-                child: Container(
-                  child: FutureBuilder<QuerySnapshot>(
-                      future: events.get(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        // If something went wrong
-                        if (snapshot.hasError) {
-                          return const Text("Something went wrong");
-                        }
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          return ListView(
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            children: snapshot.data!.docs.map((doc) {
-                              Map<String, dynamic> docData =
-                                  doc.data() as Map<String, dynamic>;
-                              return SizedBox(
-                                height: 80,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    _pc.close();
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                EventDetailsScreen(
-                                                    Event(doc.id))));
-                                  },
-                                  child: Card(
-                                    semanticContainer: true,
-                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                    elevation: 5,
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 5, horizontal: 5),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                    ),
-                                    child: Container(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 20),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Flexible(
-                                            child: AutoSizeText(
-                                              (doc.data() as Map<String,
-                                                      dynamic>)["eventName"]
-                                                  .toString(),
-                                              maxLines: 1,
+          child: ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                decoration: const BoxDecoration(
+                  //color: Colors.black54, //const Color(0xFFF3F5F7),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(24.0),
+                    topRight: Radius.circular(24.0),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    const FaIcon(FontAwesomeIcons.chevronDown),
+                    Expanded(
+                      child: Container(
+                        padding:
+                            const EdgeInsets.only(top: 20.0, right: 5, left: 5),
+                        child: FutureBuilder<QuerySnapshot>(
+                            future: events.get(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              // If something went wrong
+                              if (snapshot.hasError) {
+                                return const Text("Something went wrong");
+                              }
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                return ListView(
+                                  scrollDirection: Axis.vertical,
+                                  shrinkWrap: true,
+                                  physics: const BouncingScrollPhysics(),
+                                  children: snapshot.data!.docs.map((doc) {
+                                    Map<String, dynamic> docData =
+                                        doc.data() as Map<String, dynamic>;
+                                    return SizedBox(
+                                      //height: 80,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          _pc.close();
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      EventDetailsScreen(
+                                                          Event(doc.id))));
+                                        },
+                                        child: Card(
+                                          color: Colors.black54,
+                                          semanticContainer: true,
+                                          clipBehavior:
+                                              Clip.antiAliasWithSaveLayer,
+                                          //elevation: 5,
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 7, horizontal: 5),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15.0),
+                                          ),
+                                          child: Container(
+                                            padding: EdgeInsets.all(
+                                                13), //EdgeInsets.symmetric(horizontal: 20),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Container(
+                                                  child: Flexible(
+                                                    child: Column(
+                                                      children: [
+                                                        Align(
+                                                          alignment: Alignment
+                                                              .centerLeft,
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    bottom: 10),
+                                                            child: Text(
+                                                              (DateFormat
+                                                                      .MMMEd()
+                                                                  .add_Hm()
+                                                                  .format(docData[
+                                                                          "dateTime"]
+                                                                      .toDate())
+                                                                  .toString()),
+
+                                                              //  maxLines: 1,
+                                                              //overflow: TextOverflow.ellipsis,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .left,
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                letterSpacing:
+                                                                    0.27,
+                                                                color: Colors
+                                                                    .greenAccent,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Align(
+                                                          alignment: Alignment
+                                                              .centerLeft,
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                              right: 8,
+                                                            ),
+                                                            child: AutoSizeText(
+                                                                docData["eventName"]
+                                                                    .toString(),
+                                                                maxLines: 2,
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color: Colors
+                                                                        .white)),
+                                                          ),
+                                                        ),
+                                                        Align(
+                                                            alignment: Alignment
+                                                                .centerLeft,
+                                                            child: Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(top: 5),
+                                                              child: Text(
+                                                                'by ${docData["hostingGroup"]["groupName"].toString()}',
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .left,
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w300,
+                                                                  fontSize: 12,
+                                                                  letterSpacing:
+                                                                      0.27,
+                                                                  color: HexColor(
+                                                                      '#F8FAFB'),
+                                                                ),
+                                                              ),
+                                                            ))
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  onPressed: () {
+                                                    final loc = LatLng(
+                                                        docData["location"]
+                                                            .latitude,
+                                                        docData["location"]
+                                                            .longitude);
+                                                    _goToPlace(loc);
+                                                    _pc.close();
+                                                  },
+                                                  icon: Icon(
+                                                      Icons
+                                                          .location_on_outlined,
+                                                      color: Colors.white),
+                                                )
+                                              ],
                                             ),
                                           ),
-                                          ElevatedButton(
-                                              onPressed: () {
-                                                final loc = LatLng(
-                                                    docData["location"]
-                                                        .latitude,
-                                                    docData["location"]
-                                                        .longitude);
-                                                _goToPlace(loc);
-                                                _pc.close();
-                                              },
-                                              child: Icon(Icons.search))
-                                        ],
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          );
-                        }
-                        return const CircularProgressIndicator();
-                      }),
+                                    );
+                                  }).toList(),
+                                );
+                              }
+                              return const CircularProgressIndicator();
+                            }),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
         ),
         body: Center(

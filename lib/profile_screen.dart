@@ -38,7 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     "Couch potatoe ",
     "Dancing Queen",
     "Social Butterfly",
-    "Nieves"
+    "BNOC"
   ];
 
   final _stepCircleRadius = 12.0;
@@ -175,6 +175,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
               physics: const BouncingScrollPhysics(),
               slivers: <Widget>[
                 SliverAppBar(
+                  actions: <Widget>[
+                    IconButton(
+                      icon: Icon(
+                        Icons.edit,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {},
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.logout_rounded,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        context.read<UserAuthentication>().signOut();
+                      },
+                    ),
+                  ],
                   leading: BackButton(color: Colors.white
                       // icon: Icon(Icons.arrow_back, color: Colors.black),
                       // onPressed: () => Navigator.of(context).pop(),
@@ -258,8 +276,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ],
                             ),
                             SizedBox(height: 2 * SizeConfig.widthMultiplier),
-                            Container(
-                                height: 50, child: _getStepProgress(data)),
+                            Expanded(
+                              child: Container(
+                                  height: 50, child: _getStepProgress(data)),
+                            )
                           ],
                         ),
                       ),
@@ -547,7 +567,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                             children: <Widget>[
                                                                               Container(
                                                                                 child: Text(
-                                                                                  '${attendedEvent["participantsCount"].toString()} going',
+                                                                                  '9 going',
                                                                                   //  textAlign: TextAlign.right,
                                                                                   style: TextStyle(
                                                                                     fontWeight: FontWeight.w300,
@@ -873,7 +893,7 @@ class socialProgressView extends StatelessWidget {
     //Key key,
     required this.decoration,
     required this.padding,
-    this.lineHeight = 20.0,
+    this.lineHeight = 25.0,
   })  : _stepsText = stepsText,
         _curStep = curStep,
         _height = height,
@@ -927,38 +947,58 @@ class socialProgressView extends StatelessWidget {
         wids.add(Tooltip(
             message: 'COUCH POTATO ',
             triggerMode: TooltipTriggerMode.tap,
-            child: CircleAvatar(
-              backgroundImage: AssetImage('images/CouchPotatoe.png'),
-              backgroundColor: circleColor,
-              radius: _dotRadius,
-            )));
+            child: Container(
+                height: lineHeight,
+                decoration: BoxDecoration(
+                    color: circleColor,
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        topLeft: Radius.circular(20))),
+                child: CircleAvatar(
+                  backgroundImage: AssetImage('images/CouchPotatoe.png'),
+                  backgroundColor: circleColor,
+                  radius: _dotRadius,
+                ))));
       } else if (i == 1) {
         wids.add(Tooltip(
             message: 'DANCING QUEEN',
             triggerMode: TooltipTriggerMode.tap,
-            child: CircleAvatar(
-              backgroundImage: AssetImage('images/dancingQueen.png'),
-              backgroundColor: circleColor,
-              radius: _dotRadius,
-            )));
+            child: Container(
+                height: lineHeight,
+                color: lineColor,
+                child: CircleAvatar(
+                  backgroundImage: AssetImage('images/dancingQueen.png'),
+                  backgroundColor: circleColor,
+                  radius: _dotRadius,
+                ))));
       } else if (i == 2) {
         wids.add(Tooltip(
             message: 'SOCIAL BUTTERFLY',
             triggerMode: TooltipTriggerMode.tap,
-            child: CircleAvatar(
-              backgroundImage: AssetImage('images/SocialButterfly.png'),
-              backgroundColor: circleColor,
-              radius: _dotRadius,
-            )));
+            child: Container(
+                height: lineHeight,
+                color: lineColor,
+                child: CircleAvatar(
+                  backgroundImage: AssetImage('images/SocialButterfly.png'),
+                  backgroundColor: circleColor,
+                  radius: _dotRadius,
+                ))));
       } else if (i == 3) {
         wids.add(Tooltip(
-            message: 'NIEVES',
+            message: 'BNOC',
             triggerMode: TooltipTriggerMode.tap,
-            child: CircleAvatar(
-              backgroundImage: AssetImage('images/BNOC.png'),
-              backgroundColor: circleColor,
-              radius: _dotRadius,
-            )));
+            child: Container(
+                height: lineHeight,
+                decoration: BoxDecoration(
+                    color: circleColor,
+                    borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(20),
+                        topRight: Radius.circular(20))),
+                child: CircleAvatar(
+                  backgroundImage: AssetImage('images/BNOC.png'),
+                  backgroundColor: circleColor,
+                  radius: _dotRadius,
+                ))));
       }
 
       //add a line separator

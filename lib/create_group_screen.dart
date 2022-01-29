@@ -1,9 +1,11 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter/painting.dart';
 
 class CreateGroupScreen extends StatefulWidget {
   const CreateGroupScreen({Key? key}) : super(key: key);
@@ -49,6 +51,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     }
   }
 
+  static List selectedInterestsList = [];
+
   bool isPrivate = true;
 
   String dropdownValue = 'One';
@@ -63,7 +67,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             backgroundColor: Colors.black),
         body: Form(
             key: _formKey,
-            child: Column(
+            child: ListView(
               children: <Widget>[
                 Container(
                   margin: const EdgeInsets.only(
@@ -107,6 +111,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   margin: const EdgeInsets.symmetric(
                       vertical: 5.0, horizontal: 10.0),
                   child: TextFormField(
+                    maxLines: null,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       labelText: "Description",
@@ -190,7 +195,98 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     ),
                   ),
                 ),
-                Spacer(flex: 3),
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 20.0, horizontal: 10.0),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(25)),
+                  child: Column(
+                    children: <Widget>[
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              top: 15, right: 15, left: 15),
+                          child: Flexible(
+                            child: AutoSizeText(
+                                "INTERESTS associated with this group:",
+                                maxLines: 1,
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white)),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                              child: Wrap(
+                            spacing: 5.0,
+                            runSpacing: 3.0,
+                            children: <Widget>[
+                              filterChipWidget(chipName: 'Music/Dance/Club'),
+                              filterChipWidget(chipName: 'Sports & Fitness'),
+                              filterChipWidget(chipName: 'Travel & Outdoors'),
+                              filterChipWidget(chipName: 'Science & Tech'),
+                            ],
+                          )),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 200,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25)),
+                              primary:
+                                  Colors.black, // Colors.white.withOpacity(0),
+                              side: BorderSide(color: Colors.white, width: 1)),
+                          onPressed: () => {},
+                          child: Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(Icons.add_a_photo_outlined,
+                                    color: Colors.red[600]),
+                                SizedBox(width: 10),
+                                Flexible(
+                                  child: AutoSizeText('UPLOAD GROUP PICTURE',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      )),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 15),
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white),
+                            borderRadius: BorderRadius.circular(60)),
+                        child: CircleAvatar(
+                            backgroundColor: Colors.black,
+                            backgroundImage: NetworkImage(''),
+                            radius: 55),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 15),
                 Container(
                   margin: EdgeInsets.only(bottom: 30.0, right: 10, left: 10),
                   child: ElevatedButton(
@@ -233,5 +329,46 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                 ),
               ],
             )));
+  }
+}
+
+class filterChipWidget extends StatefulWidget {
+  final String chipName;
+
+  filterChipWidget({required this.chipName});
+
+  @override
+  _filterChipWidgetState createState() => _filterChipWidgetState();
+}
+
+class _filterChipWidgetState extends State<filterChipWidget> {
+  var _isSelected = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilterChip(
+        label: Text(widget.chipName),
+        labelStyle: TextStyle(
+            color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
+        selected: _isSelected,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        backgroundColor: Colors.grey[900], //Color(0xffededed),
+        onSelected: (isSelected) {
+          setState(() {
+            _isSelected = isSelected;
+            if (_isSelected == true) {
+              _CreateGroupScreenState.selectedInterestsList
+                  .add(widget.chipName);
+            } else if (_isSelected == false) {
+              _CreateGroupScreenState.selectedInterestsList
+                  .remove(widget.chipName);
+            }
+            print(_CreateGroupScreenState.selectedInterestsList);
+          });
+        },
+        selectedColor: Colors.red[600] //Color(0xffeadffd),
+        );
   }
 }

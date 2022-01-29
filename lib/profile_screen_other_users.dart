@@ -1,11 +1,19 @@
+import 'dart:collection';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'group_details_screen.dart';
-import 'event_details_screen.dart';
-import 'package:intl/intl.dart'; //conversion from timestamp to date and time
+
 import 'package:project_meetup/theme_profile_screen.dart';
+import 'package:project_meetup/user_authentication.dart';
+import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:intl/intl.dart'; //to convert timestamp to a date in ddmmyy format
+import 'group_details_screen.dart';
 import 'discover_screen.dart';
-import 'profile_screen.dart';
+import 'package:filter_list/filter_list.dart';
+import 'package:project_meetup/event_details_screen.dart';
+import 'profile_screen.dart'; //for sizeconfig fun
 
 class ProfileScreenOtherUsers extends StatefulWidget {
   final String userId;
@@ -17,6 +25,7 @@ class ProfileScreenOtherUsers extends StatefulWidget {
 }
 
 class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
+  // User collection reference
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   CollectionReference groups = FirebaseFirestore.instance.collection('Groups');
   CollectionReference events = FirebaseFirestore.instance.collection('Events');
@@ -25,7 +34,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
     "Couch potatoe ",
     "Dancing Queen",
     "Social Butterfly",
-    "Nieves"
+    "BNOC"
   ];
 
   final _stepCircleRadius = 12.0;
@@ -34,7 +43,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
 
   Color _activeColor = Colors.amber;
 
-  Color _inactiveColor = Color(0xFFD6D6D6);
+  Color _inactiveColor = Color(0xFF303030); //0xFF424242
 
   TextStyle _headerStyle =
       TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold);
@@ -43,9 +52,25 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
 
   late Size _safeAreaSize;
 
-  int _socialProgressIndex = 3;
+  socialProgressView _getStepProgress(Map<String, dynamic> data) {
+    int _socialProgressIndex = 0;
+    int attendedEventsAmount = data["attendedEvents"].length;
 
-  socialProgressView _getStepProgress() {
+    if (attendedEventsAmount >= 0) {
+      if (attendedEventsAmount <= 5) {
+        _socialProgressIndex = 1;
+      }
+      if (attendedEventsAmount <= 10 && attendedEventsAmount > 5) {
+        _socialProgressIndex = 2;
+      }
+      if (attendedEventsAmount <= 20 && attendedEventsAmount > 10) {
+        _socialProgressIndex = 3;
+      }
+      if (attendedEventsAmount > 20) {
+        _socialProgressIndex = 4;
+      }
+    }
+
     return socialProgressView(
       _socialLevelsText,
       _socialProgressIndex,
@@ -56,7 +81,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
       _inactiveColor,
       _headerStyle,
       _stepStyle,
-      decoration: BoxDecoration(color: Colors.white),
+      decoration: BoxDecoration(color: Colors.black),
       padding: EdgeInsets.only(
         top: 16.0,
         left: 5.0,
@@ -71,13 +96,13 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
     "Travel & Outdoors",
     "Science & Tech"
   ];
-  List<String> selectedInterestsList = [];
 
   @override
   Widget build(BuildContext context) {
     // CollectionReference users = FirebaseFirestore.instance.collection('users');
     var mediaQD = MediaQuery.of(context);
     _safeAreaSize = mediaQD.size;
+    //  calculateSocialProgressIndex();
     return FutureBuilder<DocumentSnapshot>(
       future: users.doc(widget.userId).get(),
       builder:
@@ -95,23 +120,23 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
               snapshot.data!.data() as Map<String, dynamic>;
 
           return Scaffold(
-            backgroundColor: Colors.white, //const Color(0xffF8F8FA),
+            backgroundColor: Colors.black, //const Color(0xffF8F8FA),
             body: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: <Widget>[
                 SliverAppBar(
-                  leading: BackButton(color: Colors.black
-                      //icon: Icon(Icons.arrow_back, color: Colors.black),
-                      //onPressed: () => Navigator.of(context).pop(),
+                  leading: BackButton(color: Colors.white
+                      // icon: Icon(Icons.arrow_back, color: Colors.black),
+                      // onPressed: () => Navigator.of(context).pop(),
                       ),
-                  backgroundColor: Colors.white, //const Color(0xffF8F8FA),
-                  forceElevated: true,
-                  expandedHeight: 200,
-                  //s  collapsedHeight: 70,
-                  pinned: false,
-                  shape: const RoundedRectangleBorder(
+                  backgroundColor: Colors.black, //const Color(0xffF8F8FA),
+                  forceElevated: false,
+                  expandedHeight: 180,
+                  collapsedHeight: 180,
+                  pinned: true,
+                  /*  shape: const RoundedRectangleBorder(
                       borderRadius:
-                          BorderRadius.only(bottomRight: Radius.circular(30))),
+                          BorderRadius.only(bottomRight: Radius.circular(30))),*/
                   flexibleSpace: FlexibleSpaceBar(
                     /*centerTitle: false,
                      titlePadding:
@@ -151,7 +176,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                     Text(
                                       '${data["firstName"]} ${data["lastName"]}',
                                       style: TextStyle(
-                                          color: Colors.black,
+                                          color: Colors.white,
                                           fontSize:
                                               3 * SizeConfig.textMultiplier,
                                           fontWeight: FontWeight.bold,
@@ -172,7 +197,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                             Text(
                                               data["university"],
                                               style: TextStyle(
-                                                color: Colors.black,
+                                                color: Colors.white,
                                                 fontSize: 1.5 *
                                                     SizeConfig.textMultiplier,
                                               ),
@@ -186,7 +211,10 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                               ],
                             ),
                             SizedBox(height: 2 * SizeConfig.widthMultiplier),
-                            Container(height: 50, child: _getStepProgress()),
+                            Expanded(
+                              child: Container(
+                                  height: 50, child: _getStepProgress(data)),
+                            )
                           ],
                         ),
                       ),
@@ -212,9 +240,9 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                             child: Row(
                               children: <Widget>[
                                 Text(
-                                  "My Interests",
+                                  "MY INTERESTS",
                                   style: TextStyle(
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 0.5,
                                       fontSize: 3 * SizeConfig.textMultiplier),
@@ -236,15 +264,20 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                         top: 0, bottom: 0, right: 16, left: 13),
                                     children: data["myInterests"]
                                         .map<Widget>((interest) {
-                                      return Chip(
-                                        backgroundColor: Colors.black,
-                                        side: BorderSide(
-                                            color: Colors.white, width: 4),
-                                        label: Text(
-                                          interest.toString(),
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      );
+                                      //    SizedBox(width: 10);
+                                      return Container(
+                                          padding: EdgeInsets.only(right: 12),
+                                          child: Chip(
+                                            backgroundColor: Colors.black,
+                                            side: BorderSide(
+                                                color: Colors.white, width: 1),
+                                            label: Text(
+                                              interest.toString(),
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ));
+
                                       /*Align(
                                         child: DecoratedBox(
                                             decoration: BoxDecoration(
@@ -268,7 +301,8 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                     }).toList(),
                                   )
                                 : const Text("   No interests chosen yet",
-                                    style: TextStyle(fontSize: 15)),
+                                    style: TextStyle(
+                                        fontSize: 15, color: Colors.white)),
                           ),
                           Padding(
                             padding: EdgeInsets.only(
@@ -277,9 +311,9 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                             child: Row(
                               children: <Widget>[
                                 Text(
-                                  "Attended events",
+                                  "ATTENDED EVENTS",
                                   style: TextStyle(
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 0.5,
                                       fontSize: 3 * SizeConfig.textMultiplier),
@@ -320,210 +354,202 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                               _createRouteEvents(
                                                   Event(attendedEvent["id"])))
                                         },
-                                        child: SizedBox(
-                                          width: 280,
-                                          child: Stack(
-                                            children: <Widget>[
-                                              Container(
-                                                child: Row(
-                                                  children: <Widget>[
-                                                    const SizedBox(
-                                                      width: 48,
-                                                    ),
-                                                    Expanded(
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: HexColor(
-                                                              '#F8FAFB'),
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                      .all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          16.0)),
-                                                        ),
-                                                        child: Row(
-                                                          children: <Widget>[
-                                                            const SizedBox(
-                                                              width: 48 + 24.0,
-                                                            ),
-                                                            Expanded(
-                                                              child: Container(
-                                                                child: Column(
-                                                                  children: <
-                                                                      Widget>[
-                                                                    Align(
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .centerLeft,
-                                                                      child:
-                                                                          Padding(
-                                                                        padding:
-                                                                            const EdgeInsets.only(top: 10),
-                                                                        child:
-                                                                            Text(
-                                                                          (DateFormat.MMMEd()
-                                                                              .add_Hm()
-                                                                              .format(attendedEvent["eventTime"].toDate())
-                                                                              .toString()),
-
-                                                                          //  maxLines: 1,
-                                                                          //overflow: TextOverflow.ellipsis,
-                                                                          textAlign:
-                                                                              TextAlign.left,
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.w400,
-                                                                            fontSize:
-                                                                                14,
-                                                                            letterSpacing:
-                                                                                0.27,
-                                                                            color:
-                                                                                Colors.red[900],
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    Align(
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .centerLeft,
-                                                                      child:
-                                                                          Padding(
-                                                                        padding:
-                                                                            const EdgeInsets.only(top: 2),
-                                                                        child:
-                                                                            Text(
-                                                                          attendedEvent["eventName"]
-                                                                              .toString(),
-                                                                          textAlign:
-                                                                              TextAlign.left,
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.w600,
-                                                                            fontSize:
-                                                                                16,
-                                                                            letterSpacing:
-                                                                                0.27,
-                                                                            color:
-                                                                                Colors.black,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    Align(
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .centerLeft,
-                                                                      child:
-                                                                          Padding(
-                                                                        padding:
-                                                                            const EdgeInsets.only(top: 5),
-                                                                        child:
-                                                                            Row(
-                                                                          //    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                          //  crossAxisAlignment: CrossAxisAlignment.center,
-                                                                          children: <
-                                                                              Widget>[
-                                                                            Expanded(
-                                                                              child: Text(
-                                                                                'by ${attendedEvent["hostingGroup"].toString()}',
-                                                                                textAlign: TextAlign.left,
-                                                                                style: TextStyle(
-                                                                                  fontWeight: FontWeight.w300,
-                                                                                  fontSize: 12,
-                                                                                  letterSpacing: 0.27,
-                                                                                  color: Colors.blueGrey[700],
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    const Expanded(
-                                                                      child:
-                                                                          SizedBox(),
-                                                                    ),
-                                                                    Align(
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .centerRight,
-                                                                      child:
-                                                                          Padding(
-                                                                        padding: const EdgeInsets.only(
-                                                                            right:
-                                                                                10,
-                                                                            bottom:
-                                                                                10),
-                                                                        child:
-                                                                            Column(
-                                                                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                          //crossAxisAlignment: CrossAxisAlignment.start,
-                                                                          children: <
-                                                                              Widget>[
-                                                                            Container(
-                                                                              child: Text(
-                                                                                '${attendedEvent["participantsCount"].toString()} going',
-                                                                                //  textAlign: TextAlign.right,
-                                                                                style: TextStyle(
-                                                                                  fontWeight: FontWeight.w300,
-                                                                                  fontSize: 12,
-                                                                                  letterSpacing: 0.27,
-                                                                                  color: Colors.blueGrey[600],
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              Container(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 24,
-                                                          bottom: 24,
-                                                          left: 16),
+                                        child: Hero(
+                                          tag: attendedEvent["id"],
+                                          child: SizedBox(
+                                            width: 280,
+                                            child: Stack(
+                                              children: <Widget>[
+                                                Container(
                                                   child: Row(
                                                     children: <Widget>[
-                                                      ClipRRect(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                    .all(
-                                                                Radius.circular(
-                                                                    16.0)),
-                                                        child: AspectRatio(
-                                                          aspectRatio: 1.0,
-                                                          child: Image(
-                                                            fit: BoxFit.fill,
-                                                            image: NetworkImage(
-                                                              attendedEvent[
-                                                                      "eventPicture"]
-                                                                  .toString(),
-                                                            ),
+                                                      const SizedBox(
+                                                        width: 48,
+                                                      ),
+                                                      Expanded(
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors
+                                                                .deepPurple
+                                                                .withOpacity(
+                                                                    0.4),
+                                                            /*    border: Border.all(
+                                                                color: Colors
+                                                                    .greenAccent,
+                                                                width: 1.5),*/
+                                                            borderRadius:
+                                                                const BorderRadius
+                                                                        .all(
+                                                                    Radius.circular(
+                                                                        16.0)),
+                                                          ),
+                                                          child: Row(
+                                                            children: <Widget>[
+                                                              const SizedBox(
+                                                                width:
+                                                                    48 + 24.0,
+                                                              ),
+                                                              Expanded(
+                                                                child:
+                                                                    Container(
+                                                                  child: Column(
+                                                                    children: <
+                                                                        Widget>[
+                                                                      Align(
+                                                                        alignment:
+                                                                            Alignment.centerLeft,
+                                                                        child:
+                                                                            Padding(
+                                                                          padding:
+                                                                              const EdgeInsets.only(top: 10),
+                                                                          child:
+                                                                              Text(
+                                                                            (DateFormat.MMMEd().add_Hm().format(attendedEvent["eventTime"].toDate()).toString()),
+
+                                                                            //  maxLines: 1,
+                                                                            //overflow: TextOverflow.ellipsis,
+                                                                            textAlign:
+                                                                                TextAlign.left,
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontWeight: FontWeight.w400,
+                                                                              fontSize: 14,
+                                                                              letterSpacing: 0.27,
+                                                                              color: Colors.greenAccent,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      Align(
+                                                                        alignment:
+                                                                            Alignment.centerLeft,
+                                                                        child:
+                                                                            Padding(
+                                                                          padding:
+                                                                              const EdgeInsets.only(top: 2),
+                                                                          child:
+                                                                              Text(
+                                                                            attendedEvent["eventName"].toString(),
+                                                                            textAlign:
+                                                                                TextAlign.left,
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontWeight: FontWeight.w600,
+                                                                              fontSize: 16,
+                                                                              letterSpacing: 0.27,
+                                                                              color: HexColor('#F8FAFB'),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      Align(
+                                                                        alignment:
+                                                                            Alignment.centerLeft,
+                                                                        child:
+                                                                            Padding(
+                                                                          padding:
+                                                                              const EdgeInsets.only(top: 5),
+                                                                          child:
+                                                                              Row(
+                                                                            //    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                            //  crossAxisAlignment: CrossAxisAlignment.center,
+                                                                            children: <Widget>[
+                                                                              Expanded(
+                                                                                child: Text(
+                                                                                  'by ${attendedEvent["hostingGroup"].toString()}',
+                                                                                  textAlign: TextAlign.left,
+                                                                                  style: TextStyle(
+                                                                                    fontWeight: FontWeight.w300,
+                                                                                    fontSize: 12,
+                                                                                    letterSpacing: 0.27,
+                                                                                    color: HexColor('#F8FAFB'),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      const Expanded(
+                                                                        child:
+                                                                            SizedBox(),
+                                                                      ),
+                                                                      Align(
+                                                                        alignment:
+                                                                            Alignment.centerRight,
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets.only(
+                                                                              right: 10,
+                                                                              bottom: 10),
+                                                                          child:
+                                                                              Column(
+                                                                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                            //crossAxisAlignment: CrossAxisAlignment.start,
+                                                                            children: <Widget>[
+                                                                              Container(
+                                                                                child: Text(
+                                                                                  '9 going',
+                                                                                  //  textAlign: TextAlign.right,
+                                                                                  style: TextStyle(
+                                                                                    fontWeight: FontWeight.w300,
+                                                                                    fontSize: 12,
+                                                                                    letterSpacing: 0.27,
+                                                                                    color: HexColor('#F8FAFB'),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
                                                         ),
                                                       )
                                                     ],
                                                   ),
                                                 ),
-                                              ),
-                                            ],
+                                                Container(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 24,
+                                                            bottom: 24,
+                                                            left: 16),
+                                                    child: Row(
+                                                      children: <Widget>[
+                                                        ClipRRect(
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                      .all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          16.0)),
+                                                          child: AspectRatio(
+                                                            aspectRatio: 1.0,
+                                                            child: Image(
+                                                              fit: BoxFit.fill,
+                                                              image:
+                                                                  NetworkImage(
+                                                                attendedEvent[
+                                                                        "eventPicture"]
+                                                                    .toString(),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       );
@@ -545,20 +571,12 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                             child: Row(
                               children: <Widget>[
                                 Text(
-                                  "My Groups",
+                                  "MY GROUPS",
                                   style: TextStyle(
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 0.5,
                                       fontSize: 3 * SizeConfig.textMultiplier),
-                                ),
-                                Spacer(),
-                                Text(
-                                  "View All",
-                                  style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize:
-                                          1.7 * SizeConfig.textMultiplier),
                                 ),
                               ],
                             ),
@@ -589,7 +607,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                             //onTap: callback,
                                             child: GestureDetector(
                                               /*   child: Hero(
-                                                tag: myGroups["id"],  */
+                                              tag: myGroups["id"],*/
                                               child: SizedBox(
                                                 height: 280,
                                                 child: Stack(
@@ -604,8 +622,10 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                             child: Container(
                                                               decoration:
                                                                   BoxDecoration(
-                                                                color: HexColor(
-                                                                    '#F8FAFB'),
+                                                                color: Colors
+                                                                    .grey
+                                                                    .withOpacity(
+                                                                        0.1),
                                                                 borderRadius:
                                                                     const BorderRadius
                                                                             .all(
@@ -634,12 +654,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                                               child: Text(
                                                                                 myGroups["groupName"].toString(),
                                                                                 textAlign: TextAlign.left,
-                                                                                style: TextStyle(
-                                                                                  fontWeight: FontWeight.w600,
-                                                                                  fontSize: 16,
-                                                                                  letterSpacing: 0.27,
-                                                                                  color: ProfileTheme.darkerText,
-                                                                                ),
+                                                                                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, letterSpacing: 0.27, color: Colors.white),
                                                                               ),
                                                                             ),
                                                                           ),
@@ -662,7 +677,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                                                     fontWeight: FontWeight.w300,
                                                                                     fontSize: 12,
                                                                                     letterSpacing: 0.27,
-                                                                                    color: Colors.blueGrey[700],
+                                                                                    color: Colors.red[600],
                                                                                   ),
                                                                                 ),
                                                                               ],
@@ -701,7 +716,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                                         .all(
                                                                     Radius.circular(
                                                                         16.0)),
-                                                            boxShadow: <
+                                                            /*  boxShadow: <
                                                                 BoxShadow>[
                                                               BoxShadow(
                                                                   color: ProfileTheme
@@ -714,7 +729,7 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                                                           0.0),
                                                                   blurRadius:
                                                                       6.0),
-                                                            ],
+                                                            ],*/
                                                           ),
                                                           child: ClipRRect(
                                                             borderRadius:
@@ -742,13 +757,10 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                               ),
                                             ),
                                             onTap: () => {
-                                              Navigator.of(context).push(
-                                                _createRoute(
-                                                  Group(
-                                                    myGroups["id"],
-                                                  ),
-                                                ),
-                                              ),
+                                              Navigator.of(context)
+                                                  .push(_createRoute(Group(
+                                                myGroups["id"],
+                                              )))
                                             },
                                           ),
                                         );
@@ -765,11 +777,12 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                     ),
                   ),
                 ),
+                //  ),
               ],
             ),
           );
         }
-        return CircularProgressIndicator();
+        return Text("loading");
       },
     );
   }
@@ -801,7 +814,7 @@ class socialProgressView extends StatelessWidget {
     //Key key,
     required this.decoration,
     required this.padding,
-    this.lineHeight = 7.0,
+    this.lineHeight = 25.0,
   })  : _stepsText = stepsText,
         _curStep = curStep,
         _height = height,
@@ -853,40 +866,60 @@ class socialProgressView extends StatelessWidget {
 
       if (i == 0) {
         wids.add(Tooltip(
-            message: 'couch potato ',
+            message: 'COUCH POTATO ',
             triggerMode: TooltipTriggerMode.tap,
-            child: CircleAvatar(
-              backgroundImage: AssetImage('images/CouchPotatoe.png'),
-              backgroundColor: circleColor,
-              radius: _dotRadius,
-            )));
+            child: Container(
+                height: lineHeight,
+                decoration: BoxDecoration(
+                    color: circleColor,
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        topLeft: Radius.circular(20))),
+                child: CircleAvatar(
+                  backgroundImage: AssetImage('images/CouchPotatoe.png'),
+                  backgroundColor: circleColor,
+                  radius: _dotRadius,
+                ))));
       } else if (i == 1) {
         wids.add(Tooltip(
-            message: 'dancing queen',
+            message: 'DANCING QUEEN',
             triggerMode: TooltipTriggerMode.tap,
-            child: CircleAvatar(
-              backgroundImage: AssetImage('images/dancingQueen.png'),
-              backgroundColor: circleColor,
-              radius: _dotRadius,
-            )));
+            child: Container(
+                height: lineHeight,
+                color: lineColor,
+                child: CircleAvatar(
+                  backgroundImage: AssetImage('images/dancingQueen.png'),
+                  backgroundColor: circleColor,
+                  radius: _dotRadius,
+                ))));
       } else if (i == 2) {
         wids.add(Tooltip(
-            message: 'social butterfly',
+            message: 'SOCIAL BUTTERFLY',
             triggerMode: TooltipTriggerMode.tap,
-            child: CircleAvatar(
-              backgroundImage: AssetImage('images/SocialButterfly.png'),
-              backgroundColor: circleColor,
-              radius: _dotRadius,
-            )));
+            child: Container(
+                height: lineHeight,
+                color: lineColor,
+                child: CircleAvatar(
+                  backgroundImage: AssetImage('images/SocialButterfly.png'),
+                  backgroundColor: circleColor,
+                  radius: _dotRadius,
+                ))));
       } else if (i == 3) {
         wids.add(Tooltip(
-            message: 'Nieves',
+            message: 'BNOC',
             triggerMode: TooltipTriggerMode.tap,
-            child: CircleAvatar(
-              backgroundImage: AssetImage('images/BNOC.png'),
-              backgroundColor: circleColor,
-              radius: _dotRadius,
-            )));
+            child: Container(
+                height: lineHeight,
+                decoration: BoxDecoration(
+                    color: circleColor,
+                    borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(20),
+                        topRight: Radius.circular(20))),
+                child: CircleAvatar(
+                  backgroundImage: AssetImage('images/BNOC.png'),
+                  backgroundColor: circleColor,
+                  radius: _dotRadius,
+                ))));
       }
 
       //add a line separator
@@ -894,10 +927,7 @@ class socialProgressView extends StatelessWidget {
       if (i != _stepsText.length - 1) {
         wids.add(
           Expanded(
-            child: Container(
-              height: lineHeight,
-              color: lineColor,
-            ),
+            child: Container(height: lineHeight, color: lineColor),
           ),
         );
       }
@@ -911,7 +941,6 @@ class socialProgressView extends StatelessWidget {
     _stepsText.asMap().forEach((i, text) {
       wids.add(Text(text, style: _stepStyle));
     });
-
     return wids;
   }
   */
@@ -1004,12 +1033,3 @@ Route _createRouteEvents(eventId) {
     },
   );
 }
-
-/*
- ElevatedButton(
-          onPressed: () {
-            context.read<UserAuthentication>().signOut();
-          },
-          child: const Text("Sign out"),
-        ),
- */
