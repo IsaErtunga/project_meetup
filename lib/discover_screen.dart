@@ -30,7 +30,6 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerTop,
       floatingActionButton: FloatingActionButton.extended(
-          heroTag: "btn1",
           backgroundColor: Colors.white,
           icon: Icon(Icons.add_circle,
               color: Colors.black), //const FaIcon(FontAwesomeIcons.plus),
@@ -59,51 +58,49 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                 return GridView.count(
                   crossAxisCount: 2,
                   children: snapshot.data!.docs.map((doc) {
-                    return Hero(
-                        tag: doc.id,
-                        child: Card(
-                          semanticContainer: true,
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          elevation: 5,
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 7, vertical: 7),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          child: GestureDetector(
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: AspectRatio(
-                                    aspectRatio: 16 / 12,
-                                    child: Image(
-                                      fit: BoxFit.fill,
-                                      image: NetworkImage(
-                                        (doc.data() as Map<String, dynamic>)[
-                                                "groupPicture"]
-                                            .toString(),
-                                      ),
-                                    ),
+                    return Card(
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      elevation: 5,
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 7, vertical: 7),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: GestureDetector(
+                        child: Column(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: AspectRatio(
+                                aspectRatio: 16 / 12,
+                                child: Image(
+                                  fit: BoxFit.fill,
+                                  image: NetworkImage(
+                                    (doc.data() as Map<String, dynamic>)[
+                                            "groupPicture"]
+                                        .toString(),
                                   ),
                                 ),
-                                Expanded(
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    child: AutoSizeText(
-                                      (doc.data() as Map<String, dynamic>)[
-                                              "groupName"]
-                                          .toString(),
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                      maxLines: 1,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                            onTap: () => {
-                              /*
+                            Expanded(
+                              child: Container(
+                                alignment: Alignment.center,
+                                child: AutoSizeText(
+                                  (doc.data()
+                                          as Map<String, dynamic>)["groupName"]
+                                      .toString(),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                  maxLines: 1,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        onTap: () => {
+                          /*
                               Navigator.of(context).push(
                                 MaterialPageRoute<void>(
                                   builder: (BuildContext context) {
@@ -112,16 +109,16 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                                 ),
                               )*/
 
-                              Navigator.of(context).push(_createRoute(Group(
-                                doc.id,
-                                groupName: (doc.data()
-                                    as Map<String, dynamic>)["groupName"],
-                                groupPicture: (doc.data()
-                                    as Map<String, dynamic>)["groupPicture"],
-                              )))
-                            },
-                          ),
-                        ));
+                          Navigator.of(context).push(_createRoute(Group(
+                            doc.id,
+                            groupName: (doc.data()
+                                as Map<String, dynamic>)["groupName"],
+                            groupPicture: (doc.data()
+                                as Map<String, dynamic>)["groupPicture"],
+                          )))
+                        },
+                      ),
+                    );
                   }).toList(),
                 );
               }

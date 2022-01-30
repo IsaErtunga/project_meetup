@@ -87,7 +87,6 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       FloatingActionButton.extended(
-                        heroTag: "btn1",
                         backgroundColor: Colors.white,
                         icon: Icon(Icons.add_circle, color: Colors.black),
                         onPressed: () {
@@ -106,7 +105,6 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                         ),
                       ),
                       FloatingActionButton.extended(
-                        heroTag: "btn2",
                         backgroundColor: Colors.white,
                         icon: const FaIcon(FontAwesomeIcons.comments,
                             color: Colors.black),
@@ -142,13 +140,10 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                           background: Container(
                             alignment: Alignment.center,
                             margin: const EdgeInsets.only(left: 0, top: 0),
-                            child: Hero(
-                              tag: widget.group.id,
-                              child: CircleAvatar(
-                                radius: 80,
-                                backgroundImage:
-                                    NetworkImage(groupdata["groupPicture"]),
-                              ),
+                            child: CircleAvatar(
+                              radius: 80,
+                              backgroundImage:
+                                  NetworkImage(groupdata["groupPicture"]),
                             ),
                           ),
                           centerTitle: true,
