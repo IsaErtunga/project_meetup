@@ -162,19 +162,38 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                         ),
                       ),
                       SliverFillRemaining(
-                          //hasScrollBody: false,
+                          hasScrollBody: false,
                           child: Container(
                               child: Padding(
                                   padding: const EdgeInsets.only(
                                       left: 10.0, right: 10),
                                   child: Column(children: [
-                                    SizedBox(height: 6),
+                                    SizedBox(height: 10),
                                     Align(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                            '${groupdata["members"].length.toString()} MEMBERS',
-                                            style:
-                                                TextStyle(color: Colors.red))),
+                                      alignment: Alignment.center,
+                                      child: Container(
+                                        width: 150,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black,
+                                          border: Border.all(color: Colors.red),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        padding: EdgeInsets.all(5),
+                                        child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              Icon(Icons.group_rounded,
+                                                  color: Colors.red),
+                                              SizedBox(width: 10),
+                                              Text(
+                                                  '${groupdata["members"].length.toString()} MEMBERS',
+                                                  style: TextStyle(
+                                                      color: Colors.red))
+                                            ]),
+                                      ),
+                                    ),
                                     SizedBox(
                                         height:
                                             2 * SizeConfig.heightMultiplier),

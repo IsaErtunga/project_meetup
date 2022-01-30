@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:project_meetup/user_authentication.dart';
 import 'package:provider/provider.dart';
@@ -47,167 +49,209 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.teal,
-      body: Column(
-        children: [
-          Text("Register an account"),
-          Spacer(flex: 2),
-          Form(
-            key: _formKey,
+      // resizeToAvoidBottomInset: false, //use this if you dont want for the keyboard to resize background image
+      body: Center(
+        child: Container(
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: ExactAssetImage('images/SignInBackground.png'),
+                  fit: BoxFit.cover)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
+              alignment: Alignment.center,
+              color: Colors.grey.withOpacity(0.1),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 10.0),
-                    child: TextFormField(
-                      style: const TextStyle(color: Colors.white),
-                      controller: emailController,
-                      decoration: InputDecoration(
-                        labelText: "Email",
-                        labelStyle: const TextStyle(color: Colors.white),
-                        floatingLabelBehavior: FloatingLabelBehavior.never,
-                        filled: true,
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                      // The validator receives the text that the user has entered.
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 10.0),
-                    child: TextFormField(
-                      style: const TextStyle(color: Colors.white),
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: "Password",
-                        labelStyle: const TextStyle(color: Colors.white),
-                        floatingLabelBehavior: FloatingLabelBehavior.never,
-                        filled: true,
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                      // The validator receives the text that the user has entered.
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 10.0),
-                    child: TextFormField(
-                      style: const TextStyle(color: Colors.white),
-                      controller: firstNameController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: "First Name",
-                        labelStyle: const TextStyle(color: Colors.white),
-                        floatingLabelBehavior: FloatingLabelBehavior.never,
-                        filled: true,
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                      // The validator receives the text that the user has entered.
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  TextFormField(
-                    style: const TextStyle(color: Colors.white),
-                    controller: lastNameController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: "Last Name",
-                      labelStyle: const TextStyle(color: Colors.white),
-                      floatingLabelBehavior: FloatingLabelBehavior.never,
-                      filled: true,
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                    // The validator receives the text that the user has entered.
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      return null;
-                    },
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shadowColor: Colors.transparent,
-                        primary: Colors.white24,
-                        textStyle: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 35, vertical: 15),
-                      ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          _toggleIsLoading();
-                          createUser(
-                                  email: emailController.text.trim(),
-                                  password: passwordController.text.trim(),
-                                  firstName: firstNameController.text.trim(),
-                                  lastName: lastNameController.text.trim())
-                              .then((value) {
-                            _toggleIsLoading();
-                            final snackBar = SnackBar(
-                              content:
-                                  const Text('Account created successfully!'),
-                              action: SnackBarAction(
-                                label: 'Close',
-                                onPressed: () {
-                                  // Some code to undo the change.
-                                },
+                  /*       Container(
+                    alignment: Alignment.center,
+                    child: Text("Welcome"),
+                  ),*/
+                  Spacer(flex: 2),
+                  Form(
+                    key: _formKey,
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 10.0),
+                            child: TextFormField(
+                              style: const TextStyle(color: Colors.white),
+                              controller: emailController,
+                              decoration: InputDecoration(
+                                prefixIcon:
+                                    Icon(Icons.person_pin, color: Colors.white),
+                                fillColor: Colors.black54,
+                                labelText: "Email",
+                                labelStyle:
+                                    const TextStyle(color: Colors.white),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.never,
+                                filled: true,
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(10)),
                               ),
-                            );
+                              // The validator receives the text that the user has entered.
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return '*This field is required';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 10.0),
+                            child: TextFormField(
+                              style: const TextStyle(color: Colors.white),
+                              controller: passwordController,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.lock_outline_rounded,
+                                    color: Colors.white),
+                                fillColor: Colors.black54,
+                                labelText: "Password",
+                                labelStyle:
+                                    const TextStyle(color: Colors.white),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.never,
+                                filled: true,
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(10)),
+                              ),
+                              // The validator receives the text that the user has entered.
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return '*This field is required';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 10.0),
+                            child: TextFormField(
+                              style: const TextStyle(color: Colors.white),
+                              controller: firstNameController,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.person_outline_rounded,
+                                    color: Colors.white),
+                                fillColor: Colors.black54,
+                                labelText: "First Name",
+                                labelStyle:
+                                    const TextStyle(color: Colors.white),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.never,
+                                filled: true,
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(10)),
+                              ),
+                              // The validator receives the text that the user has entered.
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return '*This field is required';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          TextFormField(
+                            style: const TextStyle(color: Colors.white),
+                            controller: lastNameController,
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              fillColor: Colors.black54,
+                              prefixIcon:
+                                  Icon(Icons.person, color: Colors.white),
+                              labelText: "Last Name",
+                              labelStyle: const TextStyle(color: Colors.white),
+                              floatingLabelBehavior:
+                                  FloatingLabelBehavior.never,
+                              filled: true,
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.circular(10)),
+                            ),
+                            // The validator receives the text that the user has entered.
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return '*This field is required';
+                              }
+                              return null;
+                            },
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(vertical: 20.0),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                elevation: 0,
+                                primary: Colors.black54,
+                                textStyle: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 35, vertical: 15),
+                              ),
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  _toggleIsLoading();
+                                  createUser(
+                                          email: emailController.text.trim(),
+                                          password:
+                                              passwordController.text.trim(),
+                                          firstName:
+                                              firstNameController.text.trim(),
+                                          lastName:
+                                              lastNameController.text.trim())
+                                      .then((value) {
+                                    _toggleIsLoading();
+                                    final snackBar = SnackBar(
+                                      content: const Text(
+                                          'Account created successfully!'),
+                                      action: SnackBarAction(
+                                        label: 'Close',
+                                        onPressed: () {
+                                          // Some code to undo the change.
+                                        },
+                                      ),
+                                    );
 
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
-                          });
-                        }
-                      },
-                      child: _isLoading
-                          ? const Center(
-                              child: SizedBox(
-                                height: 25,
-                                width: 25,
-                                child: CircularProgressIndicator(),
-                              ),
-                            )
-                          : const Text("Register"),
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+                                  });
+                                }
+                              },
+                              child: _isLoading
+                                  ? const Center(
+                                      child: SizedBox(
+                                        height: 25,
+                                        width: 25,
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    )
+                                  : const Text("Register"),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
+                  Spacer(flex: 3),
                 ],
               ),
             ),
           ),
-          Spacer(flex: 3),
-        ],
+        ),
       ),
     );
   }

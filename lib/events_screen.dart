@@ -241,7 +241,7 @@ class _EventsScreenState extends State<EventsScreen> {
                                                   },
                                                   icon: Icon(
                                                       Icons
-                                                          .location_on_outlined,
+                                                          .travel_explore_rounded,
                                                       color: Colors.white),
                                                 )
                                               ],
