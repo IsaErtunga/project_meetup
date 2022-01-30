@@ -34,19 +34,21 @@ class _EventsScreenState extends State<EventsScreen> {
     zoom: 14.4746,
   );
 
-  Set markerSet = <Marker>{};
+  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
 
   void initState() {
+    super.initState();
+
     events.get().then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         GeoPoint pos = doc["location"];
+        print(pos);
         var marker = Marker(
             markerId: MarkerId(doc.id),
             position: LatLng(pos.latitude, pos.longitude));
-        markerSet.add(marker);
+        markers[MarkerId(doc.id)] = marker;
       });
     });
-    super.initState();
   }
 
   @override
@@ -58,6 +60,7 @@ class _EventsScreenState extends State<EventsScreen> {
         children: [
           FloatingActionButton.extended(
               onPressed: () {
+                print(markers);
                 if (_pc.isPanelClosed == true) {
                   _pc.open();
                 } else {
@@ -266,7 +269,7 @@ class _EventsScreenState extends State<EventsScreen> {
         body: Center(
           child: GoogleMap(
             zoomControlsEnabled: false,
-            markers: markerSet as Set<Marker>,
+            markers: Set<Marker>.of(markers.values),
             mapType: MapType.normal,
             initialCameraPosition: _kGooglePlex,
             onMapCreated: (GoogleMapController controller) {

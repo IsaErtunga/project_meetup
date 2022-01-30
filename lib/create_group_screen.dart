@@ -1,10 +1,13 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/painting.dart';
 
 class CreateGroupScreen extends StatefulWidget {
@@ -56,6 +59,29 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   bool isPrivate = true;
 
   String dropdownValue = 'One';
+
+  void _handleImageSelection() async {
+    final result = await ImagePicker().pickImage(
+      imageQuality: 70,
+      maxWidth: 1440,
+      source: ImageSource.gallery,
+    );
+
+    if (result != null) {
+      final file = File(result.path);
+      final size = file.lengthSync();
+      final bytes = await result.readAsBytes();
+      final image = await decodeImageFromList(bytes);
+      final name = result.name;
+
+      final reference = FirebaseStorage.instance.ref(name);
+      await reference.putFile(file);
+      final uri = await reference.getDownloadURL();
+      setState(() {
+        formData["groupPicture"] = uri;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -253,7 +279,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                               primary:
                                   Colors.black, // Colors.white.withOpacity(0),
                               side: BorderSide(color: Colors.white, width: 1)),
-                          onPressed: () => {},
+                          onPressed: () => {_handleImageSelection()},
                           child: Padding(
                             padding: EdgeInsets.all(8),
                             child: Row(
@@ -280,7 +306,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                             borderRadius: BorderRadius.circular(60)),
                         child: CircleAvatar(
                             backgroundColor: Colors.black,
-                            backgroundImage: NetworkImage(''),
+                            backgroundImage:
+                                NetworkImage(formData["groupPicture"]),
                             radius: 55),
                       ),
                     ],
