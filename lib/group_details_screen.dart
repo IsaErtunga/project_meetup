@@ -162,19 +162,38 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                         ),
                       ),
                       SliverFillRemaining(
-                          //hasScrollBody: false,
+                          hasScrollBody: false,
                           child: Container(
                               child: Padding(
                                   padding: const EdgeInsets.only(
                                       left: 10.0, right: 10),
                                   child: Column(children: [
-                                    SizedBox(height: 6),
+                                    SizedBox(height: 10),
                                     Align(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                            '${groupdata["members"].length.toString()} MEMBERS',
-                                            style:
-                                                TextStyle(color: Colors.red))),
+                                      alignment: Alignment.center,
+                                      child: Container(
+                                        width: 150,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black,
+                                          border: Border.all(color: Colors.red),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        padding: EdgeInsets.all(5),
+                                        child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              Icon(Icons.group_rounded,
+                                                  color: Colors.red),
+                                              SizedBox(width: 10),
+                                              Text(
+                                                  '${groupdata["members"].length.toString()} MEMBERS',
+                                                  style: TextStyle(
+                                                      color: Colors.red))
+                                            ]),
+                                      ),
+                                    ),
                                     SizedBox(
                                         height:
                                             2 * SizeConfig.heightMultiplier),
@@ -452,14 +471,15 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                                       child: Container(
                                                         decoration:
                                                             BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(15),
-                                                          /*   border: Border.all(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            15),
+                                                                /*   border: Border.all(
                                                               color:
                                                                   Colors.black,
                                                             ),*/
-                                                          /* boxShadow: [
+                                                                /* boxShadow: [
                                                               BoxShadow(
                                                                  color: Colors
                                                                     .grey
@@ -472,9 +492,10 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                                                     0), // changes position of shadow
                                                               ),
                                                             ],*/
-                                                          color:
-                                                              Color(0xF8FAFB),
-                                                        ),
+                                                                color: Color(
+                                                                    0xFF212121)
+                                                                // Color(0xF8FAFB),
+                                                                ),
                                                         child: Row(
                                                           crossAxisAlignment:
                                                               CrossAxisAlignment
@@ -512,7 +533,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                                               '${member["firstName"]} ${member["lastName"]}',
                                                               style: TextStyle(
                                                                   color: Colors
-                                                                      .black,
+                                                                      .white,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold),

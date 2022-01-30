@@ -1,26 +1,33 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:project_meetup/sign_up_screen.dart';
 import 'package:project_meetup/user_authentication.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_functions/cloud_functions.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({Key? key}) : super(key: key);
+class EditableProfileScreen extends StatefulWidget {
+  const EditableProfileScreen({Key? key}) : super(key: key);
 
   @override
-  State<SignUpPage> createState() => _SignUpPageState();
+  State<EditableProfileScreen> createState() => _EditableProfileScreenState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+class _EditableProfileScreenState extends State<EditableProfileScreen> {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final TextEditingController userNameController = TextEditingController();
+  final TextEditingController universityController = TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
 
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+
   final _formKey = GlobalKey<FormState>();
 
-  // Sign up cloud function
+// Future<void> editUser
+
+/*
   Future<void> createUser(
       {required String email,
       required String password,
@@ -37,6 +44,9 @@ class _SignUpPageState extends State<SignUpPage> {
     });
     print(results);
   }
+*/
+
+  late Size _safeAreaSize;
 
   bool _isLoading = false;
 
@@ -48,6 +58,9 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
+    var mediaQD = MediaQuery.of(context);
+    _safeAreaSize = mediaQD.size;
+
     return Scaffold(
       // resizeToAvoidBottomInset: false, //use this if you dont want for the keyboard to resize background image
       body: Center(
@@ -67,7 +80,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Padding(
-                          padding: EdgeInsets.only(top: 20, left: 15),
+                          padding: EdgeInsets.only(top: 25, left: 10),
                           child: IconButton(
                             icon: Icon(Icons.arrow_back),
                             onPressed: () {
@@ -89,74 +102,117 @@ class _SignUpPageState extends State<SignUpPage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 10.0),
-                            child: TextFormField(
-                              style: const TextStyle(color: Colors.white),
-                              controller: emailController,
-                              decoration: InputDecoration(
-                                prefixIcon:
-                                    Icon(Icons.person_pin, color: Colors.white),
-                                fillColor: Colors.black54,
-                                labelText: "Email",
-                                labelStyle:
-                                    const TextStyle(color: Colors.white),
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.never,
-                                filled: true,
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.circular(10)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 10),
+                                child: Hero(
+                                  tag: 'tag',
+                                  child: Container(
+                                    height: 130,
+                                    width: 130,
+                                    decoration: BoxDecoration(
+                                      color: Colors.black54,
+                                      borderRadius: BorderRadius.circular(10),
+                                      //  image: DecorationImage(image: ) image that the user uploads
+                                    ),
+                                    child: Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: IconButton(
+                                          icon: Icon(
+                                            Icons.add_a_photo_outlined,
+                                            color: Colors.white,
+                                          ),
+                                          onPressed: () {
+                                            /*let user upload photo*/
+                                          },
+                                        )),
+                                  ),
+                                ),
                               ),
-                              // The validator receives the text that the user has entered.
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return '*This field is required';
-                                }
-                                return null;
-                              },
-                            ),
+                              Column(
+                                children: [
+                                  Container(
+                                    width: 210,
+                                    margin: const EdgeInsets.only(bottom: 10.0),
+                                    child: TextFormField(
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                      controller: firstNameController,
+                                      decoration: InputDecoration(
+                                        prefixIcon: Icon(
+                                            Icons.person_outline_rounded,
+                                            color: Colors.white),
+                                        fillColor: Colors.black54,
+                                        labelText: 'First Name',
+                                        labelStyle: const TextStyle(
+                                            color: Colors.white),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.never,
+                                        filled: true,
+                                        border: OutlineInputBorder(
+                                            borderSide: BorderSide.none,
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                      ),
+                                      // The validator receives the text that the user has entered.
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return '*This field is required';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 210,
+                                    margin: const EdgeInsets.only(bottom: 10.0),
+                                    child: TextFormField(
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                      controller: lastNameController,
+                                      obscureText: true,
+                                      decoration: InputDecoration(
+                                        prefixIcon: Icon(Icons.person,
+                                            color: Colors.white),
+                                        fillColor: Colors.black54,
+                                        labelText: 'Last Name',
+                                        // '${data["lastName"]}',
+                                        labelStyle: const TextStyle(
+                                            color: Colors.white),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.never,
+                                        filled: true,
+                                        border: OutlineInputBorder(
+                                            borderSide: BorderSide.none,
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                      ),
+                                      // The validator receives the text that the user has entered.
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return '*This field is required';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                           Container(
                             margin: const EdgeInsets.only(bottom: 10.0),
                             child: TextFormField(
                               style: const TextStyle(color: Colors.white),
-                              controller: passwordController,
+                              controller: userNameController,
                               obscureText: true,
                               decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.lock_outline_rounded,
+                                prefixIcon: Icon(Icons.star_border_rounded,
                                     color: Colors.white),
                                 fillColor: Colors.black54,
-                                labelText: "Password",
-                                labelStyle:
-                                    const TextStyle(color: Colors.white),
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.never,
-                                filled: true,
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.circular(10)),
-                              ),
-                              // The validator receives the text that the user has entered.
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return '*This field is required';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 10.0),
-                            child: TextFormField(
-                              style: const TextStyle(color: Colors.white),
-                              controller: firstNameController,
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.person_outline_rounded,
-                                    color: Colors.white),
-                                fillColor: Colors.black54,
-                                labelText: "First Name",
+                                labelText: 'User Name', //'${data["userName"]}',
                                 labelStyle:
                                     const TextStyle(color: Colors.white),
                                 floatingLabelBehavior:
@@ -177,13 +233,14 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                           TextFormField(
                             style: const TextStyle(color: Colors.white),
-                            controller: lastNameController,
+                            controller: universityController,
                             obscureText: true,
                             decoration: InputDecoration(
                               fillColor: Colors.black54,
-                              prefixIcon:
-                                  Icon(Icons.person, color: Colors.white),
-                              labelText: "Last Name",
+                              prefixIcon: Icon(Icons.school_outlined,
+                                  color: Colors.white),
+                              labelText:
+                                  'University', //'${data["university"]}',
                               labelStyle: const TextStyle(color: Colors.white),
                               floatingLabelBehavior:
                                   FloatingLabelBehavior.never,
@@ -217,8 +274,8 @@ class _SignUpPageState extends State<SignUpPage> {
                               ),
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  _toggleIsLoading();
-                                  createUser(
+                                  /* _toggleIsLoading();
+                                  editUserData(
                                           email: emailController.text.trim(),
                                           password:
                                               passwordController.text.trim(),
@@ -227,10 +284,10 @@ class _SignUpPageState extends State<SignUpPage> {
                                           lastName:
                                               lastNameController.text.trim())
                                       .then((value) {
-                                    _toggleIsLoading(); //add navigator back to sign in screen?
+                                    _toggleIsLoading();
                                     final snackBar = SnackBar(
                                       content: const Text(
-                                          'Account created successfully!'),
+                                          'Account successfully edited!'),
                                       action: SnackBarAction(
                                         label: 'Close',
                                         onPressed: () {
@@ -241,7 +298,8 @@ class _SignUpPageState extends State<SignUpPage> {
 
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(snackBar);
-                                  });
+                                  });  */
+                                  //on pressed also navigator route to profile screen
                                 }
                               },
                               child: _isLoading
@@ -252,7 +310,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                         child: CircularProgressIndicator(),
                                       ),
                                     )
-                                  : const Text("Register"),
+                                  : const Text("Done editing"),
                             ),
                           ),
                         ],
@@ -267,5 +325,9 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       ),
     );
+    /*    }
+        return Text("loading");
+      },
+    ); */
   }
 }

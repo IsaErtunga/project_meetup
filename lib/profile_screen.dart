@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'group_details_screen.dart';
 import 'discover_screen.dart';
 import 'package:filter_list/filter_list.dart';
 import 'event_details_screen.dart';
+import 'editable_profile_screen.dart';
 // import 'choose_interests.dart';
 //import 'theme_profile_screen.dart';
 
@@ -147,12 +149,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+/*
+  _showInterestsDialog() async {
+    await Future.delayed(
+      Duration(microseconds: 1),
+    );
+    showDialog(
+        barrierColor: Colors.black12,
+        context: context,
+        builder: (BuildContext context) {
+          return BackdropFilter(
+              child: AlertDialog(title: Text('test')),
+              filter: ImageFilter.blur(
+                sigmaX: 4,
+                sigmaY: 4,
+              ));
+        });
+  } */
+
   @override
   Widget build(BuildContext context) {
     // CollectionReference users = FirebaseFirestore.instance.collection('users');
     var mediaQD = MediaQuery.of(context);
     _safeAreaSize = mediaQD.size;
-    //  calculateSocialProgressIndex();
+
     return FutureBuilder<DocumentSnapshot>(
       future: users.doc(auth.currentUser!.uid).get(),
       builder:
@@ -181,7 +201,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Icons.edit,
                         color: Colors.white,
                       ),
-                      onPressed: () {},
+                      onPressed: () =>
+                          {Navigator.of(context).push(_createRouteToEdit())},
                     ),
                     IconButton(
                       icon: Icon(
@@ -221,16 +242,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: <Widget>[
                             Row(
                               children: <Widget>[
-                                Container(
-                                  height: 11 * SizeConfig.heightMultiplier,
-                                  width: 21 * SizeConfig.widthMultiplier,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.rectangle,
-                                      borderRadius: BorderRadius.circular(30),
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image:
-                                              NetworkImage(data["imageUrl"]))),
+                                Hero(
+                                  tag: 'tag',
+                                  child: Container(
+                                    height: 11 * SizeConfig.heightMultiplier,
+                                    width: 21 * SizeConfig.widthMultiplier,
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.rectangle,
+                                        borderRadius: BorderRadius.circular(30),
+                                        image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: NetworkImage(
+                                                data["imageUrl"]))),
+                                  ),
                                 ),
                                 SizedBox(
                                   width: 5 * SizeConfig.widthMultiplier,
@@ -1143,6 +1167,25 @@ Route _createRouteEvents(eventId) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) =>
         EventDetailsScreen(eventId),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(1.0, 0.0);
+      const end = Offset.zero;
+      const curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
+Route _createRouteToEdit() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        EditableProfileScreen(),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(1.0, 0.0);
       const end = Offset.zero;
