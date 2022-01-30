@@ -1,6 +1,7 @@
 //import 'dart:html';
 import 'dart:async';
 import 'dart:math' as math;
+import 'package:flutter/rendering.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart'; //for timestamp to date and time conversion
@@ -234,6 +235,29 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 children: <Widget>[
+                                                  Container(
+                                                      child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text('Hosted',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
+                                                      Text('by',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold))
+                                                    ],
+                                                  )),
+                                                  SizedBox(width: 10),
                                                   Hero(
                                                     tag: eventData[
                                                                 'hostingGroup']
@@ -256,78 +280,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                                 ['groupName']
                                                             .toString(),
                                                         style: TextStyle(
-                                                            color:
-                                                                Colors.white)),
+                                                            color: Colors.white,
+                                                            fontSize: 18)),
                                                   ),
-                                                  SizedBox(width: 20),
-                                                  ElevatedButton(
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                            shape: RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            25)),
-                                                            primary: Colors.red[
-                                                                600], // Colors.white.withOpacity(0),
-                                                            side: BorderSide(
-                                                                color: Color(
-                                                                    0xFFE53935),
-                                                                width: 1.5)),
-                                                    onPressed: () => {
-                                                      joinEventBatch()
-                                                          .then((value) {
-                                                        if (value == false) {
-                                                          final snackBar =
-                                                              SnackBar(
-                                                            content: const Text(
-                                                                'Joined Event!'),
-                                                            action:
-                                                                SnackBarAction(
-                                                              label: 'Close',
-                                                              onPressed: () {
-                                                                // Some code to undo the change.
-                                                              },
-                                                            ),
-                                                          );
-
-                                                          // Find the ScaffoldMessenger in the widget tree
-                                                          // and use it to show a SnackBar.
-                                                          ScaffoldMessenger.of(
-                                                                  context)
-                                                              .showSnackBar(
-                                                                  snackBar);
-                                                        } else {
-                                                          final snackBar =
-                                                              SnackBar(
-                                                            content: const Text(
-                                                                'Already Joined Event!'),
-                                                            action:
-                                                                SnackBarAction(
-                                                              label: 'Close',
-                                                              onPressed: () {
-                                                                // Some code to undo the change.
-                                                              },
-                                                            ),
-                                                          );
-
-                                                          // Find the ScaffoldMessenger in the widget tree
-                                                          // and use it to show a SnackBar.
-                                                          ScaffoldMessenger.of(
-                                                                  context)
-                                                              .showSnackBar(
-                                                                  snackBar);
-                                                        }
-                                                      })
-                                                    },
-                                                    child: const Text(
-                                                        'JOIN EVENT ',
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold)),
-                                                  )
                                                 ])),
                                       ),
                                     )
@@ -338,63 +293,142 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             Padding(
                               padding:
                                   const EdgeInsets.only(left: 10, right: 10),
-                              child: Column(
-                                children: <Widget>[
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.only(top: 5, bottom: 5),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Icon(Icons.calendar_today,
-                                              color: Colors.greenAccent,
-                                              size: 20),
-                                          SizedBox(width: 10),
-                                          Text(
-                                              (DateFormat.yMMMEd().format(
-                                                      eventData["dateTime"]
-                                                          .toDate()))
-                                                  .toString(),
-                                              style: TextStyle(
-                                                  color: Colors.greenAccent)),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.only(bottom: 5, left: 30),
-                                    child: Row(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Column(
                                       children: <Widget>[
-                                        Text(
-                                          (DateFormat.Hm().format(
-                                                  eventData["dateTime"]
-                                                      .toDate()))
-                                              .toString(),
-                                          style: TextStyle(
-                                              color: Colors.greenAccent),
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 5, bottom: 5),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Icon(Icons.calendar_today,
+                                                    color: Colors.greenAccent,
+                                                    size: 20),
+                                                SizedBox(width: 10),
+                                                Text(
+                                                    (DateFormat.yMMMEd().format(
+                                                            eventData[
+                                                                    "dateTime"]
+                                                                .toDate()))
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        color: Colors
+                                                            .greenAccent)),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              bottom: 5, left: 30),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Text(
+                                                (DateFormat.Hm().format(
+                                                        eventData["dateTime"]
+                                                            .toDate()))
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    color: Colors.greenAccent),
+                                              ),
+                                            ],
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 5, bottom: 5),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Icon(Icons.groups_rounded,
+                                                  color: Colors.greenAccent,
+                                                  size: 20),
+                                              SizedBox(width: 10),
+                                              Text(
+                                                  '${eventData["participants"].length.toString()} going',
+                                                  style: TextStyle(
+                                                      color:
+                                                          Colors.greenAccent))
+                                            ],
+                                          ),
                                         ),
                                       ],
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
                                     ),
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 5, bottom: 5),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(25)),
+                                        primary: Colors
+                                            .deepPurple, // Colors.white.withOpacity(0),
+                                        side: BorderSide(
+                                            color: Colors.deepPurple,
+                                            width: 1.5)),
+                                    onPressed: () => {
+                                      joinEventBatch().then((value) {
+                                        if (value == false) {
+                                          final snackBar = SnackBar(
+                                            content:
+                                                const Text('Joined Event!'),
+                                            action: SnackBarAction(
+                                              label: 'Close',
+                                              onPressed: () {
+                                                // Some code to undo the change.
+                                              },
+                                            ),
+                                          );
+
+                                          // Find the ScaffoldMessenger in the widget tree
+                                          // and use it to show a SnackBar.
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(snackBar);
+                                        } else {
+                                          final snackBar = SnackBar(
+                                            content: const Text(
+                                                'Already Joined Event!'),
+                                            action: SnackBarAction(
+                                              label: 'Close',
+                                              onPressed: () {
+                                                // Some code to undo the change.
+                                              },
+                                            ),
+                                          );
+
+                                          // Find the ScaffoldMessenger in the widget tree
+                                          // and use it to show a SnackBar.
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(snackBar);
+                                        }
+                                      })
+                                    },
                                     child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
-                                        Icon(Icons.groups_rounded,
-                                            color: Colors.greenAccent,
-                                            size: 20),
-                                        SizedBox(width: 10),
-                                        Text(
-                                            '${eventData["participants"].length.toString()} going',
+                                        Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Icon(
+                                                Icons.favorite_border_rounded,
+                                                color: Colors.greenAccent)),
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            "JOIN EVENT",
                                             style: TextStyle(
-                                                color: Colors.greenAccent))
+                                                color: Colors.greenAccent),
+                                          ),
+                                        ),
                                       ],
                                     ),
-                                  ),
+                                  )
                                 ],
                               ),
                             ),
@@ -521,13 +555,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                           15.0)),
                                               child: Container(
                                                 decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  /*   border: Border.all(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                    /*   border: Border.all(
                                                               color:
                                                                   Colors.black,
                                                             ),*/
-                                                  /* boxShadow: [
+                                                    /* boxShadow: [
                                                               BoxShadow(
                                                                  color: Colors
                                                                     .grey
@@ -540,8 +575,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                                     0), // changes position of shadow
                                                               ),
                                                             ],*/
-                                                  color: HexColor('#F8FAFB'),
-                                                ),
+                                                    color: Color(0xFF212121)),
                                                 child: Row(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.center,
@@ -579,7 +613,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                     Text(
                                                       '${participant["firstName"]} ${participant["lastName"]}',
                                                       style: TextStyle(
-                                                          color: Colors.black,
+                                                          color: Colors.white,
                                                           fontWeight:
                                                               FontWeight.bold),
                                                     ),

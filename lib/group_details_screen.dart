@@ -471,14 +471,15 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                                       child: Container(
                                                         decoration:
                                                             BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(15),
-                                                          /*   border: Border.all(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            15),
+                                                                /*   border: Border.all(
                                                               color:
                                                                   Colors.black,
                                                             ),*/
-                                                          /* boxShadow: [
+                                                                /* boxShadow: [
                                                               BoxShadow(
                                                                  color: Colors
                                                                     .grey
@@ -491,9 +492,10 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                                                     0), // changes position of shadow
                                                               ),
                                                             ],*/
-                                                          color:
-                                                              Color(0xF8FAFB),
-                                                        ),
+                                                                color: Color(
+                                                                    0xFF212121)
+                                                                // Color(0xF8FAFB),
+                                                                ),
                                                         child: Row(
                                                           crossAxisAlignment:
                                                               CrossAxisAlignment
@@ -531,7 +533,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                                               '${member["firstName"]} ${member["lastName"]}',
                                                               style: TextStyle(
                                                                   color: Colors
-                                                                      .black,
+                                                                      .white,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold),
