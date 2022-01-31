@@ -46,6 +46,20 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
   }
 */
 
+  // Edit user profile
+  Future<void> editProfileData() async {
+    try {
+      await users.doc(auth.currentUser!.uid).update({
+        "firstName": firstNameController.text,
+        "lastName": lastNameController.text,
+        "userName": userNameController.text,
+        "university": universityController.text
+      });
+    } on Exception catch (_) {
+      print('never reached');
+    }
+  }
+
   late Size _safeAreaSize;
 
   bool _isLoading = false;
@@ -172,7 +186,6 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                                       style:
                                           const TextStyle(color: Colors.white),
                                       controller: lastNameController,
-                                      obscureText: true,
                                       decoration: InputDecoration(
                                         prefixIcon: Icon(Icons.person,
                                             color: Colors.white),
@@ -207,7 +220,7 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                             child: TextFormField(
                               style: const TextStyle(color: Colors.white),
                               controller: userNameController,
-                              obscureText: true,
+
                               decoration: InputDecoration(
                                 prefixIcon: Icon(Icons.star_border_rounded,
                                     color: Colors.white),
@@ -234,7 +247,6 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                           TextFormField(
                             style: const TextStyle(color: Colors.white),
                             controller: universityController,
-                            obscureText: true,
                             decoration: InputDecoration(
                               fillColor: Colors.black54,
                               prefixIcon: Icon(Icons.school_outlined,
@@ -273,34 +285,7 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                                     horizontal: 35, vertical: 15),
                               ),
                               onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  /* _toggleIsLoading();
-                                  editUserData(
-                                          email: emailController.text.trim(),
-                                          password:
-                                              passwordController.text.trim(),
-                                          firstName:
-                                              firstNameController.text.trim(),
-                                          lastName:
-                                              lastNameController.text.trim())
-                                      .then((value) {
-                                    _toggleIsLoading();
-                                    final snackBar = SnackBar(
-                                      content: const Text(
-                                          'Account successfully edited!'),
-                                      action: SnackBarAction(
-                                        label: 'Close',
-                                        onPressed: () {
-                                          // Some code to undo the change.
-                                        },
-                                      ),
-                                    );
-
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(snackBar);
-                                  });  */
-                                  //on pressed also navigator route to profile screen
-                                }
+                                editProfileData();
                               },
                               child: _isLoading
                                   ? const Center(

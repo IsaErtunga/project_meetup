@@ -30,7 +30,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     'creator': null,
     'members': [],
     'events': [],
-    'associatedInterests': {},
+    'myInterests': [],
     'isPrivate': true,
   };
 
@@ -40,21 +40,22 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     return userData["amountCreatedGroups"];
   }
 
+  static List selectedInterestsList = [];
+
   Future<void> createGroup() async {
     try {
-      int userGroupCreated = await getUserAllowedGroups();
-      if (userGroupCreated >= 0 && userGroupCreated <= 3) {
-        await groups.add(formData);
+      //int userGroupCreated = await getUserAllowedGroups();
+      //if (userGroupCreated >= 0 && userGroupCreated <= 3) {
+      await groups.add(formData);
+      /*
         await users
             .doc(auth.currentUser!.uid)
-            .update({"amountCreatedGroups": userGroupCreated += 1});
-      }
+            .update({"amountCreatedGroups": userGroupCreated += 1});*/
+
     } on Exception catch (_) {
       print('never reached');
     }
   }
-
-  static List selectedInterestsList = [];
 
   bool isPrivate = true;
 
@@ -86,6 +87,12 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            print(selectedInterestsList[0].toString().split("/"));
+          },
+          child: Text("Hej"),
+        ),
         backgroundColor: Colors.black,
         appBar: AppBar(
             elevation: 0,
@@ -332,6 +339,9 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                           horizontal: 35, vertical: 15),
                     ),
                     onPressed: () {
+                      formData["myInterests"] =
+                          selectedInterestsList[0].toString().split("/");
+                      formData["creator"] = auth.currentUser!.uid;
                       print('Submitting form');
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save(); //onSaved is called!
