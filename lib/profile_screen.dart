@@ -278,6 +278,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Map<String, dynamic> data =
               snapshot.data!.data() as Map<String, dynamic>;
 
+          /*  var test = data['attendedEvents'].toList(); //.values.toList();
+          print(test);
+
+          test.sort((a, b) {
+            b.value['eventTime'].compareTo(a.value['eventTime']);
+          });
+          print(test);
+           var test2 = test.map((a) => {a.key: a.value}).toList();
+          print(test2); */
+
           return Scaffold(
             backgroundColor: Colors.black,
             //const Color(0xffF8F8FA),

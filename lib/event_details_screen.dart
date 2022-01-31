@@ -9,7 +9,7 @@ import 'package:intl/intl.dart'; //for timestamp to date and time conversion
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:geocoding/geocoding.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_meetup/discover_screen.dart';
 import 'package:project_meetup/profile_screen.dart';
@@ -49,6 +49,29 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         ),
       ),
     );
+  }
+
+  static var _eventAddress = "";
+  static var _eventAddressSecondLine = "";
+
+  Future _getEventAdress(GeoPoint) async {
+    //await Future.delayed(Duration(microseconds: 1));
+
+    var eventPlace =
+        await placemarkFromCoordinates(GeoPoint.latitude, GeoPoint.longitude);
+
+    String? name = eventPlace[0].name;
+    String? locality = eventPlace[0].locality;
+    String? street = eventPlace[0].street;
+    String? postalCode = eventPlace[0].postalCode;
+
+    String eventAdress = "${street} ${name} ";
+    String eventAdressSecondLine = "${postalCode} ${locality}";
+
+    _eventAddress = eventAdress;
+    _eventAddressSecondLine = eventAdressSecondLine;
+
+    print(_eventAddress);
   }
 
   Future<bool> joinEventBatch() async {
@@ -99,6 +122,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       });
 
       await batch.commit();
+      setState(() {});
       return Future.value(false);
     }
   }
@@ -120,8 +144,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           if (snapshot.connectionState == ConnectionState.done) {
             Map<String, dynamic> eventData =
                 snapshot.data!.data() as Map<String, dynamic>;
+            _getEventAdress(eventData["location"]);
 
-            // _getEventAdress(eventData["location"]);
             return Scaffold(
               backgroundColor: Colors.black,
               body: CustomScrollView(
@@ -211,6 +235,21 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                           letterSpacing: 0.5,
                                           fontSize:
                                               3 * SizeConfig.heightMultiplier),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 5, bottom: 5),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Icon(Icons.groups_rounded,
+                                            color: Colors.greenAccent,
+                                            size: 20),
+                                        SizedBox(width: 10),
+                                        Text(
+                                            '${eventData["participants"].length.toString()} going',
+                                            style: TextStyle(
+                                                color: Colors.greenAccent))
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -343,21 +382,38 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                 CrossAxisAlignment.start,
                                           ),
                                         ),
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 5, bottom: 5),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Icon(Icons.location_on_outlined,
+                                                    color: Colors.greenAccent,
+                                                    size: 20),
+                                                SizedBox(width: 10),
+                                                Text(_eventAddress,
+                                                    style: TextStyle(
+                                                        color: Colors
+                                                            .greenAccent)),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
                                         Padding(
                                           padding: EdgeInsets.only(
-                                              top: 5, bottom: 5),
+                                              bottom: 5, left: 30),
                                           child: Row(
                                             children: <Widget>[
-                                              Icon(Icons.groups_rounded,
-                                                  color: Colors.greenAccent,
-                                                  size: 20),
-                                              SizedBox(width: 10),
                                               Text(
-                                                  '${eventData["participants"].length.toString()} going',
-                                                  style: TextStyle(
-                                                      color:
-                                                          Colors.greenAccent))
+                                                _eventAddressSecondLine,
+                                                style: TextStyle(
+                                                    color: Colors.greenAccent),
+                                              ),
                                             ],
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                           ),
                                         ),
                                       ],

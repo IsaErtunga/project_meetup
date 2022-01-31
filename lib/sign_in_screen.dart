@@ -132,6 +132,8 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                     ),
                   ),
+                  Text('Not a member yet?'),
+                  Text('Sign up now'),
                   Spacer(flex: 2),
                   Container(
                     margin: EdgeInsets.only(bottom: 40.0),

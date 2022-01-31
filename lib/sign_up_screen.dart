@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:project_meetup/user_authentication.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'sign_in_screen.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -151,7 +152,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             child: TextFormField(
                               style: const TextStyle(color: Colors.white),
                               controller: firstNameController,
-                              obscureText: true,
+
                               decoration: InputDecoration(
                                 prefixIcon: Icon(Icons.person_outline_rounded,
                                     color: Colors.white),
@@ -178,7 +179,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           TextFormField(
                             style: const TextStyle(color: Colors.white),
                             controller: lastNameController,
-                            obscureText: true,
+
                             decoration: InputDecoration(
                               fillColor: Colors.black54,
                               prefixIcon:
@@ -243,6 +244,10 @@ class _SignUpPageState extends State<SignUpPage> {
                                         .showSnackBar(snackBar);
                                   });
                                 }
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SignInPage()));
                               },
                               child: _isLoading
                                   ? const Center(
