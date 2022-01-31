@@ -36,6 +36,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return groups.get();
   }
 
+  Future _refreshInterests(BuildContext context) async {
+    return users.get();
+  }
+
   final _socialLevelsText = [
     "Couch potatoe ",
     "Dancing Queen",
@@ -96,12 +100,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+/*
   List<String> allInterestsList = [
     "Music/Dance/Club",
     "Sports & Fitness",
     "Travel & Outdoors",
     "Science & Tech"
-  ];
+  ];  */
 
   static List<String> selectedInterestsList = [];
 
@@ -110,7 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .doc(auth.currentUser!.uid)
         .update({'myInterests': selectedInterestsList});
   }
-/*
+  /*
   void _openInterestsFilterDialog() async {
     await FilterListDialog.display<String>(context,
         backgroundColor: Colors.white,
@@ -169,13 +174,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   alignment: Alignment.center,
                   children: <Widget>[
                     Container(
+                      constraints: BoxConstraints(
+                        minHeight: 250,
+                        minWidth: double.infinity,
+                        maxHeight: double.infinity,
+                      ),
                       padding: EdgeInsets.only(right: 8, left: 8, bottom: 15),
                       width: double.infinity,
-                      height: 300,
+                      //height: 300,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
                           color: Colors.white60),
-                      child: Column(
+                      child: ListView(
+                        shrinkWrap: true,
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -183,7 +194,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Padding(
                                 padding: EdgeInsets.only(right: 10, top: 10),
                                 child: ElevatedButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      setState(() {
+                                        addInterests();
+                                      });
+
+                                      Navigator.pop(context);
+                                      // _refreshInterests(context);
+                                    },
+
                                     // _openInterestsFilterDialog,
                                     style: ElevatedButton.styleFrom(
                                         elevation: 0,
@@ -231,8 +250,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               filter: ImageFilter.blur(
-                sigmaX: 4,
-                sigmaY: 4,
+                sigmaX: 6,
+                sigmaY: 6,
               ));
         });
   }
@@ -319,6 +338,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     height: 11 * SizeConfig.heightMultiplier,
                                     width: 21 * SizeConfig.widthMultiplier,
                                     decoration: BoxDecoration(
+                                        color: Colors.white24,
                                         shape: BoxShape.rectangle,
                                         borderRadius: BorderRadius.circular(30),
                                         image: DecorationImage(
@@ -475,7 +495,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 )
                               : const Text("   No interests chosen yet",
                                   style: TextStyle(
-                                      fontSize: 15, color: Colors.white)),
+                                      fontSize: 15, color: Colors.white30)),
                         ),
                         Padding(
                           padding: EdgeInsets.only(
@@ -680,7 +700,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                               Widget>[
                                                                             Container(
                                                                               child: Text(
-                                                                                '9 going',
+                                                                                '7 going',
                                                                                 //  textAlign: TextAlign.right,
                                                                                 style: TextStyle(
                                                                                   fontWeight: FontWeight.w300,
@@ -743,10 +763,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     );
                                   }).toList(),
                                 )
-                              : const Text(
-                                  "No attended events",
-                                  style: TextStyle(fontSize: 24),
-                                ),
+                              : const Text("No events attended yet",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 20, color: Colors.white30)),
                         ),
                         SizedBox(
                           width: 10 * SizeConfig.widthMultiplier,
@@ -965,8 +985,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   }).toList(),
                                 )
                               : const Text(
-                                  "No groups",
-                                  style: TextStyle(fontSize: 24),
+                                  "Not a member of any groups",
+                                  style: TextStyle(
+                                      fontSize: 20, color: Colors.white30),
                                 ),
                         ),
                       ],

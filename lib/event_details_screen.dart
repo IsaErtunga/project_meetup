@@ -1,5 +1,6 @@
 //import 'dart:html';
 import 'dart:async';
+import 'dart:collection';
 import 'dart:math' as math;
 import 'package:flutter/rendering.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -92,7 +93,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             "eventTime": eventData["dateTime"],
             "hostingGroup": eventData["hostingGroup"]["groupName"],
             "id": eventDataSnapshot.id,
-            "participantsCount": eventData["participants"].length + 1
+            //  "participantsCount": eventData["participants"].length + 1
           }
         ])
       });
@@ -376,8 +377,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                       joinEventBatch().then((value) {
                                         if (value == false) {
                                           final snackBar = SnackBar(
-                                            content:
-                                                const Text('Joined Event!'),
+                                            content: const Text(
+                                                'You joined the event, HAVE FUN!'),
                                             action: SnackBarAction(
                                               label: 'Close',
                                               onPressed: () {
@@ -393,7 +394,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                         } else {
                                           final snackBar = SnackBar(
                                             content: const Text(
-                                                'Already Joined Event!'),
+                                                'You already joined this event!'),
                                             action: SnackBarAction(
                                               label: 'Close',
                                               onPressed: () {
@@ -624,8 +625,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                           );
                                         }).toList(),
                                       )
-                                    : const Text("No participants",
-                                        style: TextStyle(fontSize: 24)),
+                                    : const Text(
+                                        "No participants",
+                                        style: TextStyle(
+                                            fontSize: 24,
+                                            color: Colors.white24),
+                                      ),
                               ),
                             ),
                           ],

@@ -341,7 +341,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                                                                       children: <Widget>[
                                                                                         Expanded(
                                                                                           child: Text(
-                                                                                            '${hostedEvent["participantsCount"].toString()} going',
+                                                                                            '7 going',
                                                                                             textAlign: TextAlign.left,
                                                                                             style: TextStyle(fontWeight: FontWeight.w300, fontSize: 12, letterSpacing: 0.27, color: Colors.white //Color(0xF8FAFB),
                                                                                                 ),
@@ -407,8 +407,11 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                               }).toList(),
                                             )
                                           : const Text(
-                                              "No attended events",
-                                              style: TextStyle(fontSize: 24),
+                                              "No events hosted yet",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.white30),
                                             ),
                                     ),
                                     SizedBox(
@@ -540,8 +543,10 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                                   );
                                                 }).toList(),
                                               )
-                                            : const Text("No participants",
-                                                style: TextStyle(fontSize: 24)),
+                                            : const Text("No members",
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.white30)),
                                       ),
                                     ),
                                   ])))),
