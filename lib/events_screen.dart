@@ -44,7 +44,7 @@ class _EventsScreenState extends State<EventsScreen> {
     events.get().then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         GeoPoint pos = doc["location"];
-        print(pos);
+
         var marker = Marker(
             markerId: MarkerId(doc.id),
             position: LatLng(pos.latitude, pos.longitude));
@@ -62,8 +62,6 @@ class _EventsScreenState extends State<EventsScreen> {
         children: [
           FloatingActionButton.extended(
               onPressed: () {
-                print(markers);
-
                 if (_pc.isPanelClosed == true) {
                   _pc.open();
                 } else {
@@ -72,7 +70,7 @@ class _EventsScreenState extends State<EventsScreen> {
               },
               label: Text("Events")),
           SizedBox(
-            height: 70,
+            height: 100,
           )
         ],
       ),
@@ -101,8 +99,8 @@ class _EventsScreenState extends State<EventsScreen> {
                             const EdgeInsets.only(top: 20.0, right: 5, left: 5),
                         child: FutureBuilder<QuerySnapshot>(
                             future: events
-                                .orderBy('dateTime', descending: false)
-                                .startAt([now]).get(), //events.get(),
+                                .where("isPrivate", isEqualTo: false)
+                                .get(), //events.get(),
                             builder: (BuildContext context,
                                 AsyncSnapshot<QuerySnapshot> snapshot) {
                               // If something went wrong

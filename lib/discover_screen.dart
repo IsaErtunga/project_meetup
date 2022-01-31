@@ -27,6 +27,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     return groups.get();
   }
 
+  bool _isLoading = true;
   dynamic userData;
 
   Future<dynamic> getUserData() async {
@@ -36,6 +37,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
       final data = snapshot.data() as Map<String, dynamic>;
       setState(() {
         userData = data;
+        _isLoading = false;
       });
     });
   }
@@ -48,6 +50,10 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading == true) {
+      return CircularProgressIndicator();
+    }
+
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerTop,
       floatingActionButton: FloatingActionButton.extended(
