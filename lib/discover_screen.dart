@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'group_details_screen.dart';
 import 'create_group_screen.dart';
@@ -17,12 +17,33 @@ class DiscoverScreen extends StatefulWidget {
 
 class _DiscoverScreenState extends State<DiscoverScreen> {
   CollectionReference groups = FirebaseFirestore.instance.collection('Groups');
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   /// Groups read from database.
   final groupList = [];
 
   Future _refreshGroups(BuildContext context) async {
     return groups.get();
+  }
+
+  dynamic userData;
+
+  Future<dynamic> getUserData() async {
+    final DocumentReference document = users.doc(auth.currentUser!.uid);
+
+    await document.get().then<dynamic>((DocumentSnapshot snapshot) async {
+      final data = snapshot.data() as Map<String, dynamic>;
+      setState(() {
+        userData = data;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
   }
 
   @override
@@ -47,7 +68,12 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
       body: RefreshIndicator(
         onRefresh: () => _refreshGroups(context),
         child: FutureBuilder<QuerySnapshot>(
-            future: groups.get(),
+            future: groups.where("members", arrayContains: {
+              "userId": auth.currentUser!.uid,
+              "firstName": userData["firstName"],
+              "lastName": userData["lastName"],
+              "profilePicture": userData["imageUrl"],
+            }).get(),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasError) {

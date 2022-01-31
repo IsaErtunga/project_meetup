@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'dart:ui';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:project_meetup/sign_up_screen.dart';
 import 'package:project_meetup/user_authentication.dart';
 import 'package:provider/provider.dart';
@@ -24,37 +27,26 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
   final _formKey = GlobalKey<FormState>();
+  final Map<String, dynamic> formData = {
+    "firstName": "",
+    "lastName": "",
+    "userName": "",
+    "university": "",
+    "imageUrl": ""
+  };
 
-// Future<void> editUser
-
-/*
-  Future<void> createUser(
-      {required String email,
-      required String password,
-      required String firstName,
-      required String lastName}) async {
-    HttpsCallable callable =
-        FirebaseFunctions.instance.httpsCallable('createUserWithSignUp');
-
-    final results = await callable({
-      "email": email,
-      "password": password,
-      "firstName": firstName,
-      "lastName": lastName
-    });
-    print(results);
-  }
-*/
+  String imageUrl = "";
 
   // Edit user profile
   Future<void> editProfileData() async {
     try {
-      await users.doc(auth.currentUser!.uid).update({
-        "firstName": firstNameController.text,
-        "lastName": lastNameController.text,
-        "userName": userNameController.text,
-        "university": universityController.text
-      });
+      final reference = FirebaseStorage.instance.ref(profilePicName);
+      await reference.putFile(profileFile);
+      final uri = await reference.getDownloadURL();
+      if (imageUrl != "") {
+        imageUrl = uri;
+      }
+      await users.doc(auth.currentUser!.uid).update(formData);
     } on Exception catch (_) {
       print('never reached');
     }
@@ -67,6 +59,59 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
   void _toggleIsLoading() {
     setState(() {
       _isLoading = !_isLoading;
+    });
+  }
+
+  dynamic userData;
+
+  Future<dynamic> getUserData() async {
+    final DocumentReference document = users.doc(auth.currentUser!.uid);
+
+    await document.get().then<dynamic>((DocumentSnapshot snapshot) async {
+      final data = snapshot.data() as Map<String, dynamic>;
+      setState(() {
+        userData = data;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
+
+  File profileFile = File("");
+  String profilePicName = "";
+
+  // Let user upload photo
+  void _handleImageSelection() async {
+    final result = await ImagePicker().pickImage(
+      imageQuality: 70,
+      maxWidth: 1440,
+      source: ImageSource.gallery,
+    );
+
+    if (result != null) {
+      final file = File(result.path);
+      final size = file.lengthSync();
+      final bytes = await result.readAsBytes();
+      final image = await decodeImageFromList(bytes);
+      final name = result.name;
+
+      setState(() {
+        profileFile = file;
+        profilePicName = name;
+      });
+    }
+  }
+
+  void _uploadImageToStorage() async {
+    final reference = FirebaseStorage.instance.ref(profilePicName);
+    await reference.putFile(profileFile);
+    final uri = await reference.getDownloadURL();
+    setState(() {
+      imageUrl = uri;
     });
   }
 
@@ -139,7 +184,7 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                                             color: Colors.white,
                                           ),
                                           onPressed: () {
-                                            /*let user upload photo*/
+                                            _handleImageSelection();
                                           },
                                         )),
                                   ),
@@ -153,7 +198,7 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                                     child: TextFormField(
                                       style:
                                           const TextStyle(color: Colors.white),
-                                      controller: firstNameController,
+                                      //controller: firstNameController,
                                       decoration: InputDecoration(
                                         prefixIcon: Icon(
                                             Icons.person_outline_rounded,
@@ -177,6 +222,11 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                                         }
                                         return null;
                                       },
+                                      onSaved: (String? value) {
+                                        setState(() {
+                                          formData['firstName'] = value;
+                                        });
+                                      },
                                     ),
                                   ),
                                   Container(
@@ -185,7 +235,7 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                                     child: TextFormField(
                                       style:
                                           const TextStyle(color: Colors.white),
-                                      controller: lastNameController,
+                                      //controller: lastNameController,
                                       decoration: InputDecoration(
                                         prefixIcon: Icon(Icons.person,
                                             color: Colors.white),
@@ -209,6 +259,11 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                                         }
                                         return null;
                                       },
+                                      onSaved: (String? value) {
+                                        setState(() {
+                                          formData['lastName'] = value;
+                                        });
+                                      },
                                     ),
                                   ),
                                 ],
@@ -219,13 +274,13 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                             margin: const EdgeInsets.only(bottom: 10.0),
                             child: TextFormField(
                               style: const TextStyle(color: Colors.white),
-                              controller: userNameController,
-
+                              //controller: userNameController,
                               decoration: InputDecoration(
                                 prefixIcon: Icon(Icons.star_border_rounded,
                                     color: Colors.white),
                                 fillColor: Colors.black54,
-                                labelText: 'User Name', //'${data["userName"]}',
+                                labelText: 'User Name',
+                                //'${data["userName"]}',
                                 labelStyle:
                                     const TextStyle(color: Colors.white),
                                 floatingLabelBehavior:
@@ -242,17 +297,22 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                                 }
                                 return null;
                               },
+                              onSaved: (String? value) {
+                                setState(() {
+                                  formData['userName'] = value;
+                                });
+                              },
                             ),
                           ),
                           TextFormField(
                             style: const TextStyle(color: Colors.white),
-                            controller: universityController,
+                            //controller: universityController,
                             decoration: InputDecoration(
                               fillColor: Colors.black54,
                               prefixIcon: Icon(Icons.school_outlined,
                                   color: Colors.white),
-                              labelText:
-                                  'University', //'${data["university"]}',
+                              labelText: 'University',
+                              //'${data["university"]}',
                               labelStyle: const TextStyle(color: Colors.white),
                               floatingLabelBehavior:
                                   FloatingLabelBehavior.never,
@@ -267,6 +327,11 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                                 return '*This field is required';
                               }
                               return null;
+                            },
+                            onSaved: (String? value) {
+                              setState(() {
+                                formData['university'] = value;
+                              });
                             },
                           ),
                           Container(
@@ -285,7 +350,10 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                                     horizontal: 35, vertical: 15),
                               ),
                               onPressed: () {
-                                editProfileData();
+                                if (_formKey.currentState!.validate()) {
+                                  _formKey.currentState!.save();
+                                  editProfileData();
+                                }
                               },
                               child: _isLoading
                                   ? const Center(
@@ -310,9 +378,5 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
         ),
       ),
     );
-    /*    }
-        return Text("loading");
-      },
-    ); */
   }
 }

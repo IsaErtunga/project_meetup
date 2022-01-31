@@ -31,7 +31,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     'members': [],
     'events': [],
     'myInterests': [],
-    'isPrivate': true,
   };
 
   Future<int> getUserAllowedGroups() async {
@@ -87,12 +86,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            print(selectedInterestsList[0].toString().split("/"));
-          },
-          child: Text("Hej"),
-        ),
         backgroundColor: Colors.black,
         appBar: AppBar(
             elevation: 0,
@@ -183,53 +176,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                 ),
                 Container(
                   margin: const EdgeInsets.symmetric(
-                      vertical: 5.0, horizontal: 10.0),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.transparent,
-                      elevation: 0,
-                      minimumSize: const Size.fromHeight(50),
-                      textStyle: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 7),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25)),
-                      side: BorderSide(color: Colors.white),
-                    ),
-                    onPressed: () {},
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Icon(Icons.privacy_tip_outlined,
-                            color: Colors.red[600]),
-                        Align(
-                          alignment: Alignment.center,
-                          child: Text("Is group private",
-                              style: TextStyle(color: Colors.white)),
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Switch(
-                            activeColor: Colors.red[600],
-                            inactiveTrackColor: Colors.white,
-                            value: isPrivate,
-                            onChanged: (value) {
-                              setState(() {
-                                isPrivate = value;
-                                formData["isPrivate"] = value;
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(
                       vertical: 20.0, horizontal: 10.0),
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.white),
@@ -241,15 +187,13 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         child: Padding(
                           padding: const EdgeInsets.only(
                               top: 15, right: 15, left: 15),
-                          child: Flexible(
-                            child: AutoSizeText(
-                                "INTERESTS associated with this group:",
-                                maxLines: 1,
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white)),
-                          ),
+                          child: AutoSizeText(
+                              "INTERESTS associated with this group:",
+                              maxLines: 1,
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white)),
                         ),
                       ),
                       Padding(
@@ -338,8 +282,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                           horizontal: 35, vertical: 15),
                     ),
                     onPressed: () {
-                      formData["myInterests"] =
-                          selectedInterestsList[0].toString().split("/");
+                      formData["myInterests"] = selectedInterestsList;
                       formData["creator"] = auth.currentUser!.uid;
                       print('Submitting form');
                       if (_formKey.currentState!.validate()) {

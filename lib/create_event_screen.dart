@@ -31,9 +31,10 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     "description": null,
     "dateTime": null,
     "hostingGroup": null,
-    "eventPicture": "",
+    "eventPicture": "https://picsum.photos/200",
     "location": null,
     "participants": [],
+    "isPrivate": true,
   };
 
   // Formatted strings for dateTime button
@@ -84,7 +85,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     return batch.commit();
   }
 
-  String radioValue = "hej";
+  bool isPrivate = true;
 
   @override
   Widget build(BuildContext context) {
@@ -187,38 +188,48 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             Container(
               margin:
                   const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-              child: TextFormField(
-                  style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
-                    labelText: 'Address',
-                    labelStyle: TextStyle(
-                      color: Colors.white54,
-                      fontSize: 16,
-                      fontFamily: 'verdana_regular',
-                      fontWeight: FontWeight.w400,
-                    ),
-                    floatingLabelBehavior: FloatingLabelBehavior.auto,
-                    floatingLabelStyle: TextStyle(color: Colors.greenAccent),
-                    filled: false,
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: const Color(0xFFFFEBEE)),
-                        borderRadius: BorderRadius.all(Radius.circular(25))),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.greenAccent, width: 1.5),
-                      borderRadius: BorderRadius.all(Radius.circular(25)),
-                    ),
-                    prefixIcon: Icon(
-                      Icons.edit_location_outlined,
-                      color: Colors.greenAccent,
-                    ),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.transparent,
+                  elevation: 0,
+                  minimumSize: const Size.fromHeight(50),
+                  textStyle: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
                   ),
-                  onChanged: (value) {
-                    applicationBloc.searchPlaces(value);
-                    applicationBloc.searchResults.forEach((element) {
-                      print(element.description);
-                    });
-                  }),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25)),
+                  side: BorderSide(color: Colors.white),
+                ),
+                onPressed: () {},
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Icon(Icons.privacy_tip_outlined, color: Colors.greenAccent),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Text("Is event private",
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Switch(
+                        activeColor: Colors.greenAccent,
+                        inactiveTrackColor: Colors.white,
+                        value: isPrivate,
+                        onChanged: (value) {
+                          setState(() {
+                            isPrivate = value;
+                            formData["isPrivate"] = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
             SizedBox(height: 30),
             Container(
@@ -365,7 +376,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         borderRadius: BorderRadius.circular(60)),
                     child: CircleAvatar(
                         backgroundColor: Colors.black,
-                        backgroundImage: NetworkImage(''),
+                        backgroundImage: NetworkImage(formData["eventPicture"]),
                         radius: 55),
                   ),
                 ],
