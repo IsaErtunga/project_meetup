@@ -23,8 +23,10 @@ class EventsScreen extends StatefulWidget {
 }
 
 class _EventsScreenState extends State<EventsScreen> {
-  // Events firestore reference
+  // Events firestore reference - only Events that lie in the future
+  DateTime now = new DateTime.now();
   CollectionReference events = FirebaseFirestore.instance.collection('Events');
+
   final PanelController _pc = new PanelController();
   // Controller for Google Maps
   Completer<GoogleMapController> _controller = Completer();
@@ -61,6 +63,7 @@ class _EventsScreenState extends State<EventsScreen> {
           FloatingActionButton.extended(
               onPressed: () {
                 print(markers);
+
                 if (_pc.isPanelClosed == true) {
                   _pc.open();
                 } else {
@@ -97,7 +100,9 @@ class _EventsScreenState extends State<EventsScreen> {
                         padding:
                             const EdgeInsets.only(top: 20.0, right: 5, left: 5),
                         child: FutureBuilder<QuerySnapshot>(
-                            future: events.get(),
+                            future: events
+                                .orderBy('dateTime', descending: false)
+                                .startAt([now]).get(), //events.get(),
                             builder: (BuildContext context,
                                 AsyncSnapshot<QuerySnapshot> snapshot) {
                               // If something went wrong

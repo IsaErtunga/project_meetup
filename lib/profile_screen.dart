@@ -36,6 +36,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return groups.get();
   }
 
+  Future _refreshInterests(BuildContext context) async {
+    return users.get();
+  }
+
   final _socialLevelsText = [
     "Couch potatoe ",
     "Dancing Queen",
@@ -96,20 +100,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+/*
   List<String> allInterestsList = [
     "Music/Dance/Club",
     "Sports & Fitness",
     "Travel & Outdoors",
     "Science & Tech"
-  ];
-  List<String> selectedInterestsList = [];
+  ];  */
+
+  static List<String> selectedInterestsList = [];
 
   Future<void> addInterests() {
     return users
         .doc(auth.currentUser!.uid)
         .update({'myInterests': selectedInterestsList});
   }
-
+  /*
   void _openInterestsFilterDialog() async {
     await FilterListDialog.display<String>(context,
         backgroundColor: Colors.white,
@@ -148,24 +154,107 @@ class _ProfileScreenState extends State<ProfileScreen> {
       Navigator.pop(context);
     });
   }
+  */
 
-/*
   _showInterestsDialog() async {
     await Future.delayed(
       Duration(microseconds: 1),
     );
+    selectedInterestsList.clear();
     showDialog(
-        barrierColor: Colors.black12,
+        barrierColor: Colors.transparent,
         context: context,
         builder: (BuildContext context) {
           return BackdropFilter(
-              child: AlertDialog(title: Text('test')),
+              child: Dialog(
+                //insetPadding: EdgeInsets.all(0),
+                backgroundColor: Colors.transparent,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.center,
+                  children: <Widget>[
+                    Container(
+                      constraints: BoxConstraints(
+                        minHeight: 250,
+                        minWidth: double.infinity,
+                        maxHeight: double.infinity,
+                      ),
+                      padding: EdgeInsets.only(right: 8, left: 8, bottom: 15),
+                      width: double.infinity,
+                      //height: 300,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.white60),
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(right: 10, top: 10),
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        addInterests();
+                                      });
+
+                                      Navigator.pop(context);
+                                      // _refreshInterests(context);
+                                    },
+
+                                    // _openInterestsFilterDialog,
+                                    style: ElevatedButton.styleFrom(
+                                        elevation: 0,
+                                        primary: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15))),
+                                    child: const Text('APPLY',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold))),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20),
+                          Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Container(
+                              child: Wrap(
+                                spacing: 5.0,
+                                runSpacing: 3.0,
+                                children: <Widget>[
+                                  filterChipWidget(
+                                      chipName: 'Music/Dance/Club'),
+                                  filterChipWidget(
+                                      chipName: 'Sports & Fitness'),
+                                  filterChipWidget(
+                                      chipName: 'Travel & Outdoors'),
+                                  filterChipWidget(chipName: 'Science & Tech'),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                        top: -100,
+                        child: Image(
+                            image: ExactAssetImage(
+                                'images/InterestsSelection.png'),
+                            width: 150,
+                            height: 150)),
+                  ],
+                ),
+              ),
               filter: ImageFilter.blur(
-                sigmaX: 4,
-                sigmaY: 4,
+                sigmaX: 6,
+                sigmaY: 6,
               ));
         });
-  } */
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -189,8 +278,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Map<String, dynamic> data =
               snapshot.data!.data() as Map<String, dynamic>;
 
+          /*  var test = data['attendedEvents'].toList(); //.values.toList();
+          print(test);
+
+          test.sort((a, b) {
+            b.value['eventTime'].compareTo(a.value['eventTime']);
+          });
+          print(test);
+           var test2 = test.map((a) => {a.key: a.value}).toList();
+          print(test2); */
+
           return Scaffold(
-            backgroundColor: Colors.black, //const Color(0xffF8F8FA),
+            backgroundColor: Colors.black,
+            //const Color(0xffF8F8FA),
             body: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: <Widget>[
@@ -248,6 +348,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     height: 11 * SizeConfig.heightMultiplier,
                                     width: 21 * SizeConfig.widthMultiplier,
                                     decoration: BoxDecoration(
+                                        color: Colors.white24,
                                         shape: BoxShape.rectangle,
                                         borderRadius: BorderRadius.circular(30),
                                         image: DecorationImage(
@@ -315,71 +416,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),*/
                 ),
                 SliverFillRemaining(
-                  child: Container(
-                    //    SingleChildScrollView(
-                    // physics: const BouncingScrollPhysics(),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0, right: 10),
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: 10.0,
-                                top: 3 * SizeConfig.heightMultiplier),
-                            child: Row(
-                              children: <Widget>[
-                                Text(
-                                  "MY INTERESTS",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.5,
-                                      fontSize: 3 * SizeConfig.textMultiplier),
-                                ),
-                                Spacer(),
-                                ElevatedButton(
-                                    onPressed: _openInterestsFilterDialog,
-                                    style: ElevatedButton.styleFrom(
-                                        primary: Colors.white,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15))),
-                                    child: const Text('EDIT',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold))),
-                              ],
-                            ),
+                  // child: SingleChildScrollView(
+                  // physics: const BouncingScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10.0, right: 10),
+                    child: ListView(
+                      physics: BouncingScrollPhysics(),
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: 10.0,
                           ),
-                          SizedBox(
-                            height: 1.5 * SizeConfig.heightMultiplier,
+                          child: Row(
+                            children: <Widget>[
+                              Text(
+                                "MY INTERESTS",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.5,
+                                    fontSize: 3 * SizeConfig.textMultiplier),
+                              ),
+                              Spacer(),
+                              ElevatedButton(
+                                  onPressed: _showInterestsDialog,
+                                  // _openInterestsFilterDialog,
+                                  style: ElevatedButton.styleFrom(
+                                      primary: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15))),
+                                  child: const Text('EDIT',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold))),
+                            ],
                           ),
-                          Container(
-                            height: 40,
-                            width: double.infinity,
-                            child: data["myInterests"].isNotEmpty
-                                ? ListView(
-                                    scrollDirection: Axis.horizontal,
-                                    physics: BouncingScrollPhysics(),
-                                    padding: const EdgeInsets.only(
-                                        top: 0, bottom: 0, right: 16, left: 13),
-                                    children: data["myInterests"]
-                                        .map<Widget>((interest) {
-                                      //    SizedBox(width: 10);
-                                      return Container(
-                                          padding: EdgeInsets.only(right: 12),
-                                          child: Chip(
-                                            backgroundColor: Colors.black,
-                                            side: BorderSide(
-                                                color: Colors.white, width: 1),
-                                            label: Text(
-                                              interest.toString(),
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                          ));
+                        ),
+                        SizedBox(
+                          height: 1.5 * SizeConfig.heightMultiplier,
+                        ),
+                        Container(
+                          height: 40,
+                          width: double.infinity,
+                          child: data["myInterests"].isNotEmpty
+                              ? ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  physics: BouncingScrollPhysics(),
+                                  padding: const EdgeInsets.only(
+                                      top: 0, bottom: 0, right: 16, left: 13),
+                                  children: data["myInterests"]
+                                      .map<Widget>((interest) {
+                                    //    SizedBox(width: 10);
+                                    return Container(
+                                        padding: EdgeInsets.only(right: 12),
+                                        child: Chip(
+                                          backgroundColor: Colors.black,
+                                          side: BorderSide(
+                                              color: Colors.white, width: 1),
+                                          label: Text(
+                                            interest.toString(),
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ));
 
-                                      /*Align(
+                                    /*Align(
                                         child: DecoratedBox(
                                             decoration: BoxDecoration(
                                                 border: Border.all(
@@ -399,27 +501,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               ),
                                             )),
                                       );*/
-                                    }).toList(),
-                                  )
-                                : const Text("   No interests chosen yet",
-                                    style: TextStyle(
-                                        fontSize: 15, color: Colors.white)),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: 10.0,
-                                top: 3 * SizeConfig.heightMultiplier),
-                            child: Row(
-                              children: <Widget>[
-                                Text(
-                                  "ATTENDED EVENTS",
+                                  }).toList(),
+                                )
+                              : const Text("   No interests chosen yet",
                                   style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.5,
-                                      fontSize: 3 * SizeConfig.textMultiplier),
-                                ),
-                                /*      Spacer(),
+                                      fontSize: 15, color: Colors.white30)),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: 10.0, top: 3 * SizeConfig.heightMultiplier),
+                          child: Row(
+                            children: <Widget>[
+                              Text(
+                                "ATTENDED EVENTS",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.5,
+                                    fontSize: 3 * SizeConfig.textMultiplier),
+                              ),
+                              /*      Spacer(),
                                 OutlinedButton(
                                     onPressed: () {
                                       Navigator.push(
@@ -432,395 +533,426 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     style: ButtonStyle(),
                                     child: const Text('view all',
                                         style: TextStyle(color: Colors.black))),*/
-                              ],
-                            ),
+                            ],
                           ),
-                          SizedBox(
-                            height: 3 * SizeConfig.heightMultiplier,
-                          ),
-                          Container(
-                            height: 134,
-                            width: double.infinity,
-                            child: data["attendedEvents"].isNotEmpty
-                                ? ListView(
-                                    padding: const EdgeInsets.only(
-                                        top: 0, bottom: 0, right: 16, left: 13),
-                                    scrollDirection: Axis.horizontal,
-                                    physics: const BouncingScrollPhysics(),
-                                    children: data["attendedEvents"]
-                                        .map<Widget>((attendedEvent) {
-                                      return GestureDetector(
-                                        onTap: () => {
-                                          Navigator.of(context).push(
-                                              _createRouteEvents(
-                                                  Event(attendedEvent["id"])))
-                                        },
-                                        child: Hero(
-                                          tag: attendedEvent["id"],
-                                          child: SizedBox(
-                                            width: 280,
-                                            child: Stack(
-                                              children: <Widget>[
-                                                Container(
-                                                  child: Row(
-                                                    children: <Widget>[
-                                                      const SizedBox(
-                                                        width: 48,
-                                                      ),
-                                                      Expanded(
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors
-                                                                .deepPurple
-                                                                .withOpacity(
-                                                                    0.4),
-                                                            /*    border: Border.all(
+                        ),
+                        SizedBox(
+                          height: 3 * SizeConfig.heightMultiplier,
+                        ),
+                        Container(
+                          height: 134,
+                          width: double.infinity,
+                          child: data["attendedEvents"].isNotEmpty
+                              ? ListView(
+                                  padding: const EdgeInsets.only(
+                                      top: 0, bottom: 0, right: 16, left: 13),
+                                  scrollDirection: Axis.horizontal,
+                                  physics: const BouncingScrollPhysics(),
+                                  children: data["attendedEvents"]
+                                      .map<Widget>((attendedEvent) {
+                                    return GestureDetector(
+                                      onTap: () => {
+                                        Navigator.of(context).push(
+                                            _createRouteEvents(
+                                                Event(attendedEvent["id"])))
+                                      },
+                                      child: Hero(
+                                        tag: attendedEvent["id"],
+                                        child: SizedBox(
+                                          width: 280,
+                                          child: Stack(
+                                            children: <Widget>[
+                                              Container(
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    const SizedBox(
+                                                      width: 48,
+                                                    ),
+                                                    Expanded(
+                                                      child: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors
+                                                              .deepPurple
+                                                              .withOpacity(0.4),
+                                                          /*    border: Border.all(
                                                                 color: Colors
                                                                     .greenAccent,
                                                                 width: 1.5),*/
-                                                            borderRadius:
-                                                                const BorderRadius
-                                                                        .all(
-                                                                    Radius.circular(
-                                                                        16.0)),
-                                                          ),
-                                                          child: Row(
-                                                            children: <Widget>[
-                                                              const SizedBox(
-                                                                width:
-                                                                    48 + 24.0,
-                                                              ),
-                                                              Expanded(
-                                                                child:
-                                                                    Container(
-                                                                  child: Column(
-                                                                    children: <
-                                                                        Widget>[
-                                                                      Align(
-                                                                        alignment:
-                                                                            Alignment.centerLeft,
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                      .all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          16.0)),
+                                                        ),
+                                                        child: Row(
+                                                          children: <Widget>[
+                                                            const SizedBox(
+                                                              width: 48 + 24.0,
+                                                            ),
+                                                            Expanded(
+                                                              child: Container(
+                                                                child: Column(
+                                                                  children: <
+                                                                      Widget>[
+                                                                    Align(
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .centerLeft,
+                                                                      child:
+                                                                          Padding(
+                                                                        padding:
+                                                                            const EdgeInsets.only(top: 10),
                                                                         child:
-                                                                            Padding(
-                                                                          padding:
-                                                                              const EdgeInsets.only(top: 10),
-                                                                          child:
-                                                                              Text(
-                                                                            (DateFormat.MMMEd().add_Hm().format(attendedEvent["eventTime"].toDate()).toString()),
+                                                                            Text(
+                                                                          (DateFormat.MMMEd()
+                                                                              .add_Hm()
+                                                                              .format(attendedEvent["eventTime"].toDate())
+                                                                              .toString()),
 
-                                                                            //  maxLines: 1,
-                                                                            //overflow: TextOverflow.ellipsis,
-                                                                            textAlign:
-                                                                                TextAlign.left,
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontWeight: FontWeight.w400,
-                                                                              fontSize: 14,
-                                                                              letterSpacing: 0.27,
-                                                                              color: Colors.greenAccent,
-                                                                            ),
+                                                                          //  maxLines: 1,
+                                                                          //overflow: TextOverflow.ellipsis,
+                                                                          textAlign:
+                                                                              TextAlign.left,
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w400,
+                                                                            fontSize:
+                                                                                14,
+                                                                            letterSpacing:
+                                                                                0.27,
+                                                                            color:
+                                                                                Colors.greenAccent,
                                                                           ),
                                                                         ),
                                                                       ),
-                                                                      Align(
-                                                                        alignment:
-                                                                            Alignment.centerLeft,
+                                                                    ),
+                                                                    Align(
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .centerLeft,
+                                                                      child:
+                                                                          Padding(
+                                                                        padding:
+                                                                            const EdgeInsets.only(top: 2),
                                                                         child:
-                                                                            Padding(
-                                                                          padding:
-                                                                              const EdgeInsets.only(top: 2),
-                                                                          child:
-                                                                              Text(
-                                                                            attendedEvent["eventName"].toString(),
-                                                                            textAlign:
-                                                                                TextAlign.left,
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontWeight: FontWeight.w600,
-                                                                              fontSize: 16,
-                                                                              letterSpacing: 0.27,
-                                                                              color: HexColor('#F8FAFB'),
-                                                                            ),
+                                                                            Text(
+                                                                          attendedEvent["eventName"]
+                                                                              .toString(),
+                                                                          textAlign:
+                                                                              TextAlign.left,
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w600,
+                                                                            fontSize:
+                                                                                16,
+                                                                            letterSpacing:
+                                                                                0.27,
+                                                                            color:
+                                                                                HexColor('#F8FAFB'),
                                                                           ),
                                                                         ),
                                                                       ),
-                                                                      Align(
-                                                                        alignment:
-                                                                            Alignment.centerLeft,
+                                                                    ),
+                                                                    Align(
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .centerLeft,
+                                                                      child:
+                                                                          Padding(
+                                                                        padding:
+                                                                            const EdgeInsets.only(top: 5),
                                                                         child:
-                                                                            Padding(
-                                                                          padding:
-                                                                              const EdgeInsets.only(top: 5),
-                                                                          child:
-                                                                              Row(
-                                                                            //    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            //  crossAxisAlignment: CrossAxisAlignment.center,
-                                                                            children: <Widget>[
-                                                                              Expanded(
-                                                                                child: Text(
-                                                                                  'by ${attendedEvent["hostingGroup"].toString()}',
-                                                                                  textAlign: TextAlign.left,
-                                                                                  style: TextStyle(
-                                                                                    fontWeight: FontWeight.w300,
-                                                                                    fontSize: 12,
-                                                                                    letterSpacing: 0.27,
-                                                                                    color: HexColor('#F8FAFB'),
-                                                                                  ),
+                                                                            Row(
+                                                                          //    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                          //  crossAxisAlignment: CrossAxisAlignment.center,
+                                                                          children: <
+                                                                              Widget>[
+                                                                            Expanded(
+                                                                              child: Text(
+                                                                                'by ${attendedEvent["hostingGroup"].toString()}',
+                                                                                textAlign: TextAlign.left,
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.w300,
+                                                                                  fontSize: 12,
+                                                                                  letterSpacing: 0.27,
+                                                                                  color: HexColor('#F8FAFB'),
                                                                                 ),
                                                                               ),
-                                                                            ],
-                                                                          ),
+                                                                            ),
+                                                                          ],
                                                                         ),
                                                                       ),
-                                                                      const Expanded(
+                                                                    ),
+                                                                    const Expanded(
+                                                                      child:
+                                                                          SizedBox(),
+                                                                    ),
+                                                                    Align(
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .centerRight,
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: const EdgeInsets.only(
+                                                                            right:
+                                                                                10,
+                                                                            bottom:
+                                                                                10),
                                                                         child:
-                                                                            SizedBox(),
-                                                                      ),
-                                                                      Align(
-                                                                        alignment:
-                                                                            Alignment.centerRight,
-                                                                        child:
-                                                                            Padding(
-                                                                          padding: const EdgeInsets.only(
-                                                                              right: 10,
-                                                                              bottom: 10),
-                                                                          child:
-                                                                              Column(
-                                                                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            //crossAxisAlignment: CrossAxisAlignment.start,
-                                                                            children: <Widget>[
-                                                                              Container(
-                                                                                child: Text(
-                                                                                  '9 going',
-                                                                                  //  textAlign: TextAlign.right,
-                                                                                  style: TextStyle(
-                                                                                    fontWeight: FontWeight.w300,
-                                                                                    fontSize: 12,
-                                                                                    letterSpacing: 0.27,
-                                                                                    color: HexColor('#F8FAFB'),
-                                                                                  ),
+                                                                            Column(
+                                                                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                          //crossAxisAlignment: CrossAxisAlignment.start,
+                                                                          children: <
+                                                                              Widget>[
+                                                                            Container(
+                                                                              child: Text(
+                                                                                '7 going',
+                                                                                //  textAlign: TextAlign.right,
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.w300,
+                                                                                  fontSize: 12,
+                                                                                  letterSpacing: 0.27,
+                                                                                  color: HexColor('#F8FAFB'),
                                                                                 ),
                                                                               ),
-                                                                            ],
-                                                                          ),
+                                                                            ),
+                                                                          ],
                                                                         ),
                                                                       ),
-                                                                    ],
-                                                                  ),
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
-                                                            ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 24,
+                                                          bottom: 24,
+                                                          left: 16),
+                                                  child: Row(
+                                                    children: <Widget>[
+                                                      ClipRRect(
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                    .all(
+                                                                Radius.circular(
+                                                                    16.0)),
+                                                        child: AspectRatio(
+                                                          aspectRatio: 1.0,
+                                                          child: Image(
+                                                            fit: BoxFit.fill,
+                                                            image: NetworkImage(
+                                                              attendedEvent[
+                                                                      "eventPicture"]
+                                                                  .toString(),
+                                                            ),
                                                           ),
                                                         ),
                                                       )
                                                     ],
                                                   ),
                                                 ),
-                                                Container(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 24,
-                                                            bottom: 24,
-                                                            left: 16),
-                                                    child: Row(
-                                                      children: <Widget>[
-                                                        ClipRRect(
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                      .all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          16.0)),
-                                                          child: AspectRatio(
-                                                            aspectRatio: 1.0,
-                                                            child: Image(
-                                                              fit: BoxFit.fill,
-                                                              image:
-                                                                  NetworkImage(
-                                                                attendedEvent[
-                                                                        "eventPicture"]
-                                                                    .toString(),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                      );
-                                    }).toList(),
-                                  )
-                                : const Text(
-                                    "No attended events",
-                                    style: TextStyle(fontSize: 24),
-                                  ),
-                          ),
-                          SizedBox(
-                            width: 10 * SizeConfig.widthMultiplier,
-                          ),
-                          SizedBox(
-                            height: 3 * SizeConfig.heightMultiplier,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 10.0, right: 30.0),
-                            child: Row(
-                              children: <Widget>[
-                                Text(
-                                  "MY GROUPS",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.5,
-                                      fontSize: 3 * SizeConfig.textMultiplier),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 1.5 * SizeConfig.heightMultiplier,
-                          ),
-                          Expanded(
-                            child: Container(
-                              height: 300 * SizeConfig.heightMultiplier,
-                              child: data["myGroups"].isNotEmpty
-                                  ? GridView(
-                                      gridDelegate:
-                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2,
-                                        mainAxisSpacing: 32.0,
-                                        crossAxisSpacing: 32.0,
-                                        childAspectRatio: 0.8,
                                       ),
-                                      scrollDirection: Axis.vertical,
-                                      padding: const EdgeInsets.all(8),
-                                      physics: const BouncingScrollPhysics(),
-                                      children: data["myGroups"]
-                                          .map<Widget>((myGroups) {
-                                        return InkWell(
-                                          splashColor: Colors.transparent,
-                                          //onTap: callback,
-                                          child: GestureDetector(
-                                            /*   child: Hero(
-                                              tag: myGroups["id"],*/
-                                            child: SizedBox(
-                                              height: 280,
-                                              child: Stack(
-                                                alignment: AlignmentDirectional
-                                                    .bottomCenter,
-                                                children: <Widget>[
-                                                  Container(
-                                                    child: Column(
-                                                      children: <Widget>[
-                                                        Expanded(
-                                                          child: Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: Colors.grey
-                                                                  .withOpacity(
-                                                                      0.1),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                          .all(
-                                                                      Radius.circular(
-                                                                          16.0)),
-                                                              // border: new Border.all(
-                                                              //     color: DesignCourseAppTheme.notWhite),
-                                                            ),
-                                                            child: Column(
-                                                              children: <
-                                                                  Widget>[
-                                                                Expanded(
-                                                                  child:
-                                                                      Container(
-                                                                    child:
-                                                                        Column(
-                                                                      children: <
-                                                                          Widget>[
-                                                                        //  Expanded(
-                                                                        Align(
-                                                                          alignment:
-                                                                              Alignment.centerLeft,
-                                                                          child:
-                                                                              Padding(
-                                                                            padding: const EdgeInsets.only(
-                                                                                top: 16,
-                                                                                left: 16,
-                                                                                right: 16),
-                                                                            child:
-                                                                                Text(
-                                                                              myGroups["groupName"].toString(),
-                                                                              textAlign: TextAlign.left,
-                                                                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, letterSpacing: 0.27, color: Colors.white),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.only(
-                                                                              top: 8,
-                                                                              left: 16,
-                                                                              right: 16,
-                                                                              bottom: 8),
-                                                                          child:
-                                                                              Row(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.spaceBetween,
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.center,
-                                                                            children: <Widget>[
-                                                                              Text(
-                                                                                '${myGroups['membersCount'].toString()} members',
-                                                                                textAlign: TextAlign.left,
-                                                                                style: TextStyle(
-                                                                                  fontWeight: FontWeight.w300,
-                                                                                  fontSize: 12,
-                                                                                  letterSpacing: 0.27,
-                                                                                  color: Colors.red[600],
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                const SizedBox(
-                                                                  width: 48,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 48,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 24,
-                                                              right: 16,
-                                                              left: 16),
+                                    );
+                                  }).toList(),
+                                )
+                              : const Text("No events attended yet",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 20, color: Colors.white30)),
+                        ),
+                        SizedBox(
+                          width: 10 * SizeConfig.widthMultiplier,
+                        ),
+                        SizedBox(
+                          height: 3 * SizeConfig.heightMultiplier,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10.0, right: 30.0),
+                          child: Row(
+                            children: <Widget>[
+                              Text(
+                                "MY GROUPS",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.5,
+                                    fontSize: 3 * SizeConfig.textMultiplier),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 1.5 * SizeConfig.heightMultiplier,
+                        ),
+                        Container(
+                          child: data["myGroups"].isNotEmpty
+                              ? GridView(
+                                  shrinkWrap: true,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    mainAxisSpacing: 32.0,
+                                    crossAxisSpacing: 32.0,
+                                    childAspectRatio: 0.8,
+                                  ),
+                                  scrollDirection: Axis.vertical,
+                                  padding: const EdgeInsets.all(8),
+                                  physics: NeverScrollableScrollPhysics(),
+                                  children:
+                                      data["myGroups"].map<Widget>((myGroups) {
+                                    return Container(
+                                      //onTap: callback,
+                                      child: GestureDetector(
+                                        onTap: () => {
+                                          Navigator.of(context)
+                                              .push(_createRoute(Group(
+                                            myGroups["id"],
+                                          )))
+                                        },
+                                        child: SizedBox(
+                                          height: 280,
+                                          child: Stack(
+                                            alignment: AlignmentDirectional
+                                                .bottomCenter,
+                                            children: <Widget>[
+                                              Container(
+                                                child: Column(
+                                                  children: <Widget>[
+                                                    Expanded(
                                                       child: Container(
                                                         decoration:
                                                             BoxDecoration(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.1),
                                                           borderRadius:
                                                               const BorderRadius
                                                                       .all(
                                                                   Radius
                                                                       .circular(
                                                                           16.0)),
-                                                          /*  boxShadow: <
+                                                          // border: new Border.all(
+                                                          //     color: DesignCourseAppTheme.notWhite),
+                                                        ),
+                                                        child: Column(
+                                                          children: <Widget>[
+                                                            Expanded(
+                                                              child: Container(
+                                                                child: Column(
+                                                                  children: <
+                                                                      Widget>[
+                                                                    //  Expanded(
+                                                                    Align(
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .centerLeft,
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: const EdgeInsets.only(
+                                                                            top:
+                                                                                16,
+                                                                            left:
+                                                                                16,
+                                                                            right:
+                                                                                16),
+                                                                        child:
+                                                                            Text(
+                                                                          myGroups["groupName"]
+                                                                              .toString(),
+                                                                          textAlign:
+                                                                              TextAlign.left,
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w600,
+                                                                              fontSize: 16,
+                                                                              letterSpacing: 0.27,
+                                                                              color: Colors.white),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                              .only(
+                                                                          top:
+                                                                              8,
+                                                                          left:
+                                                                              16,
+                                                                          right:
+                                                                              16,
+                                                                          bottom:
+                                                                              8),
+                                                                      child:
+                                                                          Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.spaceBetween,
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.center,
+                                                                        children: <
+                                                                            Widget>[
+                                                                          Text(
+                                                                            '${myGroups['membersCount'].toString()} members',
+                                                                            textAlign:
+                                                                                TextAlign.left,
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontWeight: FontWeight.w300,
+                                                                              fontSize: 12,
+                                                                              letterSpacing: 0.27,
+                                                                              color: Colors.red[600],
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 48,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 48,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 24,
+                                                          right: 16,
+                                                          left: 16),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                                  .all(
+                                                              Radius.circular(
+                                                                  16.0)),
+                                                      /*  boxShadow: <
                                                                 BoxShadow>[
                                                               BoxShadow(
                                                                   color: ProfileTheme
@@ -834,52 +966,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                   blurRadius:
                                                                       6.0),
                                                             ],*/
-                                                        ),
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                      .all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          16.0)),
-                                                          child: AspectRatio(
-                                                            aspectRatio: 1.28,
-                                                            child: Image(
-                                                              fit: BoxFit.fill,
-                                                              image: NetworkImage(
-                                                                  myGroups[
-                                                                          'groupPicture']
-                                                                      .toString()),
-                                                            ),
-                                                          ),
+                                                    ),
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                                  .all(
+                                                              Radius.circular(
+                                                                  16.0)),
+                                                      child: AspectRatio(
+                                                        aspectRatio: 1.28,
+                                                        child: Image(
+                                                          fit: BoxFit.fill,
+                                                          image: NetworkImage(
+                                                              myGroups[
+                                                                      'groupPicture']
+                                                                  .toString()),
                                                         ),
                                                       ),
                                                     ),
                                                   ),
-                                                ],
+                                                ),
                                               ),
-                                            ),
+                                            ],
                                           ),
-                                          onTap: () => {
-                                            Navigator.of(context)
-                                                .push(_createRoute(Group(
-                                              myGroups["id"],
-                                            )))
-                                          },
-                                        );
-                                      }).toList(),
-                                    )
-                                  : const Text(
-                                      "No groups",
-                                      style: TextStyle(fontSize: 24),
-                                    ),
-                            ),
-                          ),
-                        ],
-                      ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                )
+                              : const Text(
+                                  "Not a member of any groups",
+                                  style: TextStyle(
+                                      fontSize: 20, color: Colors.white30),
+                                ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
+
                 //  ),
               ],
             ),
@@ -1201,11 +1326,41 @@ Route _createRouteToEdit() {
   );
 }
 
-/*
- ElevatedButton(
-          onPressed: () {
-            context.read<UserAuthentication>().signOut();
-          },
-          child: const Text("Sign out"),
+class filterChipWidget extends StatefulWidget {
+  final String chipName;
+
+  filterChipWidget({required this.chipName});
+
+  @override
+  _filterChipWidgetState createState() => _filterChipWidgetState();
+}
+
+class _filterChipWidgetState extends State<filterChipWidget> {
+  var _isSelected = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilterChip(
+        label: Text(widget.chipName),
+        labelStyle: TextStyle(
+            color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
+        selected: _isSelected,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
         ),
- */
+        backgroundColor: Colors.grey[900], //Color(0xffededed),
+        onSelected: (isSelected) {
+          setState(() {
+            _isSelected = isSelected;
+            if (_isSelected == true) {
+              _ProfileScreenState.selectedInterestsList.add(widget.chipName);
+            } else if (_isSelected == false) {
+              _ProfileScreenState.selectedInterestsList.remove(widget.chipName);
+            }
+            print(_ProfileScreenState.selectedInterestsList);
+          });
+        },
+        selectedColor: Colors.red[600] //Color(0xffeadffd),
+        );
+  }
+}

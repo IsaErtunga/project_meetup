@@ -201,16 +201,17 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Container(
-                              child: Wrap(
-                            spacing: 5.0,
-                            runSpacing: 3.0,
-                            children: <Widget>[
-                              filterChipWidget(chipName: 'Music/Dance/Club'),
-                              filterChipWidget(chipName: 'Sports & Fitness'),
-                              filterChipWidget(chipName: 'Travel & Outdoors'),
-                              filterChipWidget(chipName: 'Science & Tech'),
-                            ],
-                          )),
+                            child: Wrap(
+                              spacing: 5.0,
+                              runSpacing: 3.0,
+                              children: <Widget>[
+                                filterChipWidget(chipName: 'Music/Dance/Club'),
+                                filterChipWidget(chipName: 'Sports & Fitness'),
+                                filterChipWidget(chipName: 'Travel & Outdoors'),
+                                filterChipWidget(chipName: 'Science & Tech'),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ],

@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:project_meetup/profile_screen.dart';
 import 'package:project_meetup/sign_up_screen.dart';
 import 'package:project_meetup/user_authentication.dart';
 import 'package:provider/provider.dart';
@@ -206,7 +207,7 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                                         fillColor: Colors.black54,
                                         labelText: 'First Name',
                                         labelStyle: const TextStyle(
-                                            color: Colors.white),
+                                            color: Colors.white54),
                                         floatingLabelBehavior:
                                             FloatingLabelBehavior.never,
                                         filled: true,
@@ -243,7 +244,7 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                                         labelText: 'Last Name',
                                         // '${data["lastName"]}',
                                         labelStyle: const TextStyle(
-                                            color: Colors.white),
+                                            color: Colors.white54),
                                         floatingLabelBehavior:
                                             FloatingLabelBehavior.never,
                                         filled: true,
@@ -282,7 +283,7 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                                 labelText: 'User Name',
                                 //'${data["userName"]}',
                                 labelStyle:
-                                    const TextStyle(color: Colors.white),
+                                    const TextStyle(color: Colors.white54),
                                 floatingLabelBehavior:
                                     FloatingLabelBehavior.never,
                                 filled: true,
@@ -311,9 +312,10 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                               fillColor: Colors.black54,
                               prefixIcon: Icon(Icons.school_outlined,
                                   color: Colors.white),
-                              labelText: 'University',
-                              //'${data["university"]}',
-                              labelStyle: const TextStyle(color: Colors.white),
+                              labelText:
+                                  'University', //'${data["university"]}',
+                              labelStyle:
+                                  const TextStyle(color: Colors.white54),
                               floatingLabelBehavior:
                                   FloatingLabelBehavior.never,
                               filled: true,
