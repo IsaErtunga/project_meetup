@@ -33,6 +33,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
     "https://picsum.photos/200",
   ];
 
+/*
   void _addUserToGroup() async {
     var groupName = "";
     var groupPicture = "";
@@ -60,7 +61,8 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
     });
     //add user to group doc as member
   }
-
+  */
+/*
   void _navigateAndDisplay(BuildContext context) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
@@ -71,6 +73,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
     );
     setState(() {});
   }
+  */
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +104,15 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                         backgroundColor: Colors.white,
                         icon: Icon(Icons.add_circle, color: Colors.black),
                         onPressed: () {
-                          _navigateAndDisplay(context);
+                          print(widget.group.groupName);
+                          Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          CreateEventScreen(widget.group)))
+                              .then((_) {
+                            setState(() {});
+                          });
                         },
                         label: const Text(
                           "Add event",

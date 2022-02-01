@@ -39,7 +39,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     return userData["amountCreatedGroups"];
   }
 
-  static List selectedInterestsList = [];
+  static List selectedInterestsListGroup = [];
 
   Future<void> createGroup() async {
     try {
@@ -85,6 +85,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _CreateGroupScreenState.selectedInterestsListGroup.clear();
     return Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
@@ -205,10 +206,20 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                               spacing: 5.0,
                               runSpacing: 3.0,
                               children: <Widget>[
-                                filterChipWidget(chipName: 'Music/Dance/Club'),
+                                filterChipWidget(chipName: 'Live Music'),
                                 filterChipWidget(chipName: 'Sports & Fitness'),
                                 filterChipWidget(chipName: 'Travel & Outdoors'),
                                 filterChipWidget(chipName: 'Science & Tech'),
+                                filterChipWidget(chipName: 'Performing Arts'),
+                                filterChipWidget(chipName: 'Art'),
+                                filterChipWidget(chipName: 'Cooking & Baking'),
+                                filterChipWidget(chipName: 'Debating'),
+                                filterChipWidget(chipName: 'Acrobatics'),
+                                filterChipWidget(chipName: 'Books'),
+                                filterChipWidget(chipName: 'Dancing'),
+                                filterChipWidget(chipName: 'Clubbing'),
+                                filterChipWidget(chipName: 'Cultural Exchange'),
+                                filterChipWidget(chipName: 'Networking'),
                               ],
                             ),
                           ),
@@ -283,12 +294,13 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                           horizontal: 35, vertical: 15),
                     ),
                     onPressed: () {
-                      formData["myInterests"] = selectedInterestsList;
+                      formData["myInterests"] = selectedInterestsListGroup;
                       formData["creator"] = auth.currentUser!.uid;
                       print('Submitting form');
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save(); //onSaved is called!
                         createGroup();
+                        selectedInterestsListGroup.clear();
                       }
                       Navigator.pop(context);
                     },
@@ -341,13 +353,13 @@ class _filterChipWidgetState extends State<filterChipWidget> {
           setState(() {
             _isSelected = isSelected;
             if (_isSelected == true) {
-              _CreateGroupScreenState.selectedInterestsList
+              _CreateGroupScreenState.selectedInterestsListGroup
                   .add(widget.chipName);
             } else if (_isSelected == false) {
-              _CreateGroupScreenState.selectedInterestsList
+              _CreateGroupScreenState.selectedInterestsListGroup
                   .remove(widget.chipName);
             }
-            print(_CreateGroupScreenState.selectedInterestsList);
+            print(_CreateGroupScreenState.selectedInterestsListGroup);
           });
         },
         selectedColor: Colors.red[600] //Color(0xffeadffd),

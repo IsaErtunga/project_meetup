@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:math' as math;
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/painting.dart';
@@ -51,8 +52,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     );
   }
 
-  static var _eventAddress = "";
-  static var _eventAddressSecondLine = "";
+  static String _eventAddress = "";
+  static String _eventAddressSecondLine = "";
 
   Future _getEventAdress(GeoPoint) async {
     //await Future.delayed(Duration(microseconds: 1));
@@ -129,6 +130,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //_getEventAddress
     return FutureBuilder<DocumentSnapshot>(
         future: events.doc(widget.event.eventId).get(),
         builder:
@@ -276,27 +278,29 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                     MainAxisAlignment.center,
                                                 children: <Widget>[
                                                   Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 60),
                                                       child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text('Hosted',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold)),
-                                                      Text('by',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold))
-                                                    ],
-                                                  )),
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text('Hosted',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold)),
+                                                          Text('by',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold))
+                                                        ],
+                                                      )),
                                                   SizedBox(width: 10),
                                                   Hero(
                                                     tag: eventData[
@@ -314,14 +318,15 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                     ),
                                                   ),
                                                   SizedBox(width: 15),
-                                                  SizedBox(
-                                                    child: Text(
+                                                  Expanded(
+                                                    child: AutoSizeText(
                                                         eventData['hostingGroup']
                                                                 ['groupName']
                                                             .toString(),
                                                         style: TextStyle(
                                                             color: Colors.white,
-                                                            fontSize: 18)),
+                                                            fontSize: 16),
+                                                        maxLines: 3),
                                                   ),
                                                 ])),
                                       ),
@@ -338,85 +343,96 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
-                                    child: Column(
-                                      children: <Widget>[
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Padding(
+                                    child: Container(
+                                      child: Column(
+                                        children: <Widget>[
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 5, bottom: 5),
+                                              child: Row(
+                                                children: <Widget>[
+                                                  Icon(Icons.calendar_today,
+                                                      color: Colors.greenAccent,
+                                                      size: 20),
+                                                  SizedBox(width: 10),
+                                                  Text(
+                                                      (DateFormat.yMMMEd()
+                                                              .format(eventData[
+                                                                      "dateTime"]
+                                                                  .toDate()))
+                                                          .toString(),
+                                                      style: TextStyle(
+                                                          color: Colors
+                                                              .greenAccent)),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
                                             padding: EdgeInsets.only(
-                                                top: 5, bottom: 5),
+                                                bottom: 5, left: 30),
                                             child: Row(
                                               children: <Widget>[
-                                                Icon(Icons.calendar_today,
-                                                    color: Colors.greenAccent,
-                                                    size: 20),
-                                                SizedBox(width: 10),
                                                 Text(
-                                                    (DateFormat.yMMMEd().format(
-                                                            eventData[
-                                                                    "dateTime"]
-                                                                .toDate()))
-                                                        .toString(),
-                                                    style: TextStyle(
-                                                        color: Colors
-                                                            .greenAccent)),
+                                                  (DateFormat.Hm().format(
+                                                          eventData["dateTime"]
+                                                              .toDate()))
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                      color:
+                                                          Colors.greenAccent),
+                                                ),
                                               ],
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                             ),
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: 5, left: 30),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Text(
-                                                (DateFormat.Hm().format(
-                                                        eventData["dateTime"]
-                                                            .toDate()))
-                                                    .toString(),
-                                                style: TextStyle(
-                                                    color: Colors.greenAccent),
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 5, bottom: 5),
+                                              child: Row(
+                                                children: <Widget>[
+                                                  Icon(
+                                                      Icons
+                                                          .location_on_outlined,
+                                                      color: Colors.greenAccent,
+                                                      size: 20),
+                                                  SizedBox(width: 10),
+                                                  Expanded(
+                                                    child: Container(
+                                                      child: Text(_eventAddress,
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .greenAccent),
+                                                          maxLines: 1),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            ),
                                           ),
-                                        ),
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Padding(
+                                          Padding(
                                             padding: EdgeInsets.only(
-                                                top: 5, bottom: 5),
+                                                bottom: 5, left: 30),
                                             child: Row(
                                               children: <Widget>[
-                                                Icon(Icons.location_on_outlined,
-                                                    color: Colors.greenAccent,
-                                                    size: 20),
-                                                SizedBox(width: 10),
-                                                Text(_eventAddress,
-                                                    style: TextStyle(
-                                                        color: Colors
-                                                            .greenAccent)),
+                                                Text(
+                                                  _eventAddressSecondLine,
+                                                  style: TextStyle(
+                                                      color:
+                                                          Colors.greenAccent),
+                                                ),
                                               ],
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                             ),
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: 5, left: 30),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Text(
-                                                _eventAddressSecondLine,
-                                                style: TextStyle(
-                                                    color: Colors.greenAccent),
-                                              ),
-                                            ],
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                          ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   ElevatedButton(
@@ -485,7 +501,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                         ),
                                       ],
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
                             ),
