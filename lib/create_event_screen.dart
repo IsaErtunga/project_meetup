@@ -1,7 +1,11 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:project_meetup/application_bloc.dart';
 import 'package:project_meetup/google_maps_screen.dart';
 import 'package:provider/provider.dart';
@@ -51,6 +55,29 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         formattedString = formatter.format(args.value);
       }
     });
+  }
+
+  void _handleImageSelection() async {
+    final result = await ImagePicker().pickImage(
+      imageQuality: 70,
+      maxWidth: 1440,
+      source: ImageSource.gallery,
+    );
+
+    if (result != null) {
+      final file = File(result.path);
+      final size = file.lengthSync();
+      final bytes = await result.readAsBytes();
+      final image = await decodeImageFromList(bytes);
+      final name = result.name;
+
+      final reference = FirebaseStorage.instance.ref(name);
+      await reference.putFile(file);
+      final uri = await reference.getDownloadURL();
+      setState(() {
+        formData["eventPicture"] = uri;
+      });
+    }
   }
 
   Future<void> addEvent() {
@@ -349,7 +376,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                               borderRadius: BorderRadius.circular(25)),
                           primary: Colors.black, // Colors.white.withOpacity(0),
                           side: BorderSide(color: Colors.white, width: 1)),
-                      onPressed: () => {},
+                      onPressed: () {
+                        _handleImageSelection();
+                      },
                       child: Padding(
                         padding: EdgeInsets.all(8),
                         child: Row(

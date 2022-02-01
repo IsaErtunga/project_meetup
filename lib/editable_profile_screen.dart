@@ -55,15 +55,10 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
 
   late Size _safeAreaSize;
 
-  bool _isLoading = false;
-
-  void _toggleIsLoading() {
-    setState(() {
-      _isLoading = !_isLoading;
-    });
-  }
+  bool _isLoading = true;
 
   dynamic userData;
+  late final Map _image;
 
   Future<dynamic> getUserData() async {
     final DocumentReference document = users.doc(auth.currentUser!.uid);
@@ -72,6 +67,8 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
       final data = snapshot.data() as Map<String, dynamic>;
       setState(() {
         userData = data;
+        _image = {"type": "network", "image": data["imageUrl"]};
+        _isLoading = false;
       });
     });
   }
@@ -103,6 +100,7 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
       setState(() {
         profileFile = file;
         profilePicName = name;
+        _image = {"type": "local", "image": image.toString()};
       });
     }
   }
@@ -120,6 +118,12 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
   Widget build(BuildContext context) {
     var mediaQD = MediaQuery.of(context);
     _safeAreaSize = mediaQD.size;
+
+    if (_isLoading == true) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
 
     return Scaffold(
       // resizeToAvoidBottomInset: false, //use this if you dont want for the keyboard to resize background image
@@ -177,17 +181,27 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                                       borderRadius: BorderRadius.circular(10),
                                       //  image: DecorationImage(image: ) image that the user uploads
                                     ),
-                                    child: Align(
-                                        alignment: Alignment.bottomRight,
-                                        child: IconButton(
-                                          icon: Icon(
-                                            Icons.add_a_photo_outlined,
-                                            color: Colors.white,
-                                          ),
-                                          onPressed: () {
-                                            _handleImageSelection();
-                                          },
-                                        )),
+                                    child: Column(
+                                      children: [
+                                        Image(
+                                          image: NetworkImage(_image["image"]),
+                                          fit: BoxFit.fitWidth,
+                                          width: 100,
+                                          height: 100,
+                                        ),
+                                        Align(
+                                            alignment: Alignment.bottomRight,
+                                            child: IconButton(
+                                              icon: Icon(
+                                                Icons.add_a_photo_outlined,
+                                                color: Colors.white,
+                                              ),
+                                              onPressed: () {
+                                                _handleImageSelection();
+                                              },
+                                            )),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

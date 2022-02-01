@@ -154,7 +154,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                   }).toList(),
                 );
               }
-              return const CircularProgressIndicator();
+              return const Center(child: CircularProgressIndicator());
             }),
       ),
     );

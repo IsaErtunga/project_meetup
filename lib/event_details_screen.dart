@@ -84,8 +84,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     final eventData = eventDataSnapshot.data() as Map<String, dynamic>;
 
     var contain = eventData["participants"]
-        .where((element) => element == userDataSnapshot.id);
-    if (contain == true) {
+        .where((element) => element["userId"] == userDataSnapshot.id);
+    print(contain);
+    if (contain.isNotEmpty) {
       return Future.value(true);
     } else {
       WriteBatch batch = FirebaseFirestore.instance.batch();
@@ -443,8 +444,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                             ),
                                           );
 
-                                          // Find the ScaffoldMessenger in the widget tree
-                                          // and use it to show a SnackBar.
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(snackBar);
                                         } else {
