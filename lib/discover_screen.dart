@@ -48,6 +48,17 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     getUserData();
   }
 
+  void _navigateAndDisplay(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      // Create the SelectionScreen in the next step.
+      MaterialPageRoute(builder: (context) => const CreateGroupScreen()),
+    );
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading == true) {

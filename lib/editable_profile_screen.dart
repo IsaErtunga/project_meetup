@@ -355,6 +355,7 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                                 if (_formKey.currentState!.validate()) {
                                   _formKey.currentState!.save();
                                   editProfileData();
+                                  Navigator.pop(context);
                                 }
                               },
                               child: _isLoading

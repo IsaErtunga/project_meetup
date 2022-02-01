@@ -61,6 +61,17 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
     //add user to group doc as member
   }
 
+  void _navigateAndDisplay(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      // Create the SelectionScreen in the next step.
+      MaterialPageRoute(builder: (context) => CreateEventScreen(widget.group)),
+    );
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<DocumentSnapshot>(
@@ -90,11 +101,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                         backgroundColor: Colors.white,
                         icon: Icon(Icons.add_circle, color: Colors.black),
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      CreateEventScreen(widget.group)));
+                          _navigateAndDisplay(context);
                         },
                         label: const Text(
                           "Add event",

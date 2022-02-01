@@ -290,6 +290,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         _formKey.currentState!.save(); //onSaved is called!
                         createGroup();
                       }
+                      Navigator.pop(context);
                     },
                     child: Stack(
                       children: <Widget>[

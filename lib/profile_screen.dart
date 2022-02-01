@@ -256,6 +256,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
   }
 
+  void _navigateAndDisplay(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      // Create the SelectionScreen in the next step.
+      MaterialPageRoute(builder: (context) => const EditableProfileScreen()),
+    );
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     // CollectionReference users = FirebaseFirestore.instance.collection('users');
@@ -301,8 +312,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Icons.edit,
                         color: Colors.white,
                       ),
-                      onPressed: () =>
-                          {Navigator.of(context).push(_createRouteToEdit())},
+                      onPressed: () => {_navigateAndDisplay(context)},
                     ),
                     IconButton(
                       icon: Icon(
@@ -503,9 +513,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       );*/
                                   }).toList(),
                                 )
-                              : const Text("   No interests chosen yet",
+                              : const Text("No interests chosen yet",
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      fontSize: 15, color: Colors.white30)),
+                                      fontSize: 20, color: Colors.white30)),
                         ),
                         Padding(
                           padding: EdgeInsets.only(
@@ -996,6 +1007,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 )
                               : const Text(
                                   "Not a member of any groups",
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: 20, color: Colors.white30),
                                 ),
@@ -1357,7 +1369,6 @@ class _filterChipWidgetState extends State<filterChipWidget> {
             } else if (_isSelected == false) {
               _ProfileScreenState.selectedInterestsList.remove(widget.chipName);
             }
-            print(_ProfileScreenState.selectedInterestsList);
           });
         },
         selectedColor: Colors.red[600] //Color(0xffeadffd),
