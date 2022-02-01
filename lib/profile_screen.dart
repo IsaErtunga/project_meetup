@@ -225,13 +225,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 spacing: 5.0,
                                 runSpacing: 3.0,
                                 children: <Widget>[
-                                  filterChipWidget(
-                                      chipName: 'Music/Dance/Club'),
+                                  filterChipWidget(chipName: 'Live Music'),
                                   filterChipWidget(
                                       chipName: 'Sports & Fitness'),
                                   filterChipWidget(
                                       chipName: 'Travel & Outdoors'),
                                   filterChipWidget(chipName: 'Science & Tech'),
+                                  filterChipWidget(chipName: 'Performing Arts'),
+                                  filterChipWidget(chipName: 'Art'),
+                                  filterChipWidget(
+                                      chipName: 'Cooking & Baking'),
+                                  filterChipWidget(chipName: 'Debating'),
+                                  filterChipWidget(chipName: 'Acrobatics'),
+                                  filterChipWidget(chipName: 'Books'),
+                                  filterChipWidget(chipName: 'Dancing'),
+                                  filterChipWidget(chipName: 'Clubbing'),
+                                  filterChipWidget(
+                                      chipName: 'Cultural Exchange'),
+                                  filterChipWidget(chipName: 'Networking'),
                                 ],
                               ),
                             ),
@@ -254,6 +265,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 sigmaY: 6,
               ));
         });
+  }
+
+  void _navigateAndDisplay(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the edit Screen.
+    final result = await Navigator.push(
+      context,
+      // Create the editScreen in the next step.
+      MaterialPageRoute(builder: (context) => const EditableProfileScreen()),
+    );
+    setState(() {});
   }
 
   @override
@@ -301,8 +323,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Icons.edit,
                         color: Colors.white,
                       ),
-                      onPressed: () =>
-                          {Navigator.of(context).push(_createRouteToEdit())},
+                      onPressed: () => {_navigateAndDisplay(context)},
                     ),
                     IconButton(
                       icon: Icon(
@@ -503,9 +524,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       );*/
                                   }).toList(),
                                 )
-                              : const Text("   No interests chosen yet",
+                              : const Text("No interests chosen yet",
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      fontSize: 15, color: Colors.white30)),
+                                      fontSize: 20, color: Colors.white30)),
                         ),
                         Padding(
                           padding: EdgeInsets.only(
@@ -822,10 +844,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       //onTap: callback,
                                       child: GestureDetector(
                                         onTap: () => {
-                                          Navigator.of(context)
-                                              .push(_createRoute(Group(
-                                            myGroups["id"],
-                                          )))
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      GroupDetailsScreen(Group(
+                                                          myGroups["id"],
+                                                          groupName: myGroups[
+                                                              'groupName'],
+                                                          groupPicture: myGroups[
+                                                              'groupPicture'])))).then(
+                                              (_) {
+                                            setState(() {});
+                                          })
                                         },
                                         child: SizedBox(
                                           height: 280,
@@ -906,7 +937,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                             CrossAxisAlignment.center,
                                                                         children: <
                                                                             Widget>[
-                                                                          Text(
+                                                                          /*  Text(
                                                                             '${myGroups['membersCount'].toString()} members',
                                                                             textAlign:
                                                                                 TextAlign.left,
@@ -917,7 +948,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                               letterSpacing: 0.27,
                                                                               color: Colors.red[600],
                                                                             ),
-                                                                          ),
+                                                                          ),*/
                                                                         ],
                                                                       ),
                                                                     ),
@@ -996,6 +1027,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 )
                               : const Text(
                                   "Not a member of any groups",
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: 20, color: Colors.white30),
                                 ),
@@ -1357,7 +1389,6 @@ class _filterChipWidgetState extends State<filterChipWidget> {
             } else if (_isSelected == false) {
               _ProfileScreenState.selectedInterestsList.remove(widget.chipName);
             }
-            print(_ProfileScreenState.selectedInterestsList);
           });
         },
         selectedColor: Colors.red[600] //Color(0xffeadffd),

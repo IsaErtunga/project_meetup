@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:project_meetup/application_bloc.dart';
 import 'package:project_meetup/google_maps_screen.dart';
+import 'package:project_meetup/group_details_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -104,7 +105,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         {
           "eventName": formData["eventName"],
           "id": eventId,
-          "image": formData["eventPicture"]
+          "eventPicture": formData["eventPicture"],
+          "eventTime": formData['dateTime']
+          //
         }
       ])
     });
@@ -447,6 +450,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     _formKey.currentState!.save(); //onSaved is called!
                     addEventBatch();
                   }
+                  Navigator.pop(context);
                 },
                 child: Stack(
                   children: <Widget>[

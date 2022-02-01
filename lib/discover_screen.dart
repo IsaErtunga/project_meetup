@@ -48,6 +48,17 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     getUserData();
   }
 
+  void _navigateAndDisplayCreateGroup(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      // Create the SelectionScreen in the next step.
+      MaterialPageRoute(builder: (context) => const CreateGroupScreen()),
+    );
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading == true) {
@@ -61,10 +72,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
           icon: Icon(Icons.add_circle,
               color: Colors.black), //const FaIcon(FontAwesomeIcons.plus),
           onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const CreateGroupScreen()));
+            _navigateAndDisplayCreateGroup(context);
           },
           label: const Text("Create group",
               style: TextStyle(
@@ -88,6 +96,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
 
               if (snapshot.connectionState == ConnectionState.done) {
                 return GridView.count(
+                  physics: BouncingScrollPhysics(),
                   crossAxisCount: 2,
                   children: snapshot.data!.docs.map((doc) {
                     return Card(
@@ -101,6 +110,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       ),
                       child: GestureDetector(
                         child: Column(
+                          // mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Expanded(
                               flex: 3,
@@ -118,6 +128,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                             ),
                             Expanded(
                               child: Container(
+                                padding: EdgeInsets.all(8),
                                 alignment: Alignment.center,
                                 child: AutoSizeText(
                                   (doc.data()
@@ -125,7 +136,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                                       .toString(),
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold),
-                                  maxLines: 1,
+                                  maxLines: 2,
                                 ),
                               ),
                             ),
