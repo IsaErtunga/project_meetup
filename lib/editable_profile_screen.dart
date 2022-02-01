@@ -33,7 +33,7 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
     "lastName": "",
     "userName": "",
     "university": "",
-    "imageUrl": ""
+    "imageUrl": "https://picsum.photos/200"
   };
 
   String imageUrl = "";
@@ -41,12 +41,6 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
   // Edit user profile
   Future<void> editProfileData() async {
     try {
-      final reference = FirebaseStorage.instance.ref(profilePicName);
-      await reference.putFile(profileFile);
-      final uri = await reference.getDownloadURL();
-      if (imageUrl != "") {
-        imageUrl = uri;
-      }
       await users.doc(auth.currentUser!.uid).update(formData);
     } on Exception catch (_) {
       print('never reached');
@@ -68,6 +62,7 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
       setState(() {
         userData = data;
         _image = {"type": "network", "image": data["imageUrl"]};
+
         _isLoading = false;
       });
     });
@@ -97,21 +92,13 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
       final image = await decodeImageFromList(bytes);
       final name = result.name;
 
+      final reference = FirebaseStorage.instance.ref(name);
+      await reference.putFile(file);
+      final uri = await reference.getDownloadURL();
       setState(() {
-        profileFile = file;
-        profilePicName = name;
-        _image = {"type": "local", "image": image.toString()};
+        formData["imageUrl"] = uri;
       });
     }
-  }
-
-  void _uploadImageToStorage() async {
-    final reference = FirebaseStorage.instance.ref(profilePicName);
-    await reference.putFile(profileFile);
-    final uri = await reference.getDownloadURL();
-    setState(() {
-      imageUrl = uri;
-    });
   }
 
   @override
@@ -181,27 +168,17 @@ class _EditableProfileScreenState extends State<EditableProfileScreen> {
                                       borderRadius: BorderRadius.circular(10),
                                       //  image: DecorationImage(image: ) image that the user uploads
                                     ),
-                                    child: Column(
-                                      children: [
-                                        Image(
-                                          image: NetworkImage(_image["image"]),
-                                          fit: BoxFit.fitWidth,
-                                          width: 100,
-                                          height: 100,
-                                        ),
-                                        Align(
-                                            alignment: Alignment.bottomRight,
-                                            child: IconButton(
-                                              icon: Icon(
-                                                Icons.add_a_photo_outlined,
-                                                color: Colors.white,
-                                              ),
-                                              onPressed: () {
-                                                _handleImageSelection();
-                                              },
-                                            )),
-                                      ],
-                                    ),
+                                    child: Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: IconButton(
+                                          icon: Icon(
+                                            Icons.add_a_photo_outlined,
+                                            color: Colors.white,
+                                          ),
+                                          onPressed: () {
+                                            _handleImageSelection();
+                                          },
+                                        )),
                                   ),
                                 ),
                               ),

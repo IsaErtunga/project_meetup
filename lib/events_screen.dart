@@ -37,7 +37,7 @@ class _EventsScreenState extends State<EventsScreen> {
   );
 
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-
+  bool _isLoading = true;
   void initState() {
     super.initState();
 
@@ -46,16 +46,33 @@ class _EventsScreenState extends State<EventsScreen> {
         GeoPoint pos = doc["location"];
 
         var marker = Marker(
+            flat: true,
             markerId: MarkerId(doc.id),
-            position: LatLng(pos.latitude, pos.longitude));
+            position: LatLng(pos.latitude, pos.longitude),
+            infoWindow: InfoWindow(
+                title: doc["eventName"],
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              EventDetailsScreen(Event(doc.id))));
+                }));
+
         markers[MarkerId(doc.id)] = marker;
       });
+    });
+    setState(() {
+      _isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final applicationBloc = Provider.of<ApplicationBloc>(context);
+    if (_isLoading == true) {
+      return Center(child: CircularProgressIndicator());
+    }
     return Scaffold(
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
