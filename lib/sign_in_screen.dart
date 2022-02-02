@@ -21,7 +21,8 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // resizeToAvoidBottomInset: false, //use this if you dont want for the keyboard to resize background image
+      resizeToAvoidBottomInset:
+          false, //use this if you dont want for the keyboard to resize background image
       body: Center(
         child: Container(
           decoration: const BoxDecoration(
@@ -32,14 +33,19 @@ class _SignInPageState extends State<SignInPage> {
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: Container(
               alignment: Alignment.center,
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.white,
               child: Column(
                 children: [
-                  /*       Container(
+                  Spacer(flex: 1),
+                  Container(
                     alignment: Alignment.center,
-                    child: Text("Welcome"),
-                  ),*/
-                  Spacer(flex: 3),
+                    child: Image(
+                        width: 200,
+                        height: 200,
+                        image:
+                            ExactAssetImage('images/InterestsSelection.png')),
+                  ),
+                  Spacer(flex: 1),
                   Form(
                     key: _formKey,
                     child: Container(
@@ -134,7 +140,7 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                   Text('Not a member yet?'),
                   Text('Sign up now'),
-                  Spacer(flex: 2),
+                  Spacer(flex: 1),
                   Container(
                     margin: EdgeInsets.only(bottom: 40.0),
                     child: ElevatedButton(

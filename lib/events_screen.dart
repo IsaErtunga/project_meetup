@@ -115,9 +115,10 @@ class _EventsScreenState extends State<EventsScreen> {
                         padding:
                             const EdgeInsets.only(top: 20.0, right: 5, left: 5),
                         child: FutureBuilder<QuerySnapshot>(
+                            //future: events.orderBy('dateTime', descending: false).startAt([now]).get(),
                             future: events
                                 .where("isPrivate", isEqualTo: false)
-                                .get(), //events.get(),
+                                .get(),
                             builder: (BuildContext context,
                                 AsyncSnapshot<QuerySnapshot> snapshot) {
                               // If something went wrong
