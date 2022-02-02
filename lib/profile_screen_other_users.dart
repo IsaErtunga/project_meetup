@@ -732,7 +732,9 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
             ),
           );
         }
-        return Text("loading");
+        return Center(
+          child: CircularProgressIndicator(),
+        );
       },
     );
   }
