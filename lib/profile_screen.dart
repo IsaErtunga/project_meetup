@@ -100,14 +100,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-/*
-  List<String> allInterestsList = [
-    "Music/Dance/Club",
-    "Sports & Fitness",
-    "Travel & Outdoors",
-    "Science & Tech"
-  ];  */
-
   static List<String> selectedInterestsList = [];
 
   Future<void> addInterests() {
@@ -115,46 +107,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .doc(auth.currentUser!.uid)
         .update({'myInterests': selectedInterestsList});
   }
-  /*
-  void _openInterestsFilterDialog() async {
-    await FilterListDialog.display<String>(context,
-        backgroundColor: Colors.white,
-        applyButonTextBackgroundColor: Colors.black,
-        controlButtonTextStyle:
-            TextStyle(color: Colors.black, backgroundColor: Colors.white),
-        listData: allInterestsList,
-        selectedListData: selectedInterestsList,
-        height: 480,
-        headlineText: "Choose your Interests",
-        hideHeaderText: true,
-        hideSelectedTextCount: true,
-        searchFieldHintText: "Search Here", choiceChipLabel: (item) {
-      return item;
-    }, validateSelectedItem: (list, val) {
-      return list!.contains(val);
-    }, onItemSearch: (list, text) {
-      if (list!.any(
-          (element) => element.toLowerCase().contains(text.toLowerCase()))) {
-        return list
-            .where(
-                (element) => element.toLowerCase().contains(text.toLowerCase()))
-            .toList();
-      } else {
-        return [];
-      }
-    }, onApplyButtonClick: (list) {
-      if (list != null) {
-        setState(
-          () {
-            selectedInterestsList = List.from(list);
-            addInterests();
-          },
-        );
-      }
-      Navigator.pop(context);
-    });
-  }
-  */
 
   _showInterestsDialog() async {
     await Future.delayed(
@@ -261,8 +213,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               filter: ImageFilter.blur(
-                sigmaX: 6,
-                sigmaY: 6,
+                sigmaX: 5,
+                sigmaY: 5,
               ));
         });
   }
@@ -1146,7 +1098,7 @@ class socialProgressView extends StatelessWidget {
             triggerMode: TooltipTriggerMode.tap,
             child: Container(
                 height: lineHeight,
-                color: lineColor,
+                color: circleColor,
                 child: CircleAvatar(
                   backgroundImage: AssetImage('images/dancingQueen.png'),
                   backgroundColor: circleColor,
@@ -1158,7 +1110,7 @@ class socialProgressView extends StatelessWidget {
             triggerMode: TooltipTriggerMode.tap,
             child: Container(
                 height: lineHeight,
-                color: lineColor,
+                color: circleColor,
                 child: CircleAvatar(
                   backgroundImage: AssetImage('images/SocialButterfly.png'),
                   backgroundColor: circleColor,
