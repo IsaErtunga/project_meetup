@@ -460,8 +460,8 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                                 gridDelegate:
                                                     SliverGridDelegateWithFixedCrossAxisCount(
                                                         crossAxisCount: 2,
-                                                        mainAxisSpacing: 15,
-                                                        crossAxisSpacing: 15,
+                                                        mainAxisSpacing: 10,
+                                                        crossAxisSpacing: 10,
                                                         childAspectRatio: 2.2),
                                                 padding:
                                                     const EdgeInsets.all(8),
@@ -485,33 +485,15 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                                                       .circular(
                                                                           15.0)),
                                                       child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            15),
-                                                                /*   border: Border.all(
-                                                              color:
-                                                                  Colors.black,
-                                                            ),*/
-                                                                /* boxShadow: [
-                                                              BoxShadow(
-                                                                 color: Colors
-                                                                    .grey
-                                                                    .withOpacity(
-                                                                        0.5),
-                                                                spreadRadius: 1,
-                                                                blurRadius: 5, 
-                                                                offset: Offset(
-                                                                    0,
-                                                                    0), // changes position of shadow
-                                                              ),
-                                                            ],*/
-                                                                color: Color(
-                                                                    0xFF212121)
-                                                                // Color(0xF8FAFB),
-                                                                ),
+                                                        decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            color: Color(
+                                                                0xFF212121)
+                                                            // Color(0xF8FAFB),
+                                                            ),
                                                         child: Row(
                                                           crossAxisAlignment:
                                                               CrossAxisAlignment
@@ -536,7 +518,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                                                         .rectangle,
                                                                     borderRadius:
                                                                         BorderRadius.circular(
-                                                                            15),
+                                                                            10),
                                                                     image: DecorationImage(
                                                                         fit: BoxFit
                                                                             .cover,
@@ -545,14 +527,25 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                                               ),
                                                             ),
                                                             SizedBox(width: 10),
-                                                            Text(
-                                                              '${member["firstName"]} ${member["lastName"]}',
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
+                                                            Container(
+                                                              child: Flexible(
+                                                                child: Padding(
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          right:
+                                                                              3),
+                                                                  child:
+                                                                      AutoSizeText(
+                                                                    '${member["firstName"]} ${member["lastName"]}',
+                                                                    maxLines: 2,
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  ),
+                                                                ),
+                                                              ),
                                                             ),
                                                           ],
                                                         ),

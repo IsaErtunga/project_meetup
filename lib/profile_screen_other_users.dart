@@ -2,7 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:project_meetup/theme_profile_screen.dart';
 import 'package:project_meetup/user_authentication.dart';
 import 'package:provider/provider.dart';
@@ -150,43 +150,55 @@ class _ProfileScreenOtherUsersState extends State<ProfileScreenOtherUsers> {
                                 SizedBox(
                                   width: 5 * SizeConfig.widthMultiplier,
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      '${data["firstName"]} ${data["lastName"]}',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize:
-                                              3 * SizeConfig.textMultiplier,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 0.5),
-                                    ),
-                                    Text('@${data["userName"]}',
-                                        style: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize:
-                                                2 * SizeConfig.textMultiplier)),
-                                    SizedBox(
-                                      height: 2 * SizeConfig.heightMultiplier,
-                                    ),
-                                    Row(
+                                Container(
+                                  child: Flexible(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: <Widget>[
+                                        Padding(
+                                          padding: EdgeInsets.only(right: 5),
+                                          child: AutoSizeText(
+                                            '${data["firstName"]} ${data["lastName"]}',
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 3 *
+                                                    SizeConfig.textMultiplier,
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: 0.5),
+                                          ),
+                                        ),
+                                        AutoSizeText('@${data["userName"]}',
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 2 *
+                                                    SizeConfig.textMultiplier)),
+                                        SizedBox(
+                                          height:
+                                              2 * SizeConfig.heightMultiplier,
+                                        ),
                                         Row(
                                           children: <Widget>[
-                                            Text(
-                                              data["university"],
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 1.5 *
-                                                    SizeConfig.textMultiplier,
-                                              ),
+                                            Row(
+                                              children: <Widget>[
+                                                AutoSizeText(
+                                                  data["university"],
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 1.5 *
+                                                        SizeConfig
+                                                            .textMultiplier,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ],
-                                        ),
+                                        )
                                       ],
-                                    )
-                                  ],
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),

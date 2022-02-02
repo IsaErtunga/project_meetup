@@ -55,11 +55,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   static String _eventAddress = "";
   static String _eventAddressSecondLine = "";
 
-  Future _getEventAdress(GeoPoint) async {
+  Future _getEventAdress() async {
     //await Future.delayed(Duration(microseconds: 1));
 
-    var eventPlace =
-        await placemarkFromCoordinates(GeoPoint.latitude, GeoPoint.longitude);
+    final eventDataSnapshot = await events.doc(widget.event.eventId).get();
+    final eventData = eventDataSnapshot.data() as Map<String, dynamic>;
+
+    final eventPlace = await placemarkFromCoordinates(
+        eventData["location"].latitude, eventData["location"].longitude);
 
     String? name = eventPlace[0].name;
     String? locality = eventPlace[0].locality;
@@ -130,8 +133,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _getEventAdress();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    //_getEventAddress
     return FutureBuilder<DocumentSnapshot>(
         future: events.doc(widget.event.eventId).get(),
         builder:
@@ -147,7 +155,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           if (snapshot.connectionState == ConnectionState.done) {
             Map<String, dynamic> eventData =
                 snapshot.data!.data() as Map<String, dynamic>;
-            _getEventAdress(eventData["location"]);
+            // _getEventAdress(eventData["location"]);
 
             return Scaffold(
               backgroundColor: Colors.black,
@@ -682,12 +690,24 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                       ),
                                                     ),
                                                     SizedBox(width: 10),
-                                                    Text(
-                                                      '${participant["firstName"]} ${participant["lastName"]}',
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.bold),
+                                                    Container(
+                                                      child: Flexible(
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  right: 3),
+                                                          child: AutoSizeText(
+                                                            '${participant["firstName"]} ${participant["lastName"]}',
+                                                            maxLines: 2,
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ),
                                                   ],
                                                 ),

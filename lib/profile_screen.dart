@@ -1,6 +1,6 @@
 import 'dart:collection';
 import 'dart:ui';
-
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:project_meetup/attended_events_all.dart';
@@ -287,10 +287,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
                   ],
-                  leading: BackButton(color: Colors.white
+                  /*    leading: BackButton(color: Colors.white
                       // icon: Icon(Icons.arrow_back, color: Colors.black),
                       // onPressed: () => Navigator.of(context).pop(),
-                      ),
+                      ), */
                   backgroundColor: Colors.black, //const Color(0xffF8F8FA),
                   forceElevated: false,
                   expandedHeight: 200,
@@ -333,43 +333,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 SizedBox(
                                   width: 5 * SizeConfig.widthMultiplier,
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      '${data["firstName"]} ${data["lastName"]}',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize:
-                                              3 * SizeConfig.textMultiplier,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 0.5),
-                                    ),
-                                    Text('@${data["userName"]}',
-                                        style: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize:
-                                                2 * SizeConfig.textMultiplier)),
-                                    SizedBox(
-                                      height: 2 * SizeConfig.heightMultiplier,
-                                    ),
-                                    Row(
+                                Container(
+                                  child: Flexible(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: <Widget>[
+                                        Padding(
+                                          padding: EdgeInsets.only(right: 5),
+                                          child: AutoSizeText(
+                                            '${data["firstName"]} ${data["lastName"]}',
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 3 *
+                                                    SizeConfig.textMultiplier,
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: 0.5),
+                                          ),
+                                        ),
+                                        AutoSizeText('@${data["userName"]}',
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 2 *
+                                                    SizeConfig.textMultiplier)),
+                                        SizedBox(
+                                          height:
+                                              2 * SizeConfig.heightMultiplier,
+                                        ),
                                         Row(
                                           children: <Widget>[
-                                            Text(
-                                              data["university"],
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 1.5 *
-                                                    SizeConfig.textMultiplier,
-                                              ),
+                                            Row(
+                                              children: <Widget>[
+                                                AutoSizeText(
+                                                  data["university"],
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 1.5 *
+                                                        SizeConfig
+                                                            .textMultiplier,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ],
-                                        ),
+                                        )
                                       ],
-                                    )
-                                  ],
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
