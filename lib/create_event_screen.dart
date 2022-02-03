@@ -49,9 +49,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
     setState(() {
       if (args.value is DateTime) {
-        // Set form state
-        formData['dateTime'] = args.value;
-
+        formData['dateTime'] =
+            DateTime(args.value.year, args.value.month, args.value.day);
         // Set button string value
         formattedString = formatter.format(args.value);
       }
@@ -315,6 +314,85 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                       child: formData["date"] != null
                           ? Text(formattedString)
                           : Text("SELECT DATE",
+                              style: TextStyle(color: Colors.greenAccent)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              margin:
+                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    primary: Colors.transparent,
+                    elevation: 0,
+                    minimumSize: const Size.fromHeight(50),
+                    textStyle: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 35, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25)),
+                    side: BorderSide(color: Color(0xFFFFEBEE))),
+                onPressed: () async {
+                  TimeOfDay? pickedTime = await showTimePicker(
+                    initialTime: TimeOfDay.now(),
+                    context: context, //context of current state
+                    builder: (context, child) {
+                      return MediaQuery(
+                          data: MediaQuery.of(context).copyWith(
+                              // Using 24-Hour format
+                              alwaysUse24HourFormat: true),
+                          // If you want 12-Hour format, just change alwaysUse24HourFormat to false or remove all the builder argument
+                          child: Theme(
+                            data: ThemeData.light().copyWith(
+                              colorScheme: ColorScheme.light(
+                                // change the border color
+                                primary: Colors.red,
+                                // change the text color
+                                onSurface: Colors.purple,
+                              ),
+                              // button colors
+                              buttonTheme: ButtonThemeData(
+                                colorScheme: ColorScheme.light(
+                                  primary: Colors.green,
+                                ),
+                              ),
+                            ),
+                            child: child!,
+                          ));
+                    },
+                  );
+
+                  // Set state
+                  if (pickedTime != null) {
+                    //print(pickedTime.format(context)); //output 10:51 PM
+
+                    DateTime parsedTime = DateFormat.jm()
+                        .parse(pickedTime.format(context).toString());
+
+                    setState(() {
+                      formData["dateTime"].add(Duration(
+                          hours: parsedTime.hour, minutes: parsedTime.minute));
+                    });
+                  } else {
+                    print("Time is not selected");
+                  }
+                },
+                child: Stack(
+                  children: <Widget>[
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Icon(Icons.calendar_today_rounded,
+                            color: Colors.greenAccent)),
+                    Align(
+                      alignment: Alignment.center,
+                      child: formData["date"] != null
+                          ? Text(formattedString)
+                          : Text("SELECT TIME",
                               style: TextStyle(color: Colors.greenAccent)),
                     ),
                   ],
