@@ -349,11 +349,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                           // If you want 12-Hour format, just change alwaysUse24HourFormat to false or remove all the builder argument
                           child: Theme(
                             data: ThemeData.light().copyWith(
-                              colorScheme: ColorScheme.light(
+                              colorScheme: ColorScheme.dark(
                                 // change the border color
-                                primary: Colors.red,
+                                primary: Colors.greenAccent,
+
                                 // change the text color
-                                onSurface: Colors.purple,
+                                onSurface: Colors.deepPurple,
                               ),
                               // button colors
                               buttonTheme: ButtonThemeData(
@@ -386,8 +387,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   children: <Widget>[
                     Align(
                         alignment: Alignment.centerLeft,
-                        child: Icon(Icons.calendar_today_rounded,
-                            color: Colors.greenAccent)),
+                        child:
+                            Icon(Icons.access_time, color: Colors.greenAccent)),
                     Align(
                       alignment: Alignment.center,
                       child: formData["date"] != null
